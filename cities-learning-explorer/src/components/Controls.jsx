@@ -257,42 +257,44 @@ const Controls = ({
       </div>
 
       {/* Embedding dimensions */}
-      <div style={{ marginBottom: "18px", fontSize: "0.8em" }}>
-        <div style={{ marginBottom: "4px" }}>
-          Select Embedding Dimensions (3 of 4):
-        </div>
-        <div style={{ marginLeft: "8px" }}>
-          {["0", "1", "2", "3"].map((dim) => {
-            const checked = selectedDims.includes(dim);
-            const disabled = !checked && selectedDims.length === 3;
+      {(viewMode === "embedding" || viewMode === "both") && (
+        <div style={{ marginBottom: "18px", fontSize: "0.8em" }}>
+          <div style={{ marginBottom: "4px" }}>
+            Select Embedding Dimensions (3 of 4):
+          </div>
+          <div style={{ marginLeft: "8px" }}>
+            {["0", "1", "2", "3"].map((dim) => {
+              const checked = selectedDims.includes(dim);
+              const disabled = !checked && selectedDims.length === 3;
 
-            return (
-              <label
-                key={dim}
-                style={{
-                  marginRight: "10px",
-                  display: "inline-flex",
-                  alignItems: "center",
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={checked}
-                  disabled={disabled}
-                  onChange={() => {
-                    setSelectedDims((prev) =>
-                      prev.includes(dim)
-                        ? prev.filter((d) => d !== dim)
-                        : [...prev, dim]
-                    );
+              return (
+                <label
+                  key={dim}
+                  style={{
+                    marginRight: "10px",
+                    display: "inline-flex",
+                    alignItems: "center",
                   }}
-                />
-                <span style={{ marginLeft: "4px" }}>{dim}</span>
-              </label>
-            );
-          })}
+                >
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    disabled={disabled}
+                    onChange={() => {
+                      setSelectedDims((prev) =>
+                        prev.includes(dim)
+                          ? prev.filter((d) => d !== dim)
+                          : [...prev, dim]
+                      );
+                    }}
+                  />
+                  <span style={{ marginLeft: "4px" }}>{dim}</span>
+                </label>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Buttons */}
       <button onClick={onResetView}>Reset View</button>
