@@ -509,10 +509,13 @@
               <input
                 type="range"
                 min="0"
-                max={Math.ceil(maxPopulation)}
-                step="10000"
-                value={populationThreshold}
-                onChange={e => setPopulationThreshold(Number(e.target.value))}
+                max={Math.sqrt(10_000_000)}
+                step="100"
+                value={Math.sqrt(populationThreshold)}
+                onChange={e => {
+                  const real = Math.pow(Number(e.target.value), 2);
+                  setPopulationThreshold(real);
+                }}
                 style={{ width: '90%' }}
               />
             </div>
@@ -522,10 +525,13 @@
               <input
                 type="range"
                 min="0"
-                max={Math.ceil(maxStudies)}
+                max={Math.sqrt(500)}
                 step="1"
-                value={studyThreshold}
-                onChange={e => setStudyThreshold(Number(e.target.value))}
+                value={Math.sqrt(studyThreshold)}
+                onChange={e => {
+                  const real = Math.pow(Number(e.target.value), 2);
+                  setStudyThreshold(real);
+                }}
                 style={{ width: '90%' }}
               />
             </div>
