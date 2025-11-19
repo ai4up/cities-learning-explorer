@@ -1,4 +1,4 @@
-/* global Plotly */
+import Plotly from 'plotly.js-dist';
 import React, { useEffect, useRef } from "react";
 
 const MapPlot = ({ samples, colors, sizes, onSelectSample }) => {

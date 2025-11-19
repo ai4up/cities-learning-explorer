@@ -1,5 +1,5 @@
-/* global Plotly */
 import React, { useEffect, useRef } from "react";
+import Plotly from 'plotly.js-dist';
 
 const EmbeddingPlot = ({
   samples,
@@ -106,17 +106,18 @@ const EmbeddingPlot = ({
       }
     };
 
-    if (!initializedRef.current) {
-      Plotly.newPlot(plotRef.current, [trace], layout, config);
-
-      plotRef.current.on("plotly_relayout", (ev) => {
-        if (ev["scene.camera"]) {
-          cameraRef.current = ev["scene.camera"];
-        }
-      });
-      plotRef.current.on("plotly_click", clickHandler);
-      initializedRef.current = true;
-    } else {
+      if (!initializedRef.current) {
+        Plotly.newPlot(plotRef.current, [trace], layout, config).then(() => {
+          initializedRef.current = true;
+          plotRef.current.on("plotly_click", clickHandler);
+          plotRef.current.on('plotly_relayout', ev => {
+            if (ev['scene.camera']) {
+              cameraRef.current = ev['scene.camera'];
+            }
+          });
+        });
+      } else {
+      if (!plotRef.current || !plotRef.current._fullLayout) return;
       Plotly.react(plotRef.current, [trace], layout, config);
       plotRef.current.removeAllListeners &&
         plotRef.current.removeAllListeners("plotly_click");
@@ -127,6 +128,7 @@ const EmbeddingPlot = ({
   // Reset camera on resetToken change
   useEffect(() => {
     if (!plotRef.current) return;
+    if (!plotRef.current || !plotRef.current._fullLayout) return;
     Plotly.relayout(plotRef.current, { "scene.camera": null });
     cameraRef.current = null;
   }, [resetToken]);
