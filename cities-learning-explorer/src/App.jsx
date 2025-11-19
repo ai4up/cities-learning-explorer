@@ -7,7 +7,7 @@ import { palette, computeColors, computeSizes } from "./utils/coloring";
 
 const App = () => {
   const [samples, setSamples] = useState([]);
-  const [viewMode, setViewMode] = useState("embedding");
+  const [viewMode, setViewMode] = useState("map");
 
   const [colorKey, setColorKey] = useState("type");
   const [selectedSample, setSelectedSample] = useState(null);

@@ -43,16 +43,16 @@ const Controls = ({
       {/* View mode toggle */}
       <div style={{ display: "flex", marginBottom: "10px", gap: "4px" }}>
         <button
-          style={viewBtnStyle("embedding")}
-          onClick={() => setViewMode("embedding")}
-        >
-          Embedding
-        </button>
-        <button
           style={viewBtnStyle("map")}
           onClick={() => setViewMode("map")}
         >
           Map
+        </button>
+        <button
+          style={viewBtnStyle("embedding")}
+          onClick={() => setViewMode("embedding")}
+        >
+          Embedding
         </button>
         <button
           style={viewBtnStyle("both")}
