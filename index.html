@@ -225,6 +225,29 @@
         };
       }, [samples, selectedDims]);
 
+      const TYPE_ALPHA_MIN = 0.2;
+      const toRgba = (hex, alpha) => {
+        if (!hex || hex.startsWith('rgba(')) return hex;
+        const normalized = hex.replace('#', '');
+        const expanded = normalized.length === 3
+          ? normalized.split('').map(ch => ch + ch).join('')
+          : normalized;
+        const bigint = parseInt(expanded, 16);
+        if (Number.isNaN(bigint)) return hex;
+        const r = (bigint >> 16) & 255;
+        const g = (bigint >> 8) & 255;
+        const b = bigint & 255;
+        return `rgba(${r},${g},${b},${alpha})`;
+      };
+
+      const getCategoryColor = (sample) => {
+        const base = categoryColors[sample[colorKey]] || '#ffffff';
+        if (colorKey !== 'type') return base;
+        const alpha = Math.min(1, Math.max(TYPE_ALPHA_MIN, sample?.probability ?? 1));
+        if (alpha >= 0.999) return base;
+        return toRgba(base, alpha);
+      };
+
       // Filtering & highlighting logic shared by both views
       const computeColors = () => {
         return samples.map(s => {
@@ -236,14 +259,18 @@
 
           if (!inFilter) return 'rgba(0,0,0,0)';
 
+          const categoryColor = getCategoryColor(s);
+
           if (selectedSample) {
             if (selectedSample.id === s.id) return '#ffffff';
             if (selectedSample.neighbors && selectedSample.neighbors.includes(s.id)) {
-              return categoryColors[s[colorKey]];
+              return categoryColor;
             }
-            return '#555555';
+            return colorKey === 'type'
+              ? toRgba('#555555', Math.min(1, Math.max(TYPE_ALPHA_MIN, s?.probability ?? 1)))
+              : '#555555';
           }
-          return categoryColors[s[colorKey]];
+          return categoryColor;
         });
       };
 
