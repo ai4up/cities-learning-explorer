@@ -426,12 +426,13 @@
                 gap: '12px',
                 maxHeight: '150px',
                 overflowY: 'auto',
-                marginBottom: '8px'
+                marginBottom: '12px',
+                marginTop: '12px'
               }}
             >
               {/* Regions */}
               <div>
-                <strong style={{ fontSize: '0.8em' }}>Regions</strong>
+                <div style={{ fontSize: '0.8em', marginBottom: '6px', fontWeight: 'bold' }}>Regions</div>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   {regions.map(reg => (
                     <label
@@ -468,7 +469,7 @@
 
               {/* Types */}
               <div>
-                <strong style={{ fontSize: '0.8em' }}>Types</strong>
+                <div style={{ fontSize: '0.8em', marginBottom: '6px', fontWeight: 'bold' }}>Types</div>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   {types.map(t => (
                     <label
@@ -504,7 +505,7 @@
             </div>
 
             {/* Population slider */}
-            <div style={{ marginTop: '6px', marginBottom: '6px' }}>
+            <div style={{ marginTop: '12px'}}>
               <label style={{ display: 'block', fontSize: '0.8em' }}>Population ≥ {populationThreshold.toLocaleString()}</label>
               <input
                 type="range"
@@ -520,7 +521,7 @@
               />
             </div>
             {/* Number of Studies slider */}
-            <div style={{ marginTop: '6px', marginBottom: '6px' }}>
+            <div style={{ marginBottom: '6px' }}>
               <label style={{ display: 'block', fontSize: '0.8em' }}>Number of Studies ≥ {studyThreshold}</label>
               <input
                 type="range"
