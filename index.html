@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Embedding Explorer</title>
+  <title>Embedding & Map Explorer</title>
   <!-- Load React and Babel from CDN -->
   <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
@@ -28,7 +28,7 @@
       position: absolute;
       top: 10px;
       left: 10px;
-      width: 420px; /* slightly wider panel to keep checkboxes on one line */
+      width: 420px;
       background: rgba(0, 0, 0, 0.7);
       padding: 12px;
       border-radius: 4px;
@@ -104,6 +104,18 @@
     .info-panel li:hover {
       color: #79b8ff;
     }
+
+    /* Containers for the two plots */
+    .plots-wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: row;
+    }
+    .plot-container {
+      flex: 1;
+      height: 100%;
+    }
   </style>
 </head>
 <body>
@@ -114,29 +126,33 @@
     function App() {
       // State for loaded samples
       const [samples, setSamples] = useState([]);
+      // View mode: 'embedding', 'map', 'both'
+      const [viewMode, setViewMode] = useState('embedding');
+
       // Default colour key and filters
       const [colorKey, setColorKey] = useState('type');
       const [selectedSample, setSelectedSample] = useState(null);
       const [searchValue, setSearchValue] = useState('');
-      // Minimum population threshold for visibility (set to 0 so all cities initially show; user can raise)
       const [populationThreshold, setPopulationThreshold] = useState(1000000);
-      // Minimum number of studies to display a city (default 0 to ensure cities with low study count are still shown)
       const [studyThreshold, setStudyThreshold] = useState(5);
       const [selectedRegions, setSelectedRegions] = useState(new Set());
       const [selectedTypes, setSelectedTypes] = useState(new Set());
       const [selectedDims, setSelectedDims] = useState(["0", "1", "2"]); 
 
-      // Keep a ref to the current samples array to ensure click handler uses latest state
+      // Keep a ref to the current samples array for click handlers
       const samplesRef = useRef([]);
       useEffect(() => {
         samplesRef.current = samples;
       }, [samples]);
-      // Plot and camera refs
-      const plotRef = useRef(null);
-      const cameraRef = useRef(null);
-      const initialCameraRef = useRef(null);
+
+      // Plot refs
+      const embedPlotRef = useRef(null);
+      const embedCameraRef = useRef(null);
       const axisRangesRef = useRef(null);
-      const plotInitializedRef = useRef(false);
+      const embedInitializedRef = useRef(false);
+
+      const mapPlotRef = useRef(null);
+      const mapInitializedRef = useRef(false);
 
       // Load data from external JSON file
       useEffect(() => {
@@ -144,26 +160,28 @@
           .then(res => res.json())
           .then(data => {
             setSamples(data);
-            console.log(data[0]);
+            console.log('Example city:', data[0]);
           })
           .catch(err => console.error('Failed to load JSON:', err));
       }, []);
 
-      // Derive unique regions and types from samples
-      const regions = useMemo(() => {
-        return Array.from(new Set(samples.map(s => s.region))).sort();
-      }, [samples]);
-      const types = useMemo(() => {
-        return Array.from(new Set(samples.map(s => s.type))).sort();
-      }, [samples]);
+      // Derive unique regions and types
+      const regions = useMemo(
+        () => Array.from(new Set(samples.map(s => s.region))).sort(),
+        [samples]
+      );
+      const types = useMemo(
+        () => Array.from(new Set(samples.map(s => s.type))).sort(),
+        [samples]
+      );
 
-      // Initialise region and type selections when these arrays change
+      // Initialise region and type selections
       useEffect(() => {
         setSelectedRegions(new Set(regions));
         setSelectedTypes(new Set(types));
       }, [regions, types]);
 
-      // Generate palette and colours for categories (types or regions)
+      // Palette & category colours
       const palette = [
         '#e6194b','#3cb44b','#ffe119','#4363d8','#f58231','#911eb4','#46f0f0','#f032e6','#bcf60c','#fabebe',
         '#008080','#e6beff','#9a6324','#fffac8','#800000','#aaffc3','#808000','#ffd8b1','#000075','#808080'
@@ -179,20 +197,22 @@
         return map;
       }, [categories]);
 
-      // Max values for sliders
-      const maxPopulation = useMemo(() => {
-        return samples.reduce((max, s) => Math.max(max, s.population || 0), 0);
-      }, [samples]);
-      const maxStudies = useMemo(() => {
-        return samples.reduce((max, s) => Math.max(max, s.n_studies || 0), 0);
-      }, [samples]);
+      // Max values for sliders (currently unused, but can be useful)
+      const maxPopulation = useMemo(
+        () => samples.reduce((max, s) => Math.max(max, s.population || 0), 0),
+        [samples]
+      );
+      const maxStudies = useMemo(
+        () => samples.reduce((max, s) => Math.max(max, s.n_studies || 0), 0),
+        [samples]
+      );
 
-      // Compute axis ranges for the 3D plot whenever samples or selected dims change
+      // Axis ranges for 3D plot
       useEffect(() => {
         if (samples.length === 0) return;
+        if (selectedDims.length !== 3) return;
 
         const [dx, dy, dz] = selectedDims.map(d => parseInt(d));
-
         const xs = samples.map(s => s.embedding[dx]);
         const ys = samples.map(s => s.embedding[dy]);
         const zs = samples.map(s => s.embedding[dz]);
@@ -205,12 +225,17 @@
         };
       }, [samples, selectedDims]);
 
-
-      // Compute colours for all samples according to filters and selections
+      // Filtering & highlighting logic shared by both views
       const computeColors = () => {
         return samples.map(s => {
-          const inFilter = (s.population >= populationThreshold) && (s.n_studies >= studyThreshold) && selectedRegions.has(s.region) && selectedTypes.has(s.type);
+          const inFilter =
+            (s.population >= populationThreshold) &&
+            (s.n_studies >= studyThreshold) &&
+            selectedRegions.has(s.region) &&
+            selectedTypes.has(s.type);
+
           if (!inFilter) return 'rgba(0,0,0,0)';
+
           if (selectedSample) {
             if (selectedSample.id === s.id) return '#ffffff';
             if (selectedSample.neighbors && selectedSample.neighbors.includes(s.id)) {
@@ -246,10 +271,11 @@
         });
       };
 
-      // Draw or update the Plotly 3D scatter plot
-      function updatePlot() {
+      // Embedding plot
+      function updateEmbeddingPlot() {
         if (!axisRangesRef.current) return;
         if (selectedDims.length !== 3) return;
+        if (!embedPlotRef.current) return;
 
         const [dx, dy, dz] = selectedDims.map(d => parseInt(d));
 
@@ -258,6 +284,7 @@
         const z = samples.map(s => s.embedding[dz]);
         const colors = computeColors();
         const sizes = computeSizes();
+
         const trace = {
           x,
           y,
@@ -273,18 +300,21 @@
             opacity: 1.0,
           },
         };
+
         const layout = {
           scene: {
             bgcolor: '#0d1117',
             xaxis: { title: `latent_${dx}`, range: axisRangesRef.current.x, showgrid: true, zeroline: false },
             yaxis: { title: `latent_${dy}`, range: axisRangesRef.current.y, showgrid: true, zeroline: false },
             zaxis: { title: `latent_${dz}`, range: axisRangesRef.current.z, showgrid: true, zeroline: false },
-            camera: cameraRef.current || undefined,
+            camera: embedCameraRef.current || undefined,
           },
           margin: { l: 0, r: 0, b: 0, t: 0 },
           showlegend: false,
         };
+
         const config = { displayModeBar: true, responsive: true };
+
         const clickHandler = (ev) => {
           if (ev && ev.points && ev.points.length > 0) {
             const idx = ev.points[0].pointNumber;
@@ -298,52 +328,140 @@
             }
           }
         };
-        if (!plotInitializedRef.current) {
-          console.log('Initializing plot');
 
-          Plotly.newPlot(plotRef.current, [trace], layout, config);
+        if (!embedInitializedRef.current) {
+          Plotly.newPlot(embedPlotRef.current, [trace], layout, config);
 
-          plotRef.current.on('plotly_relayout', ev => {
-          if (ev['scene.camera']) {
-            cameraRef.current = ev['scene.camera'];
-          }
-        });
-          plotRef.current.on('plotly_click', clickHandler);
-          plotInitializedRef.current = true;
+          embedPlotRef.current.on('plotly_relayout', ev => {
+            if (ev['scene.camera']) {
+              embedCameraRef.current = ev['scene.camera'];
+            }
+          });
+          embedPlotRef.current.on('plotly_click', clickHandler);
+          embedInitializedRef.current = true;
         } else {
-          Plotly.react(plotRef.current, [trace], layout, config);
-          // Remove existing click listeners and re-add
-          plotRef.current.removeAllListeners && plotRef.current.removeAllListeners('plotly_click');
-          plotRef.current.on('plotly_click', clickHandler);
+          Plotly.react(embedPlotRef.current, [trace], layout, config);
+          embedPlotRef.current.removeAllListeners &&
+            embedPlotRef.current.removeAllListeners('plotly_click');
+          embedPlotRef.current.on('plotly_click', clickHandler);
         }
       }
 
-      // Trigger plot updates when filters or selections change
-      useEffect(() => {
-        updatePlot();
-      }, [populationThreshold, studyThreshold, selectedSample, selectedRegions, selectedTypes, colorKey, selectedDims]);
+      // Map plot (lat/lon)
+      function updateMapPlot() {
+        if (!mapPlotRef.current) return;
+        if (samples.length === 0) return;
 
-      // Suggestions for fuzzy search
+        const lats = samples.map(s => (s.lat !== undefined ? s.lat : (s.latitude ?? null)));
+        const lons = samples.map(s => (s.lon !== undefined ? s.lon : (s.longitude ?? null)));
+
+        const colors = computeColors();
+        const sizes = computeSizes().map(s => s * 1.4); // slightly larger for visibility on map
+
+        const trace = {
+          type: 'scattergeo',
+          mode: 'markers',
+          lat: lats,
+          lon: lons,
+          text: samples.map(s => `${s.name}${s.country ? ', ' + s.country : ''}`),
+          hovertemplate: '%{text}<extra></extra>',
+          marker: {
+            color: colors,
+            size: sizes,
+            line: { width: 0 },
+            opacity: 1.0,
+          },
+        };
+
+        const layout = {
+          geo: {
+            projection: { type: 'natural earth' },
+            showland: true,
+            landcolor: '#1b1f23',
+            showocean: true,
+            oceancolor: '#0d1117',
+            bgcolor: '#0d1117',
+          },
+          margin: { l: 0, r: 0, b: 0, t: 0 },
+          showlegend: false,
+        };
+
+        const config = { displayModeBar: true, responsive: true };
+
+        const clickHandler = (ev) => {
+          if (ev && ev.points && ev.points.length > 0) {
+            const idx = ev.points[0].pointNumber;
+            const selected = samplesRef.current[idx];
+            if (selected) {
+              setSelectedSample(prev => {
+                const next = prev && prev.id === selected.id ? null : selected;
+                setSearchValue('');
+                return next;
+              });
+            }
+          }
+        };
+
+        if (!mapInitializedRef.current) {
+          Plotly.newPlot(mapPlotRef.current, [trace], layout, config);
+          mapPlotRef.current.on('plotly_click', clickHandler);
+          mapInitializedRef.current = true;
+        } else {
+          Plotly.react(mapPlotRef.current, [trace], layout, config);
+          mapPlotRef.current.removeAllListeners &&
+            mapPlotRef.current.removeAllListeners('plotly_click');
+          mapPlotRef.current.on('plotly_click', clickHandler);
+        }
+      }
+
+      // Trigger plot updates when filters / selection / viewMode change
+      useEffect(() => {
+        if (viewMode === 'embedding' || viewMode === 'both') {
+          updateEmbeddingPlot();
+        }
+        if (viewMode === 'map' || viewMode === 'both') {
+          updateMapPlot();
+        }
+      }, [
+        viewMode,
+        populationThreshold,
+        studyThreshold,
+        selectedSample,
+        selectedRegions,
+        selectedTypes,
+        colorKey,
+        selectedDims
+      ]);
+
+      // Search suggestions
       const suggestions = useMemo(() => {
         const val = searchValue.toLowerCase();
         if (!val) return [];
-        return samples.filter(s => s.name.toLowerCase().includes(val)).slice(0, 10);
+        return samples
+          .filter(s => s.name.toLowerCase().includes(val))
+          .slice(0, 10);
       }, [searchValue, samples]);
 
-      // Auto-select sample if search text matches exactly
+      // Auto-select exact match
       useEffect(() => {
-        const exact = samples.find(s => s.name.toLowerCase() === searchValue.toLowerCase());
+        const exact = samples.find(
+          s => s.name.toLowerCase() === searchValue.toLowerCase()
+        );
         if (exact) {
           setSelectedSample(exact);
         }
-      }, [searchValue]);
+      }, [searchValue, samples]);
 
-      // Reset camera to default orientation
+      // Reset view (camera + selection)
       function resetView() {
-        Plotly.relayout(plotRef.current, { 'scene.camera': null });
+        if (embedPlotRef.current) {
+          Plotly.relayout(embedPlotRef.current, { 'scene.camera': null });
+          embedCameraRef.current = null;
+        }
         setSelectedSample(null);
       }
-      // Reset filter selections and thresholds
+
+      // Reset filters
       function resetFilters() {
         setPopulationThreshold(1000000);
         setStudyThreshold(5);
@@ -352,7 +470,7 @@
         setSelectedSample(null);
       }
 
-      // Mapping for additional metrics to display
+      // Metrics to show in info panel
       const metricList = [
         { key: 'population', label: 'Population' },
         { key: 'population_growth', label: 'Population growth' },
@@ -367,13 +485,11 @@
         { key: 'precipitation', label: 'Precipitation' },
       ];
 
-      // Helper to compute probability values for bar chart (Type 1-4)
+      // Probability values for bar chart
       const getProbabilities = sample => {
-        // If an array of probabilities exists under type_probabilities, return that
         if (sample && Array.isArray(sample.type_probabilities)) {
           return sample.type_probabilities;
         }
-        // If a 'probabilities' object exists, use those keys
         if (sample && sample.probabilities) {
           return [
             sample.probabilities.mean_prob_cluster_0 || 0,
@@ -382,17 +498,66 @@
             sample.probabilities.mean_prob_cluster_3 || 0,
           ];
         }
-        // Otherwise try to read flat fields mean_prob_cluster_0 ... mean_prob_cluster_3
-        const keys = ['mean_prob_cluster_0','mean_prob_cluster_1','mean_prob_cluster_2','mean_prob_cluster_3'];
-        return keys.map(k => (sample && sample[k] !== undefined) ? sample[k] : 0);
+        const keys = [
+          'mean_prob_cluster_0',
+          'mean_prob_cluster_1',
+          'mean_prob_cluster_2',
+          'mean_prob_cluster_3'
+        ];
+        return keys.map(k =>
+          (sample && sample[k] !== undefined) ? sample[k] : 0
+        );
       };
+
+      // Small helper for active view buttons
+      const viewBtnStyle = (mode) => ({
+        flex: 1,
+        marginBottom: 0,
+        marginRight: '4px',
+        padding: '6px',
+        borderRadius: '4px',
+        border: 'none',
+        backgroundColor: viewMode === mode ? '#238636' : '#161b22',
+        color: '#c9d1d9',
+        cursor: 'pointer'
+      });
 
       return (
         <div style={{ width: '100%', height: '100%', position: 'relative' }}>
           {/* Plot area */}
-          <div ref={plotRef} style={{ width: '100%', height: '100%' }}></div>
+          <div className="plots-wrapper">
+            {(viewMode === 'embedding' || viewMode === 'both') && (
+              <div className="plot-container" ref={embedPlotRef}></div>
+            )}
+            {(viewMode === 'map' || viewMode === 'both') && (
+              <div className="plot-container" ref={mapPlotRef}></div>
+            )}
+          </div>
+
           {/* Control panel */}
           <div className="controls">
+            {/* Top: View mode toggle */}
+            <div style={{ display: 'flex', marginBottom: '10px', gap: '4px' }}>
+              <button
+                style={viewBtnStyle('embedding')}
+                onClick={() => setViewMode('embedding')}
+              >
+                Embedding
+              </button>
+              <button
+                style={viewBtnStyle('map')}
+                onClick={() => setViewMode('map')}
+              >
+                Map
+              </button>
+              <button
+                style={viewBtnStyle('both')}
+                onClick={() => setViewMode('both')}
+              >
+                Both
+              </button>
+            </div>
+
             {/* Search input with clear button */}
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
               <input
@@ -415,24 +580,36 @@
                     setSearchValue('');
                     setSelectedSample(null);
                   }}
-                  style={{ marginLeft: '6px', padding: '4px 6px', border: 'none', borderRadius: '4px', backgroundColor: '#21262d', color: '#c9d1d9', cursor: 'pointer', width: '26px' }}
+                  style={{
+                    marginLeft: '6px',
+                    padding: '4px 6px',
+                    border: 'none',
+                    borderRadius: '4px',
+                    backgroundColor: '#21262d',
+                    color: '#c9d1d9',
+                    cursor: 'pointer',
+                    width: '26px'
+                  }}
                 >
                   &times;
                 </button>
               )}
             </div>
+
             {/* Datalist for suggestions */}
             <datalist id="suggestions">
               {suggestions.map((s, idx) => (
                 <option key={idx} value={s.name} />
               ))}
             </datalist>
+
             {/* Colour key selector */}
             <select value={colorKey} onChange={e => setColorKey(e.target.value)}>
               <option value="type">Colour by Type</option>
               <option value="region">Colour by Region</option>
             </select>
-            {/* Region and Type filters */}
+
+            {/* Region & Type filters */}
             <div
               style={{
                 display: 'grid',
@@ -476,7 +653,6 @@
                       />
                       {reg}
                     </label>
-
                   ))}
                 </div>
               </div>
@@ -520,7 +696,9 @@
 
             {/* Population slider */}
             <div style={{ marginTop: '12px'}}>
-              <label style={{ display: 'block', fontSize: '0.8em' }}>Population ≥ {populationThreshold.toLocaleString()}</label>
+              <label style={{ display: 'block', fontSize: '0.8em' }}>
+                Population ≥ {populationThreshold.toLocaleString()}
+              </label>
               <input
                 type="range"
                 min="0"
@@ -534,9 +712,12 @@
                 style={{ width: '90%' }}
               />
             </div>
+
             {/* Number of Studies slider */}
             <div style={{ marginBottom: '6px' }}>
-              <label style={{ display: 'block', fontSize: '0.8em' }}>Number of Studies ≥ {studyThreshold}</label>
+              <label style={{ display: 'block', fontSize: '0.8em' }}>
+                Number of Studies ≥ {studyThreshold}
+              </label>
               <input
                 type="range"
                 min="0"
@@ -551,16 +732,23 @@
               />
             </div>
 
+            {/* Embedding dimensions */}
             <div style={{ marginBottom: '18px', fontSize: '0.8em' }}>
               <div style={{ marginBottom: '4px'}}>Select Embedding Dimensions (3 of 4):</div>
               <div style={{ marginLeft: '8px' }}>
                 {["0", "1", "2", "3"].map(dim => {
                   const checked = selectedDims.includes(dim);
-                  const disabled =
-                    !checked && selectedDims.length === 3; // already 3 selected → cannot add more
+                  const disabled = !checked && selectedDims.length === 3;
 
                   return (
-                    <label key={dim} style={{ marginRight: '10px', display: 'inline-flex', alignItems: 'center' }}>
+                    <label
+                      key={dim}
+                      style={{
+                        marginRight: '10px',
+                        display: 'inline-flex',
+                        alignItems: 'center'
+                      }}
+                    >
                       <input
                         type="checkbox"
                         checked={checked}
@@ -583,7 +771,8 @@
             {/* Buttons */}
             <button onClick={resetView}>Reset View</button>
             <button onClick={resetFilters}>Reset Filters</button>
-            {/* Legend for category colours */}
+
+            {/* Legend */}
             <div className="legend">
               {categories.map(cat => (
                 <div className="legend-item" key={cat}>
@@ -593,61 +782,103 @@
               ))}
             </div>
           </div>
-          {/* Info panel for selected sample */}
+
+          {/* Info panel for selected city */}
           {selectedSample && (
             <div className="info-panel">
-              <h3>{selectedSample.name}{selectedSample.country ? ', ' + selectedSample.country : ''}</h3>
+              <h3>
+                {selectedSample.name}
+                {selectedSample.country ? ', ' + selectedSample.country : ''}
+              </h3>
               <div style={{ fontSize: '0.8em', lineHeight: '1.3em' }}>
                 <div><strong>Type:</strong> {selectedSample.type}</div>
                 <div><strong>Region:</strong> {selectedSample.region}</div>
                 <div><strong>GHS-UCDB ID:</strong> {selectedSample.id}</div>
                 <div><strong>Number of Studies:</strong> {selectedSample.n_studies}</div>
               </div>
-              {/* Additional metrics formatted like technical specs */}
-              <div style={{ marginTop: '8px', fontSize: '0.7em', borderTop: '1px solid #444', paddingTop: '8px' }}>
-                <div style={{ margin: '0 0 4px 0', fontSize: '1.5em', fontWeight: 'bold', paddingBottom: '8px'}}>City characteristics</div>
+
+              {/* Additional metrics */}
+              <div style={{
+                marginTop: '8px',
+                fontSize: '0.7em',
+                borderTop: '1px solid #444',
+                paddingTop: '8px'
+              }}>
+                <div style={{
+                  margin: '0 0 4px 0',
+                  fontSize: '1.5em',
+                  fontWeight: 'bold',
+                  paddingBottom: '8px'
+                }}>
+                  City characteristics
+                </div>
                 {metricList.map(item => {
                   const val = selectedSample[item.key];
                   let displayVal;
                   if (val !== undefined && val !== null) {
-                    displayVal = typeof val === 'number' ? val.toLocaleString(undefined, { maximumFractionDigits: 2 }) : val;
+                    displayVal = typeof val === 'number'
+                      ? val.toLocaleString(undefined, { maximumFractionDigits: 2 })
+                      : val;
                   } else {
                     displayVal = '-';
                   }
-                    return (
-                    <div key={item.key} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                  return (
+                    <div
+                      key={item.key}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        marginBottom: '2px'
+                      }}
+                    >
                       <span>{item.label}</span>
                       <span style={{ fontWeight: 'bold' }}>{displayVal}</span>
                     </div>
                   );
                 })}
               </div>
-              {/* Cluster assignment probabilities bar chart */}
-              {(selectedSample.type_probabilities || selectedSample.probabilities || selectedSample.mean_prob_cluster_0 !== undefined) && (
-                <div style={{ marginTop: '18px', borderTop: '1px solid #444', paddingTop: '8px' }}>
+
+              {/* Cluster assignment probabilities */}
+              {(selectedSample.type_probabilities ||
+                selectedSample.probabilities ||
+                selectedSample.mean_prob_cluster_0 !== undefined) && (
+                <div style={{
+                  marginTop: '18px',
+                  borderTop: '1px solid #444',
+                  paddingTop: '8px'
+                }}>
                   <strong>Type assignment probabilities:</strong>
-                  <div style={{ display: 'flex', alignItems: 'flex-end', height: '80px', marginTop: '4px' }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'flex-end',
+                    height: '80px',
+                    marginTop: '4px'
+                  }}>
                     {getProbabilities(selectedSample).map((val, idx) => {
                       const pct = Math.round(val * 100);
                       const label = `T${idx + 1}`;
-
                       return (
-                        <div key={idx} style={{
-                          flex: 1,
-                          textAlign: 'center',
-                          marginRight: idx < 3 ? '4px' : '0',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          justifyContent: 'flex-end',
-                          alignItems: 'center',
-                          height: '100%'
-                        }}>
-                          <div style={{
-                            backgroundColor: palette[idx % palette.length],
-                            height: `${pct}%`,
-                            borderRadius: '2px',
-                            width: '75%'
-                          }}></div>
+                        <div
+                          key={idx}
+                          style={{
+                            flex: 1,
+                            textAlign: 'center',
+                            marginRight: idx < 3 ? '4px' : '0',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'flex-end',
+                            alignItems: 'center',
+                            height: '100%'
+                          }}
+                        >
+                          <div
+                            style={{
+                              backgroundColor: palette[idx % palette.length],
+                              height: `${pct}%`,
+                              borderRadius: '2px',
+                              width: '75%'
+                            }}
+                          ></div>
                           <span style={{ fontSize: '0.7em', marginTop: '4px' }}>
                             {label}: {pct}%
                           </span>
@@ -655,53 +886,66 @@
                       );
                     })}
                   </div>
-
                 </div>
               )}
-              {/* Nearest neighbours list */}
-              <div style={{ marginTop: '18px', borderTop: '1px solid #444', paddingTop: '8px' }}>
+
+              {/* Nearest neighbours list (by neighbors column, not spatial) */}
+              <div style={{
+                marginTop: '18px',
+                borderTop: '1px solid #444',
+                paddingTop: '8px'
+              }}>
                 <strong>Similar cities with evidence:</strong>
               </div>
-                <div style={{ fontSize: '0.75em' }}>
-                  {(() => {
-                    const withStudies = selectedSample.neighbors
-                      ?.slice(0, 10)
-                      .map((idx, i) => ({
-                        neighbour: samples.find(s => s.id === idx),
-                        dist: selectedSample.neighbor_distances?.[i]
-                      }))
-                      .filter(x => x.neighbour && x.neighbour.n_studies > 0);
+              <div style={{ fontSize: '0.75em' }}>
+                {(() => {
+                  const withStudies = selectedSample.neighbors
+                    ?.slice(0, 10)
+                    .map((idx, i) => ({
+                      neighbour: samples.find(s => s.id === idx),
+                      dist: selectedSample.neighbor_distances?.[i]
+                    }))
+                    .filter(x => x.neighbour && x.neighbour.n_studies > 0);
 
-                    if (!withStudies || withStudies.length === 0) {
-                      return <div style={{ marginTop: '6px', fontStyle: 'italic' }}>No studies available for the most similar 10 cities.</div>;
-                    }
-
+                  if (!withStudies || withStudies.length === 0) {
                     return (
-                     <ul>
-                      {withStudies.map(({ neighbour, dist }) => (
-                        <div key={neighbour.id} style={{ display: 'flex', gap: '0.25rem' }}>
-                          <span>{dist?.toFixed(1)}:</span>
+                      <div style={{ marginTop: '6px', fontStyle: 'italic' }}>
+                        No studies available for the most similar 10 cities.
+                      </div>
+                    );
+                  }
 
+                  return (
+                    <ul>
+                      {withStudies.map(({ neighbour, dist }) => (
+                        <div
+                          key={neighbour.id}
+                          style={{ display: 'flex', gap: '0.25rem' }}
+                        >
+                          <span>{dist?.toFixed(1)}:</span>
                           <li
                             onClick={() => setSelectedSample(neighbour)}
-                            style={{ cursor: 'pointer', textDecoration: 'underline', listStyle: 'none' }}
+                            style={{
+                              cursor: 'pointer',
+                              textDecoration: 'underline',
+                              listStyle: 'none'
+                            }}
                           >
                             {neighbour.name}, {neighbour.country}
                           </li>
-
                           <span>({neighbour.n_studies} studies)</span>
                         </div>
                       ))}
                     </ul>
-                    );
-                  })()}
-                </div>
-
+                  );
+                })()}
+              </div>
             </div>
           )}
         </div>
       );
     }
+
     ReactDOM.render(<App />, document.getElementById('root'));
   </script>
 </body>
