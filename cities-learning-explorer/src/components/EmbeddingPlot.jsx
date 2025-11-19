@@ -13,6 +13,12 @@ const EmbeddingPlot = ({
   const axisRangesRef = useRef(null);
   const cameraRef = useRef(null);
   const initializedRef = useRef(false);
+  const lastClickTsRef = useRef(0);
+  const samplesRef = useRef(samples);
+
+  useEffect(() => {
+    samplesRef.current = samples;
+  }, [samples]);
 
   // Compute axis ranges
   useEffect(() => {
@@ -66,24 +72,9 @@ const EmbeddingPlot = ({
     const layout = {
       scene: {
         bgcolor: "#0d1117",
-        xaxis: {
-          title: `latent_${dx}`,
-          range: axisRangesRef.current.x,
-          showgrid: true,
-          zeroline: false,
-        },
-        yaxis: {
-          title: `latent_${dy}`,
-          range: axisRangesRef.current.y,
-          showgrid: true,
-          zeroline: false,
-        },
-        zaxis: {
-          title: `latent_${dz}`,
-          range: axisRangesRef.current.z,
-          showgrid: true,
-          zeroline: false,
-        },
+        xaxis: { title: `latent_${dx}`, range: axisRangesRef.current.x },
+        yaxis: { title: `latent_${dy}`, range: axisRangesRef.current.y },
+        zaxis: { title: `latent_${dz}`, range: axisRangesRef.current.z },
         camera: cameraRef.current || undefined,
         uirevision: "embedding-view",
       },
@@ -92,11 +83,19 @@ const EmbeddingPlot = ({
     };
 
     const config = { displayModeBar: true, responsive: true };
-
+    const CLICK_SUPPRESS_MS = 200;
     const clickHandler = (ev) => {
+      const now = performance.now();
+      if (now - lastClickTsRef.current < CLICK_SUPPRESS_MS) {
+        // duplicate mac hard-click event → ignore
+        return;
+      }
+      lastClickTsRef.current = now;
+
       if (ev && ev.points && ev.points.length > 0) {
         const idx = ev.points[0].pointNumber;
-        const selected = samples[idx];
+        const selected = samplesRef.current[idx];
+
         if (selected) {
           onSelectSample((prev) => {
             if (prev && prev.id === selected.id) return null;
@@ -106,28 +105,28 @@ const EmbeddingPlot = ({
       }
     };
 
-      if (!initializedRef.current) {
-        Plotly.newPlot(plotRef.current, [trace], layout, config).then(() => {
-          initializedRef.current = true;
-          plotRef.current.on("plotly_click", clickHandler);
-          plotRef.current.on('plotly_relayout', ev => {
-            if (ev['scene.camera']) {
-              cameraRef.current = ev['scene.camera'];
-            }
-          });
+    if (!initializedRef.current) {
+      Plotly.newPlot(plotRef.current, [trace], layout, config).then(() => {
+        initializedRef.current = true;
+        plotRef.current.on("plotly_click", clickHandler);
+        plotRef.current.on("plotly_relayout", (ev) => {
+          if (ev["scene.camera"]) {
+            cameraRef.current = ev["scene.camera"];
+          }
         });
-      } else {
-      if (!plotRef.current || !plotRef.current._fullLayout) return;
-      Plotly.react(plotRef.current, [trace], layout, config);
-      plotRef.current.removeAllListeners &&
-        plotRef.current.removeAllListeners("plotly_click");
-      plotRef.current.on("plotly_click", clickHandler);
+      });
+      return;
     }
+
+    if (!plotRef.current._fullLayout) return;
+
+    requestAnimationFrame(() => {
+      Plotly.react(plotRef.current, [trace], layout, config);
+    });
+
   }, [samples, colors, sizes, selectedDims, onSelectSample]);
 
-  // Reset camera on resetToken change
   useEffect(() => {
-    if (!plotRef.current) return;
     if (!plotRef.current || !plotRef.current._fullLayout) return;
     Plotly.relayout(plotRef.current, { "scene.camera": null });
     cameraRef.current = null;
