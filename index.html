@@ -87,8 +87,8 @@
     }
     .info-panel h3 {
       margin-top: 0;
-      margin-bottom: 18px;
-      font-size: 1.4em;
+      margin-bottom: 9px;
+      font-size: 1.2em;
     }
     .info-panel ul {
       list-style: none;
@@ -596,12 +596,12 @@
           {/* Info panel for selected sample */}
           {selectedSample && (
             <div className="info-panel">
-              <div style={{ fontSize: '0.8em', lineHeight: '0.6'}}>
-                <h3>{selectedSample.name}{selectedSample.country ? ', ' + selectedSample.country : ''}</h3>
-                <p><strong>Region:</strong> {selectedSample.region}</p>
-                <p><strong>GHS-UCDB ID:</strong> {selectedSample.id}</p>
-                <p><strong>Type:</strong> {selectedSample.type}</p>
-                <p><strong>Number of Studies:</strong> {selectedSample.n_studies}</p>
+              <h3>{selectedSample.name}{selectedSample.country ? ', ' + selectedSample.country : ''}</h3>
+              <div style={{ fontSize: '0.8em', lineHeight: '1.3em' }}>
+                <div><strong>Type:</strong> {selectedSample.type}</div>
+                <div><strong>Region:</strong> {selectedSample.region}</div>
+                <div><strong>GHS-UCDB ID:</strong> {selectedSample.id}</div>
+                <div><strong>Number of Studies:</strong> {selectedSample.n_studies}</div>
               </div>
               {/* Additional metrics formatted like technical specs */}
               <div style={{ marginTop: '8px', fontSize: '0.7em', borderTop: '1px solid #444', paddingTop: '8px' }}>
