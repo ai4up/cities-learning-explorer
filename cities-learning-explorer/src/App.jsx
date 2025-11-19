@@ -45,8 +45,8 @@ const App = () => {
   const [initialURLProcessed, setInitialURLProcessed] = useState(false);
   const [selectedSample, setSelectedSample] = useState(null);
   const [searchValue, setSearchValue] = useState("");
-  const [populationThreshold, setPopulationThreshold] = useState(1_000_000);
-  const [studyThreshold, setStudyThreshold] = useState(5);
+  const [populationThreshold, setPopulationThreshold] = useState(viewMode === "map" ? 250_000 : 1_000_000);
+  const [studyThreshold, setStudyThreshold] = useState(viewMode === "map" ? 0 : 5);
   const [selectedRegions, setSelectedRegions] = useState(new Set());
   const [selectedTypes, setSelectedTypes] = useState(new Set());
   const [selectedDims, setSelectedDims] = useState(["0", "1", "2"]);
@@ -180,8 +180,8 @@ const App = () => {
   };
 
   const handleResetFilters = () => {
-    setPopulationThreshold(1_000_000);
-    setStudyThreshold(5);
+    setPopulationThreshold(viewMode === "map" ? 250_000 : 1_000_000);
+    setStudyThreshold(viewMode === "map" ? 0 : 5);
     setSelectedRegions(new Set(regions));
     setSelectedTypes(new Set(types));
     setSelectedSample(null);
