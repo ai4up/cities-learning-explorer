@@ -49,12 +49,17 @@ const MapPlot = ({ samples, colors, sizes, onSelectSample }) => {
         oceancolor: "#0d1117",
         bgcolor: "#0d1117",
       },
+      paper_bgcolor: "#0d1117",
+      plot_bgcolor: "#0d1117",
       margin: { l: 0, r: 0, b: 0, t: 0 },
       showlegend: false,
       uirevision: "map-view",
     };
 
-    const config = { displayModeBar: true, responsive: true };
+    const config = {
+      displayModeBar: true,
+      responsive: true,
+    };
 
     const clickHandler = (ev) => {
       if (ev && ev.points && ev.points.length > 0) {
