@@ -124,6 +124,7 @@
       const [studyThreshold, setStudyThreshold] = useState(5);
       const [selectedRegions, setSelectedRegions] = useState(new Set());
       const [selectedTypes, setSelectedTypes] = useState(new Set());
+      const [selectedDims, setSelectedDims] = useState(["0", "1", "2"]); 
 
       // Keep a ref to the current samples array to ensure click handler uses latest state
       const samplesRef = useRef([]);
@@ -186,21 +187,24 @@
         return samples.reduce((max, s) => Math.max(max, s.n_studies || 0), 0);
       }, [samples]);
 
-      // Compute axis ranges for the 3D plot once samples are available
+      // Compute axis ranges for the 3D plot whenever samples or selected dims change
       useEffect(() => {
-        if (!axisRangesRef.current && samples.length > 0) {
-          const xs = samples.map(s => s.embedding[0]);
-          const ys = samples.map(s => s.embedding[1]);
-          const zs = samples.map(s => s.embedding[2]);
-          const pad = 0.5;
-          axisRangesRef.current = {
-            x: [Math.min(...xs) - pad, Math.max(...xs) + pad],
-            y: [Math.min(...ys) - pad, Math.max(...ys) + pad],
-            z: [Math.min(...zs) - pad, Math.max(...zs) + pad],
-          };
-          updatePlot();
-        }
-      }, [samples]);
+        if (samples.length === 0) return;
+
+        const [dx, dy, dz] = selectedDims.map(d => parseInt(d));
+
+        const xs = samples.map(s => s.embedding[dx]);
+        const ys = samples.map(s => s.embedding[dy]);
+        const zs = samples.map(s => s.embedding[dz]);
+        const pad = 0.5;
+
+        axisRangesRef.current = {
+          x: [Math.min(...xs) - pad, Math.max(...xs) + pad],
+          y: [Math.min(...ys) - pad, Math.max(...ys) + pad],
+          z: [Math.min(...zs) - pad, Math.max(...zs) + pad],
+        };
+      }, [samples, selectedDims]);
+
 
       // Compute colours for all samples according to filters and selections
       const computeColors = () => {
@@ -245,9 +249,13 @@
       // Draw or update the Plotly 3D scatter plot
       function updatePlot() {
         if (!axisRangesRef.current) return;
-        const x = samples.map(s => s.embedding[0]);
-        const y = samples.map(s => s.embedding[1]);
-        const z = samples.map(s => s.embedding[2]);
+        if (selectedDims.length !== 3) return;
+
+        const [dx, dy, dz] = selectedDims.map(d => parseInt(d));
+
+        const x = samples.map(s => s.embedding[dx]);
+        const y = samples.map(s => s.embedding[dy]);
+        const z = samples.map(s => s.embedding[dz]);
         const colors = computeColors();
         const sizes = computeSizes();
         const trace = {
@@ -268,9 +276,9 @@
         const layout = {
           scene: {
             bgcolor: '#0d1117',
-            xaxis: { title: 'latent_0', range: axisRangesRef.current.x, showgrid: true, zeroline: false },
-            yaxis: { title: 'latent_1', range: axisRangesRef.current.y, showgrid: true, zeroline: false },
-            zaxis: { title: 'latent_2', range: axisRangesRef.current.z, showgrid: true, zeroline: false },
+            xaxis: { title: `latent_${dx}`, range: axisRangesRef.current.x, showgrid: true, zeroline: false },
+            yaxis: { title: `latent_${dy}`, range: axisRangesRef.current.y, showgrid: true, zeroline: false },
+            zaxis: { title: `latent_${dz}`, range: axisRangesRef.current.z, showgrid: true, zeroline: false },
             camera: cameraRef.current || undefined,
           },
           margin: { l: 0, r: 0, b: 0, t: 0 },
@@ -307,7 +315,7 @@
       // Trigger plot updates when filters or selections change
       useEffect(() => {
         updatePlot();
-      }, [populationThreshold, studyThreshold, selectedSample, selectedRegions, selectedTypes, colorKey]);
+      }, [populationThreshold, studyThreshold, selectedSample, selectedRegions, selectedTypes, colorKey, selectedDims]);
 
       // Suggestions for fuzzy search
       const suggestions = useMemo(() => {
@@ -536,6 +544,36 @@
                 style={{ width: '90%' }}
               />
             </div>
+
+            <div style={{ marginBottom: '18px', fontSize: '0.8em' }}>
+              <div style={{ marginBottom: '4px'}}>Select Embedding Dimensions (3 of 4):</div>
+              <div style={{ marginLeft: '8px' }}>
+                {["0", "1", "2", "3"].map(dim => {
+                  const checked = selectedDims.includes(dim);
+                  const disabled =
+                    !checked && selectedDims.length === 3; // already 3 selected → cannot add more
+
+                  return (
+                    <label key={dim} style={{ marginRight: '10px', display: 'inline-flex', alignItems: 'center' }}>
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        disabled={disabled}
+                        onChange={() => {
+                          setSelectedDims(prev =>
+                            prev.includes(dim)
+                              ? prev.filter(d => d !== dim)
+                              : [...prev, dim]
+                          );
+                        }}
+                      />
+                      <span style={{ marginLeft: "4px" }}>{dim}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Buttons */}
             <button onClick={resetView}>Reset View</button>
             <button onClick={resetFilters}>Reset Filters</button>
@@ -557,7 +595,6 @@
                 <p><strong>Region:</strong> {selectedSample.region}</p>
                 <p><strong>Type:</strong> {selectedSample.type}</p>
                 <p><strong>Number of Studies:</strong> {selectedSample.n_studies}</p>
-                {/* <p><strong>Embedding:</strong> {selectedSample.full_embedding.map(v => v.toFixed(3)).join(', ')}</p> */}
               </div>
               {/* Additional metrics formatted like technical specs */}
               <div style={{ marginTop: '8px', fontSize: '0.7em', borderTop: '1px solid #444', paddingTop: '8px' }}>
