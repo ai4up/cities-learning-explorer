@@ -8,6 +8,7 @@ const EmbeddingPlot = ({
   selectedDims,
   onSelectSample,
   resetToken,
+  viewMode,
 }) => {
   const plotRef = useRef(null);
   const axisRangesRef = useRef(null);
@@ -15,6 +16,18 @@ const EmbeddingPlot = ({
   const initializedRef = useRef(false);
   const lastClickTsRef = useRef(0);
   const samplesRef = useRef(samples);
+
+  const computeLayoutSize = () => {
+    if (!plotRef.current) return null;
+    const rect = plotRef.current.getBoundingClientRect();
+    const width = rect.width || plotRef.current.offsetWidth || 0;
+    if (!width) return null;
+    const desiredHeight =
+      viewMode === "both"
+        ? Math.max(width / 2, 360)
+        : Math.max(rect.height || width, width / 1.25);
+    return { width, height: desiredHeight };
+  };
 
   useEffect(() => {
     samplesRef.current = samples;
@@ -69,6 +82,8 @@ const EmbeddingPlot = ({
       },
     };
 
+    const size = computeLayoutSize();
+
     const layout = {
       scene: {
         bgcolor: "#0d1117",
@@ -80,6 +95,8 @@ const EmbeddingPlot = ({
       },
       margin: { l: 0, r: 0, b: 0, t: 0 },
       showlegend: false,
+      width: size?.width,
+      height: size?.height,
     };
 
     const config = { displayModeBar: true, responsive: true };
@@ -123,8 +140,7 @@ const EmbeddingPlot = ({
     requestAnimationFrame(() => {
       Plotly.react(plotRef.current, [trace], layout, config);
     });
-
-  }, [samples, colors, sizes, selectedDims, onSelectSample]);
+  }, [samples, colors, sizes, selectedDims, onSelectSample, viewMode]);
 
   useEffect(() => {
     if (!plotRef.current || !plotRef.current._fullLayout) return;

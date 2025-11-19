@@ -135,7 +135,7 @@ const App = () => {
   };
 
   return (
-    <div className="app-root">
+    <div className={`app-root mode-${viewMode}`}>
       {/* Plot area */}
       <div className="plots-wrapper">
         {(viewMode === "embedding" || viewMode === "both") && (
@@ -146,6 +146,7 @@ const App = () => {
             selectedDims={selectedDims}
             onSelectSample={setSelectedSample}
             resetToken={resetToken}
+            viewMode={viewMode}
           />
         )}
 
@@ -155,6 +156,7 @@ const App = () => {
             colors={colors}
             sizes={sizes}
             onSelectSample={setSelectedSample}
+            viewMode={viewMode}
           />
         )}
       </div>

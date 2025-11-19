@@ -1,9 +1,21 @@
 import Plotly from 'plotly.js-dist';
 import React, { useEffect, useRef } from "react";
 
-const MapPlot = ({ samples, colors, sizes, onSelectSample }) => {
+const MapPlot = ({ samples, colors, sizes, onSelectSample, viewMode }) => {
   const plotRef = useRef(null);
   const initializedRef = useRef(false);
+
+  const computeLayoutSize = () => {
+    if (!plotRef.current) return null;
+    const rect = plotRef.current.getBoundingClientRect();
+    const width = rect.width || plotRef.current.offsetWidth || 0;
+    if (!width) return null;
+    const desiredHeight =
+      viewMode === "both"
+        ? Math.max(width / 2, 360)
+        : Math.max(rect.height, width / 2);
+    return { width, height: desiredHeight };
+  };
 
   useEffect(() => {
     if (!plotRef.current) return;
@@ -40,20 +52,29 @@ const MapPlot = ({ samples, colors, sizes, onSelectSample }) => {
       },
     };
 
+    const size = computeLayoutSize();
+
     const layout = {
       geo: {
         projection: { type: "natural earth" },
+        showframe: false,
+        framecolor: "#0d1117",
         showland: true,
         landcolor: "#1b1f23",
         showocean: true,
         oceancolor: "#0d1117",
         bgcolor: "#0d1117",
+        lataxis: { showgrid: false, zeroline: false },
+        lonaxis: { showgrid: false, zeroline: false },
       },
       paper_bgcolor: "#0d1117",
       plot_bgcolor: "#0d1117",
       margin: { l: 0, r: 0, b: 0, t: 0 },
       showlegend: false,
       uirevision: "map-view",
+      autosize: true,
+      width: size?.width,
+      height: size?.height,
     };
 
     const config = {
