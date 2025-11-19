@@ -119,8 +119,8 @@ const Controls = ({
         value={colorKey}
         onChange={(e) => setColorKey(e.target.value)}
       >
-        <option value="type">Colour by Type</option>
-        <option value="region">Colour by Region</option>
+        <option value="type">Color by type</option>
+        <option value="region">Color by region</option>
       </select>
 
       {/* Region & Type filters */}
@@ -246,7 +246,7 @@ const Controls = ({
       {/* Number of Studies slider */}
       <div style={{ marginBottom: "6px" }}>
         <label style={{ display: "block", fontSize: "0.8em" }}>
-          Number of Studies ≥ {studyThreshold}
+          Number of studies ≥ {studyThreshold}
         </label>
         <input
           type="range"
@@ -303,8 +303,8 @@ const Controls = ({
       )}
 
       {/* Buttons */}
-      <button onClick={onResetView}>Reset View</button>
-      <button onClick={onResetFilters}>Reset Filters</button>
+      <button onClick={onResetView}>Reset view</button>
+      <button onClick={onResetFilters}>Reset filters</button>
 
       {/* Legend */}
       <div className="legend">

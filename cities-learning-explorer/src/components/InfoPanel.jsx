@@ -31,7 +31,7 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
           <strong>GHS-UCDB ID:</strong> {selectedSample.id}
         </div>
         <div>
-          <strong>Number of Studies:</strong> {selectedSample.n_studies}
+          <strong>Number of studies:</strong> {selectedSample.n_studies}
         </div>
       </div>
 
