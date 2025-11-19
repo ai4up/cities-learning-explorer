@@ -8,8 +8,8 @@ import { palette, computeColors, computeSizes } from "./utils/coloring";
 const App = () => {
   const [samples, setSamples] = useState([]);
   const [viewMode, setViewMode] = useState("map");
-
   const [colorKey, setColorKey] = useState("type");
+  const [initialURLProcessed, setInitialURLProcessed] = useState(false);
   const [selectedSample, setSelectedSample] = useState(null);
   const [searchValue, setSearchValue] = useState("");
   const [populationThreshold, setPopulationThreshold] = useState(1_000_000);
@@ -17,7 +17,6 @@ const App = () => {
   const [selectedRegions, setSelectedRegions] = useState(new Set());
   const [selectedTypes, setSelectedTypes] = useState(new Set());
   const [selectedDims, setSelectedDims] = useState(["0", "1", "2"]);
-  const [initialCityLoaded, setInitialCityLoaded] = useState(false);
   const [resetToken, setResetToken] = useState(0);
 
   // Load data
@@ -36,7 +35,7 @@ const App = () => {
             setSelectedSample(match);
           }
         }
-        setInitialCityLoaded(true);
+        setInitialURLProcessed(true);
       })
       .catch((err) => console.error("Failed to load JSON:", err));
   }, []);
@@ -143,20 +142,39 @@ const App = () => {
     setSelectedRegions(new Set(regions));
     setSelectedTypes(new Set(types));
     setSelectedSample(null);
-    window.history.replaceState({}, "", "/");
+    // Clear city from URL
+    const params = new URLSearchParams(window.location.search);
+    params.delete("city");
+    window.history.replaceState({}, "", "?" + params.toString());
   };
 
+  // --- Sync viewMode into URL ---
   useEffect(() => {
-    if (!initialCityLoaded) return;
+    if (!initialURLProcessed) return;
+
+    const params = new URLSearchParams(window.location.search);
+    params.set("view", viewMode);
 
     if (selectedSample) {
-      const newUrl = `?city=${selectedSample.id}`;
-      window.history.replaceState({}, "", newUrl);
-    } else {
-      // Clear URL when no city selected
-      window.history.replaceState({}, "", "/");
+      params.set("city", selectedSample.id);
     }
-  }, [selectedSample, initialCityLoaded]);
+
+    window.history.replaceState({}, "", "?" + params.toString());
+  }, [viewMode, initialURLProcessed]);
+
+
+  // --- Sync selected city into URL ---
+  useEffect(() => {
+    if (!initialURLProcessed) return;
+
+    const params = new URLSearchParams(window.location.search);
+
+    if (selectedSample) params.set("city", selectedSample.id);
+    else params.delete("city");
+
+    window.history.replaceState({}, "", "?" + params.toString());
+  }, [selectedSample, initialURLProcessed]);
+
 
   return (
     <div className={`app-root mode-${viewMode}`}>
