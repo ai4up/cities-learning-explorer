@@ -25,6 +25,8 @@ const Controls = ({
   categoryColors,
   onResetView,
   onResetFilters,
+  controlsOpen,
+  setControlsOpen
 }) => {
   const viewBtnStyle = (mode) => ({
     flex: 1,
@@ -39,7 +41,11 @@ const Controls = ({
   });
 
   return (
-    <div className="controls">
+    <>
+    <button className="controls-toggle" onClick={() => setControlsOpen(o => !o)}>
+      {controlsOpen ? "▲ Hide Control Panel" : "▼ Show Control Panel"}
+    </button>
+    <div className="controls" data-open={controlsOpen}>
       {/* View mode toggle */}
       <div style={{ display: "flex", marginBottom: "10px", gap: "4px" }}>
         <button
@@ -313,6 +319,7 @@ const Controls = ({
         ))}
       </div>
     </div>
+    </>
   );
 };
 

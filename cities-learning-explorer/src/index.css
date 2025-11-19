@@ -5,13 +5,13 @@ body {
     font-family: Arial, sans-serif;
     overflow: hidden;
   }
-  
+
   #root {
     width: 100vw;
     height: 100vh;
     position: relative;
   }
-  
+
   /* Control panel styling */
   .controls {
     position: absolute;
@@ -24,7 +24,7 @@ body {
     z-index: 10;
     box-sizing: border-box;
   }
-  
+
   .controls input,
   .controls select,
   .controls button {
@@ -36,39 +36,39 @@ body {
     background-color: #161b22;
     color: #c9d1d9;
   }
-  
+
   .controls input::placeholder {
     color: #586069;
   }
-  
+
   .controls button {
     cursor: pointer;
   }
-  
+
   .controls button:hover {
     background-color: #21262d;
   }
-  
+
   .legend {
     margin-top: 8px;
     display: flex;
     flex-wrap: wrap;
   }
-  
+
   .legend-item {
     display: flex;
     align-items: center;
     margin-right: 8px;
     margin-bottom: 4px;
   }
-  
+
   .legend-color {
     width: 14px;
     height: 14px;
     border-radius: 2px;
     margin-right: 4px;
   }
-  
+
   /* Info panel */
   .info-panel {
     position: absolute;
@@ -82,30 +82,30 @@ body {
     overflow-y: auto;
     box-sizing: border-box;
   }
-  
+
   .info-panel h3 {
     margin-top: 0;
     margin-bottom: 9px;
     font-size: 1.2em;
   }
-  
+
   .info-panel ul {
     list-style: none;
     padding-left: 0;
     margin-bottom: 0;
   }
-  
+
   .info-panel li {
     cursor: pointer;
     text-decoration: underline;
     color: #58a6ff;
     margin-bottom: 4px;
   }
-  
+
   .info-panel li:hover {
     color: #79b8ff;
   }
-  
+
   /* Containers for the two plots */
   .plots-wrapper {
     width: 100%;
@@ -113,16 +113,50 @@ body {
     display: flex;
     flex-direction: column;
   }
-  
+
   .plot-container {
     flex: 1;
     position: relative;
     overflow: hidden;
   }
-  
+
   .app-root {
     width: 100%;
     height: 100%;
     position: relative;
   }
-  
+
+  /* Toggle button — visible only on mobile */
+.controls-toggle {
+  display: none;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #161b22;
+  color: #c9d1d9;
+  border: 1px solid #30363d;
+  padding: 6px 10px;
+  border-radius: 4px;
+  z-index: 20;
+  cursor: pointer;
+}
+
+/* Mobile-only: show toggle button */
+@media (max-width: 768px) {
+  .controls-toggle {
+    display: block;
+  }
+
+  .controls {
+    top: 50px;
+    transition: max-height 0.35s ease-in-out, opacity 0.3s ease;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+  }
+
+  .controls[data-open="true"] {
+    max-height: 80vh; /* enough for scrolling */
+    opacity: 1;
+  }
+}

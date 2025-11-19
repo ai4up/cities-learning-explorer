@@ -51,6 +51,7 @@ const App = () => {
   const [selectedTypes, setSelectedTypes] = useState(new Set());
   const [selectedDims, setSelectedDims] = useState(["0", "1", "2"]);
   const [resetToken, setResetToken] = useState(0);
+  const [controlsOpen, setControlsOpen] = useState(true);
 
   // ------------------------------------------------------
   // Load data + initialize URL-based state
@@ -269,6 +270,8 @@ const App = () => {
         categoryColors={categoryColors}
         onResetView={handleResetView}
         onResetFilters={handleResetFilters}
+        controlsOpen={controlsOpen}
+        setControlsOpen={setControlsOpen}
       />
 
       {/* Info panel */}
