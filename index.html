@@ -335,6 +335,7 @@
             yaxis: { title: `latent_${dy}`, range: axisRangesRef.current.y, showgrid: true, zeroline: false },
             zaxis: { title: `latent_${dz}`, range: axisRangesRef.current.z, showgrid: true, zeroline: false },
             camera: embedCameraRef.current || undefined,
+            uirevision: 'embedding-view',
           },
           margin: { l: 0, r: 0, b: 0, t: 0 },
           showlegend: false,
@@ -411,6 +412,7 @@
           },
           margin: { l: 0, r: 0, b: 0, t: 0 },
           showlegend: false,
+          uirevision: 'map-view',
         };
 
         const config = { displayModeBar: true, responsive: true };
