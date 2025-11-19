@@ -35,6 +35,61 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
         </div>
       </div>
 
+      {/* Cluster assignment probabilities */}
+      {(selectedSample.type_probabilities ||
+        selectedSample.probabilities ||
+        selectedSample.mean_prob_cluster_0 !== undefined) && (
+        <div
+          style={{
+            marginTop: "18px",
+            borderTop: "1px solid #444",
+            paddingTop: "8px",
+          }}
+        >
+          <strong>Type probabilities:</strong>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-end",
+              height: "80px",
+              marginTop: "4px",
+            }}
+          >
+            {getProbabilities(selectedSample).map((val, idx) => {
+              const pct = Math.round(val * 100);
+              const label = `T${idx + 1}`;
+              return (
+                <div
+                  key={idx}
+                  style={{
+                    flex: 1,
+                    textAlign: "center",
+                    marginRight: idx < 3 ? "4px" : "0",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                    height: "100%",
+                  }}
+                >
+                  <div
+                    style={{
+                      backgroundColor: palette[idx % palette.length],
+                      height: `${pct}%`,
+                      borderRadius: "2px",
+                      width: "75%",
+                    }}
+                  ></div>
+                  <span style={{ fontSize: "0.7em", marginTop: "4px" }}>
+                    {label}: {pct}%
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Additional metrics */}
       <div
         style={{
@@ -81,10 +136,8 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
         })}
       </div>
 
-      {/* Cluster assignment probabilities */}
-      {(selectedSample.type_probabilities ||
-        selectedSample.probabilities ||
-        selectedSample.mean_prob_cluster_0 !== undefined) && (
+      {/* Domain solution counts (horizontal bar chart) */}
+      {selectedSample.solution_domain_counts && (
         <div
           style={{
             marginTop: "18px",
@@ -92,47 +145,58 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
             paddingTop: "8px",
           }}
         >
-          <strong>Type assignment probabilities:</strong>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "flex-end",
-              height: "80px",
-              marginTop: "4px",
-            }}
-          >
-            {getProbabilities(selectedSample).map((val, idx) => {
-              const pct = Math.round(val * 100);
-              const label = `T${idx + 1}`;
-              return (
-                <div
-                  key={idx}
-                  style={{
-                    flex: 1,
-                    textAlign: "center",
-                    marginRight: idx < 3 ? "4px" : "0",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "flex-end",
-                    alignItems: "center",
-                    height: "100%",
-                  }}
-                >
-                  <div
-                    style={{
-                      backgroundColor: palette[idx % palette.length],
-                      height: `${pct}%`,
-                      borderRadius: "2px",
-                      width: "75%",
-                    }}
-                  ></div>
-                  <span style={{ fontSize: "0.7em", marginTop: "4px" }}>
-                    {label}: {pct}%
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+          <strong>Climate solution domains:</strong>
+
+          {Object.values(selectedSample.solution_domain_counts).every((v) => v === 0) ? (
+            <div style={{ marginTop: "6px", fontStyle: "italic", fontSize: "0.75em" }}>
+              No domain information available.
+            </div>
+          ) : (
+            <div style={{ marginTop: "10px" }}>
+              {Object.entries(selectedSample.solution_domain_counts)
+                .filter(([label, val]) => val > 0)
+                .map(([label, val], idx) => {
+                  const max = Math.max(
+                    ...Object.values(selectedSample.solution_domain_counts)
+                  );
+                  const widthPct = Math.round((val / max) * 100);
+
+                  return (
+                    <div
+                      key={label}
+                      style={{
+                        marginBottom: "6px",
+                        fontSize: "0.75em",
+                      }}
+                    >
+                      {/* Label */}
+                      <div style={{ marginBottom: "2px" }}>{label}</div>
+
+                      {/* Horizontal bar */}
+                      <div
+                        style={{
+                          height: "10px",
+                          backgroundColor: palette[idx % palette.length],
+                          width: `${widthPct}%`,
+                          borderRadius: "2px",
+                        }}
+                      ></div>
+
+                      {/* Value */}
+                      <div
+                        style={{
+                          fontSize: "0.65em",
+                          opacity: 0.8,
+                          marginTop: "2px",
+                        }}
+                      >
+                        {val} {val === 1 ? "study" : "studies"}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          )}
         </div>
       )}
 
