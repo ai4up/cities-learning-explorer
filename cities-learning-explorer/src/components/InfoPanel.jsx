@@ -239,6 +239,24 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
           </ul>
         )}
       </div>
+
+      {/* Close button */}
+      <div style={{ marginTop: "12px", textAlign: "center" }}>
+        <button
+          onClick={() => setSelectedSample(null)}
+          style={{
+            backgroundColor: "#21262d",
+            color: "#c9d1d9",
+            border: "1px solid #30363d",
+            padding: "6px 15px",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontSize: "0.8em"
+          }}
+        >
+          Close
+        </button>
+      </div>
     </div>
   );
 };
