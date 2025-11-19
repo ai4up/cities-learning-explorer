@@ -17,6 +17,7 @@ const App = () => {
   const [selectedRegions, setSelectedRegions] = useState(new Set());
   const [selectedTypes, setSelectedTypes] = useState(new Set());
   const [selectedDims, setSelectedDims] = useState(["0", "1", "2"]);
+  const [initialCityLoaded, setInitialCityLoaded] = useState(false);
   const [resetToken, setResetToken] = useState(0);
 
   // Load data
@@ -26,6 +27,16 @@ const App = () => {
       .then((data) => {
         setSamples(data);
         console.log("Example city:", data[0]);
+        const params = new URLSearchParams(window.location.search);
+        const cid = params.get("city");
+
+        if (cid) {
+          const match = data.find((s) => String(s.id) === String(cid));
+          if (match) {
+            setSelectedSample(match);
+          }
+        }
+        setInitialCityLoaded(true);
       })
       .catch((err) => console.error("Failed to load JSON:", err));
   }, []);
@@ -132,7 +143,20 @@ const App = () => {
     setSelectedRegions(new Set(regions));
     setSelectedTypes(new Set(types));
     setSelectedSample(null);
+    window.history.replaceState({}, "", "/");
   };
+
+  useEffect(() => {
+    if (!initialCityLoaded) return;
+
+    if (selectedSample) {
+      const newUrl = `?city=${selectedSample.id}`;
+      window.history.replaceState({}, "", newUrl);
+    } else {
+      // Clear URL when no city selected
+      window.history.replaceState({}, "", "/");
+    }
+  }, [selectedSample, initialCityLoaded]);
 
   return (
     <div className={`app-root mode-${viewMode}`}>
