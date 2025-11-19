@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import Plotly from 'plotly.js-dist';
+import Plotly from "plotly.js-dist";
 
 const EmbeddingPlot = ({
   samples,
@@ -17,26 +17,30 @@ const EmbeddingPlot = ({
   const lastClickTsRef = useRef(0);
   const samplesRef = useRef(samples);
 
-  const computeLayoutSize = () => {
-    if (!plotRef.current) return null;
-    const rect = plotRef.current.getBoundingClientRect();
-    const width = rect.width || plotRef.current.offsetWidth || 0;
-    if (!width) return null;
-    const desiredHeight =
-      viewMode === "both"
-        ? Math.max(width / 2, 360)
-        : Math.max(rect.height || width, width / 1.25);
-    return { width, height: desiredHeight };
-  };
-
   useEffect(() => {
     samplesRef.current = samples;
   }, [samples]);
 
+  const computeLayoutSize = () => {
+    if (!plotRef.current) return null;
+
+    const rect = plotRef.current.getBoundingClientRect();
+    const width = rect.width || plotRef.current.offsetWidth || 0;
+    if (!width) return null;
+
+    let height;
+    if (viewMode === "both") {
+      height = Math.max(window.innerHeight / 2, 360);
+    } else {
+      height = window.innerHeight;
+    }
+
+    return { width, height };
+  };
+
   // Compute axis ranges
   useEffect(() => {
-    if (!samples.length) return;
-    if (selectedDims.length !== 3) return;
+    if (!samples.length || selectedDims.length !== 3) return;
 
     const [dx, dy, dz] = selectedDims.map((d) => parseInt(d, 10));
     const xs = samples.map((s) => s.embedding[dx]);
@@ -51,12 +55,10 @@ const EmbeddingPlot = ({
     };
   }, [samples, selectedDims]);
 
-  // Build / update plot
+  // Build/update plot
   useEffect(() => {
-    if (!plotRef.current) return;
-    if (!axisRangesRef.current) return;
-    if (selectedDims.length !== 3) return;
-    if (!samples.length) return;
+    if (!plotRef.current || !axisRangesRef.current || selectedDims.length !== 3 || !samples.length)
+      return;
 
     const [dx, dy, dz] = selectedDims.map((d) => parseInt(d, 10));
 
@@ -70,9 +72,7 @@ const EmbeddingPlot = ({
       z,
       mode: "markers",
       type: "scatter3d",
-      text: samples.map(
-        (s) => `${s.name}${s.country ? ", " + s.country : ""}`
-      ),
+      text: samples.map((s) => `${s.name}${s.country ? ", " + s.country : ""}`),
       hovertemplate: "%{text}<extra></extra>",
       marker: {
         color: colors,
@@ -103,21 +103,17 @@ const EmbeddingPlot = ({
     const CLICK_SUPPRESS_MS = 200;
     const clickHandler = (ev) => {
       const now = performance.now();
-      if (now - lastClickTsRef.current < CLICK_SUPPRESS_MS) {
-        // duplicate mac hard-click event → ignore
-        return;
-      }
+      if (now - lastClickTsRef.current < CLICK_SUPPRESS_MS) return; // suppress mac double-hard-click
       lastClickTsRef.current = now;
 
-      if (ev && ev.points && ev.points.length > 0) {
+      if (ev?.points?.length > 0) {
         const idx = ev.points[0].pointNumber;
         const selected = samplesRef.current[idx];
 
         if (selected) {
-          onSelectSample((prev) => {
-            if (prev && prev.id === selected.id) return null;
-            return selected;
-          });
+          onSelectSample((prev) =>
+            prev && prev.id === selected.id ? null : selected
+            );
         }
       }
     };
@@ -132,16 +128,15 @@ const EmbeddingPlot = ({
           }
         });
       });
-      return;
+    } else {
+      if (!plotRef.current._fullLayout) return;
+      requestAnimationFrame(() => {
+        Plotly.react(plotRef.current, [trace], layout, config);
+      });
     }
-
-    if (!plotRef.current._fullLayout) return;
-
-    requestAnimationFrame(() => {
-      Plotly.react(plotRef.current, [trace], layout, config);
-    });
   }, [samples, colors, sizes, selectedDims, onSelectSample, viewMode]);
 
+  // Reset camera
   useEffect(() => {
     if (!plotRef.current || !plotRef.current._fullLayout) return;
     Plotly.relayout(plotRef.current, { "scene.camera": null });
