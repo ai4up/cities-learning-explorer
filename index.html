@@ -289,7 +289,13 @@
           if (ev && ev.points && ev.points.length > 0) {
             const idx = ev.points[0].pointNumber;
             const selected = samplesRef.current[idx];
-            if (selected) setSelectedSample(selected);
+            if (selected) {
+              setSelectedSample(prev => {
+                const next = prev && prev.id === selected.id ? null : selected;
+                setSearchValue('');
+                return next;
+              });
+            }
           }
         };
         if (!plotInitializedRef.current) {
