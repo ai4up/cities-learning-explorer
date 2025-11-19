@@ -5,6 +5,39 @@ import MapPlot from "./components/MapPlot";
 import InfoPanel from "./components/InfoPanel";
 import { palette, computeColors, computeSizes } from "./utils/coloring";
 
+// ------------------------------------------------------
+// URL helper functions
+// ------------------------------------------------------
+const readURLParams = () => new URLSearchParams(window.location.search);
+
+const updateURLParams = (updates = {}) => {
+  const params = readURLParams();
+
+  Object.entries(updates).forEach(([key, value]) => {
+    if (value === null || value === undefined) params.delete(key);
+    else params.set(key, value);
+  });
+
+  const qs = params.toString();
+  window.history.replaceState({}, "", qs ? `?${qs}` : "/");
+};
+
+const loadInitialURLState = (samples) => {
+  const params = readURLParams();
+  const city = params.get("city");
+  const view = params.get("view");
+
+  const selectedCity =
+    city ? samples.find((s) => String(s.id) === String(city)) : null;
+
+  const viewMode =
+    view === "map" || view === "embedding" || view === "both"
+      ? view
+      : null;
+
+  return { selectedCity, viewMode };
+};
+
 const App = () => {
   const [samples, setSamples] = useState([]);
   const [viewMode, setViewMode] = useState("map");
@@ -19,27 +52,30 @@ const App = () => {
   const [selectedDims, setSelectedDims] = useState(["0", "1", "2"]);
   const [resetToken, setResetToken] = useState(0);
 
-  // Load data
+  // ------------------------------------------------------
+  // Load data + initialize URL-based state
+  // ------------------------------------------------------
   useEffect(() => {
     fetch("/cities.json")
       .then((res) => res.json())
       .then((data) => {
         setSamples(data);
         console.log("Example city:", data[0]);
-        const params = new URLSearchParams(window.location.search);
-        const cid = params.get("city");
 
-        if (cid) {
-          const match = data.find((s) => String(s.id) === String(cid));
-          if (match) {
-            setSelectedSample(match);
-          }
-        }
+        // Pull initial state (city + viewMode) from URL
+        const { selectedCity, viewMode: urlView } = loadInitialURLState(data);
+
+        if (selectedCity) setSelectedSample(selectedCity);
+        if (urlView) setViewMode(urlView);
+
         setInitialURLProcessed(true);
       })
       .catch((err) => console.error("Failed to load JSON:", err));
   }, []);
 
+  // ------------------------------------------------------
+  // Derived lists (regions/types/categories)
+  // ------------------------------------------------------
   const regions = useMemo(
     () => Array.from(new Set(samples.map((s) => s.region))).sort(),
     [samples]
@@ -50,7 +86,7 @@ const App = () => {
     [samples]
   );
 
-  // Initialise selections when regions/types change
+  // Initialize selected filters
   useEffect(() => {
     setSelectedRegions(new Set(regions));
     setSelectedTypes(new Set(types));
@@ -69,7 +105,9 @@ const App = () => {
     return map;
   }, [categories]);
 
-  // Colors & sizes shared by both plots
+  // ------------------------------------------------------
+  // Compute per-city rendering colors and sizes
+  // ------------------------------------------------------
   const colors = useMemo(
     () =>
       computeColors(samples, {
@@ -112,7 +150,9 @@ const App = () => {
     ]
   );
 
+  // ------------------------------------------------------
   // Search suggestions
+  // ------------------------------------------------------
   const suggestions = useMemo(() => {
     const val = searchValue.toLowerCase();
     if (!val) return [];
@@ -121,7 +161,7 @@ const App = () => {
       .slice(0, 10);
   }, [searchValue, samples]);
 
-  // Auto-select exact match by name
+  // Auto-select exact match
   useEffect(() => {
     const exact = samples.find(
       (s) => s.name.toLowerCase() === searchValue.toLowerCase()
@@ -131,6 +171,9 @@ const App = () => {
     }
   }, [searchValue, samples]);
 
+  // ------------------------------------------------------
+  // Reset handlers
+  // ------------------------------------------------------
   const handleResetView = () => {
     setResetToken((t) => t + 1);
     setSelectedSample(null);
@@ -142,40 +185,37 @@ const App = () => {
     setSelectedRegions(new Set(regions));
     setSelectedTypes(new Set(types));
     setSelectedSample(null);
+
     // Clear city from URL
-    const params = new URLSearchParams(window.location.search);
-    params.delete("city");
-    window.history.replaceState({}, "", "?" + params.toString());
+    updateURLParams({ city: null });
   };
 
-  // --- Sync viewMode into URL ---
+  // ------------------------------------------------------
+  // Sync viewMode -> URL
+  // ------------------------------------------------------
   useEffect(() => {
     if (!initialURLProcessed) return;
 
-    const params = new URLSearchParams(window.location.search);
-    params.set("view", viewMode);
-
-    if (selectedSample) {
-      params.set("city", selectedSample.id);
-    }
-
-    window.history.replaceState({}, "", "?" + params.toString());
+    updateURLParams({
+      view: viewMode,
+      city: selectedSample ? selectedSample.id : null,
+    });
   }, [viewMode, initialURLProcessed]);
 
-
-  // --- Sync selected city into URL ---
+  // ------------------------------------------------------
+  // Sync selectedSample -> URL
+  // ------------------------------------------------------
   useEffect(() => {
     if (!initialURLProcessed) return;
 
-    const params = new URLSearchParams(window.location.search);
-
-    if (selectedSample) params.set("city", selectedSample.id);
-    else params.delete("city");
-
-    window.history.replaceState({}, "", "?" + params.toString());
+    updateURLParams({
+      city: selectedSample ? selectedSample.id : null,
+    });
   }, [selectedSample, initialURLProcessed]);
 
-
+  // ------------------------------------------------------
+  // Render UI
+  // ------------------------------------------------------
   return (
     <div className={`app-root mode-${viewMode}`}>
       {/* Plot area */}
@@ -203,7 +243,7 @@ const App = () => {
         )}
       </div>
 
-      {/* Shared controls */}
+      {/* Controls */}
       <Controls
         viewMode={viewMode}
         setViewMode={setViewMode}
