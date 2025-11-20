@@ -80,8 +80,9 @@ const Controls = ({
           onChange={(e) => setSearchValue(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter" && suggestions.length > 0) {
-              setSelectedSample(suggestions[0]);
-              setSearchValue(suggestions[0].name);
+              const s = suggestions[0];
+              setSelectedSample(s);
+              setSearchValue(`${s.name}, ${s.country}`);
             }
           }}
           list="suggestions"
@@ -111,7 +112,7 @@ const Controls = ({
 
       <datalist id="suggestions">
         {suggestions.map((s, idx) => (
-          <option key={idx} value={s.name} />
+          <option key={idx} value={`${s.name}, ${s.country}`} />
         ))}
       </datalist>
 

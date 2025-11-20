@@ -158,14 +158,15 @@ const App = () => {
     const val = searchValue.toLowerCase();
     if (!val) return [];
     return samples
-      .filter((s) => s.name.toLowerCase().includes(val))
+      .filter((s) => `${s.name} ${s.country}`.toLowerCase().includes(val))
       .slice(0, 10);
   }, [searchValue, samples]);
 
   // Auto-select exact match
   useEffect(() => {
-    const exact = samples.find(
-      (s) => s.name.toLowerCase() === searchValue.toLowerCase()
+    const exact = samples.find((s) =>
+      s.name.toLowerCase() === searchValue.toLowerCase() ||
+      (`${s.name}, ${s.country}`.toLowerCase() === searchValue.toLowerCase())
     );
     if (exact) {
       setSelectedSample(exact);
