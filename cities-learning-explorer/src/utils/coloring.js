@@ -140,7 +140,7 @@ export function percentileColor(p) {
 
   if (p < 20) return "#d35f5f";   // muted red
   if (p < 40) return "#d7a06a";   // muted orange
-  if (p < 60) return "#d4c06a";   // muted yellow
-  if (p < 80) return "#7fbf8e";   // muted light green
-  return "#5f9f72";               // muted green
+  if (p < 60) return "#d2c691ff";   // muted yellow
+  if (p < 80) return "#73a880ff";   // muted light green
+  return "#198038ff";               // muted green
 }
