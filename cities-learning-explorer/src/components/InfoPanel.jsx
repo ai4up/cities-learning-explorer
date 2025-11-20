@@ -1,5 +1,5 @@
 import React from "react";
-import { metricList, getProbabilities, typeDescriptions } from "../utils/metrics";
+import { metricList, typeDescriptions } from "../utils/metrics";
 import { palette } from "../utils/coloring";
 
 const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
@@ -42,9 +42,7 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
       </div>
 
       {/* Cluster assignment probabilities */}
-      {(selectedSample.type_probabilities ||
-        selectedSample.probabilities ||
-        selectedSample.mean_prob_cluster_0 !== undefined) && (
+      {selectedSample.type_probabilities && (
         <div
           style={{
             marginTop: "18px",
@@ -61,7 +59,7 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
               marginTop: "4px",
             }}
           >
-            {getProbabilities(selectedSample).map((val, idx) => {
+            {selectedSample.type_probabilities.map((val, idx) => {
               const pct = Math.round(val * 100);
               const label = `T${idx + 1}`;
               return (

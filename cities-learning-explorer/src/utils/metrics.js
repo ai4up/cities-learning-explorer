@@ -18,27 +18,3 @@ export const typeDescriptions = {
   "Type 3": "Wealthier, low-growth cities with high per-capita emissions, strong infrastructure, and higher gender equality; mainly in the Global North, plus some in Latin America, Africa, and Asia.",
   "Type 4": "Large and megacities with high density, fast growth, strong infrastructure, and very high CO₂ emissions; globally distributed across both developing and developed contexts."
 };
-
-export const getProbabilities = (sample) => {
-  if (sample && Array.isArray(sample.type_probabilities)) {
-    return sample.type_probabilities;
-  }
-  if (sample && sample.probabilities) {
-    return [
-      sample.probabilities.mean_prob_cluster_0 || 0,
-      sample.probabilities.mean_prob_cluster_1 || 0,
-      sample.probabilities.mean_prob_cluster_2 || 0,
-      sample.probabilities.mean_prob_cluster_3 || 0,
-    ];
-  }
-  const keys = [
-    "mean_prob_cluster_0",
-    "mean_prob_cluster_1",
-    "mean_prob_cluster_2",
-    "mean_prob_cluster_3",
-  ];
-  return keys.map((k) =>
-    sample && sample[k] !== undefined ? sample[k] : 0
-  );
-};
-  
