@@ -159,6 +159,7 @@ const App = () => {
     if (!val) return [];
     return samples
       .filter((s) => `${s.name} ${s.country}`.toLowerCase().includes(val))
+      .sort((a, b) => (b.population || 0) - (a.population || 0))
       .slice(0, 10);
   }, [searchValue, samples]);
 
