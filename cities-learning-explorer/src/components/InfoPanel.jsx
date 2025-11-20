@@ -111,7 +111,7 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
             paddingBottom: "8px",
           }}
         >
-          City characteristics
+          City characteristics:
         </div>
         {metricList.map((item) => {
           const val = selectedSample[item.key];
