@@ -1,6 +1,6 @@
 import React from "react";
 import { formatNumber, metricList, typeDescriptions } from "../utils/metrics";
-import { palette, percentileColor } from "../utils/coloring";
+import { domainPalette, palette, percentileColor } from "../utils/coloring";
 
 const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
   if (!selectedSample) return null;
@@ -210,7 +210,7 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
                       <div
                         style={{
                           height: "10px",
-                          backgroundColor: palette[idx % palette.length],
+                          backgroundColor: domainPalette[idx % domainPalette.length],
                           width: `${widthPct}%`,
                           borderRadius: "2px",
                         }}

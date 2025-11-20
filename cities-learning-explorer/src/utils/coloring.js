@@ -23,6 +23,19 @@ export const palette = [
   "#808080",
 ];
 
+export const domainPalette = [
+  "#b36c75", // muted red
+  "#7fa87f", // muted green
+  "#c7bd7a", // muted yellow
+  "#7d89b5", // muted blue
+  "#c8956b", // muted orange
+  "#a487b4", // muted purple
+  "#82baba", // muted teal
+  "#c78ab8", // muted magenta
+  "#a8c57c", // muted lime
+  "#d8b8b8", // muted pink
+];
+
 export const toRgba = (hex, alpha) => {
   if (!hex || hex.startsWith("rgba(")) return hex;
   const normalized = hex.replace("#", "");
