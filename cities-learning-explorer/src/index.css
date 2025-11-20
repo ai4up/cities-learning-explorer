@@ -202,3 +202,50 @@ body {
   visibility: visible;
   opacity: 1;
 }
+
+/* Methodology block */
+.methodology-toggle {
+  display: inline-block;
+  margin-left: 6px;
+  cursor: pointer;
+  color: #8b949e;
+  font-size: 0.75em;
+}
+
+.methodology-toggle:hover {
+  color: #c9d1d9;
+  opacity: 1;
+}
+
+.methodology-box {
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 3px solid #444;
+  padding: 6px 10px;
+  margin: 8px 0 10px 0;
+  border-radius: 4px;
+  font-size: 0.75em;
+  color: #c9d1d9;
+  line-height: 1.35em;
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.methodology-box ul {
+  padding-left: 18px;
+  margin-top: 6px;
+}
+
+.methodology-box li {
+  margin-bottom: 4px;
+}
+
+.methodology-box a {
+  color: #8ab4f8;
+  text-decoration: none;
+  opacity: 0.85;
+}
+
+.methodology-box a:hover {
+  text-decoration: underline;
+  opacity: 1;
+}
