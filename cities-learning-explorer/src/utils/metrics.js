@@ -1,18 +1,18 @@
 export const metricList = [
     { key: "population", label: "Population", decimals: -3 },
-    { key: "population_growth", label: "Population growth [%]", decimals: 1 },
-    { key: "population_density", label: "Population density [people/km²]", decimals: -2 },
-    { key: "population_density_growth", label: "Population density growth [%]", decimals: 1 },
-    { key: "gdp_ppp", label: "GDP PPP [int'l $/capita]", decimals: -2 },
-    { key: "gdp_ppp_growth", label: "GDP PPP growth [%]", decimals: 1 },
-    { key: "hdd", label: "Heating Degree Days [°C]", decimals: -1 },
-    { key: "cdd", label: "Cooling Degree Days [°C]", decimals: -1 },
+    { key: "population_growth", label: "Population growth", unit: "%", decimals: 1 },
+    { key: "population_density", label: "Population density", unit: "people/km²", decimals: -2 },
+    { key: "population_density_growth", label: "Population density growth", unit: "%", decimals: 1 },
+    { key: "gdp_ppp", label: "GDP PPP", unit: "int'l $/capita", decimals: -2 },
+    { key: "gdp_ppp_growth", label: "GDP PPP growth", unit: "%", decimals: 1 },
+    { key: "hdd", label: "Heating Degree Days", unit: "°C", decimals: -1 },
+    { key: "cdd", label: "Cooling Degree Days", unit: "°C", decimals: -1 },
     { key: "critical_infrastructure", label: "Critical infrastructure", decimals: 2 },
     { key: "greenness_index", label: "Greenness", decimals: 2 },
-    { key: "precipitation", label: "Precipitation [mm]", decimals: -1 },
+    { key: "precipitation", label: "Precipitation", unit: "mm", decimals: -1 },
     { key: "female_gender_index", label: "Female gender index", decimals: 2 },
     { key: "hdi", label: "Human development index", decimals: 2 },
-    { key: "emissions", label: "Emissions [tCO₂e/capita]", decimals: 2 },
+    { key: "emissions", label: "GHG emissions", unit: "tCO₂e/capita", decimals: 2 },
   ];
   
 export const typeDescriptions = {

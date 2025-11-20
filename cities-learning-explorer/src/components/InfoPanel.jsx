@@ -130,7 +130,12 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
                 marginBottom: "2px",
               }}
             >
-              <span>{item.label}</span>
+              <span>
+                {item.label}
+                {item.unit && (
+                  <span style={{ color: "#8b949e" }}> [{item.unit}]</span>
+                )}
+              </span>
               <span style={{ fontWeight: "bold" }}>{displayVal}</span>
             </div>
           );
