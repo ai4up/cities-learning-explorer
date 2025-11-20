@@ -1,6 +1,6 @@
 import React from "react";
-import { metricList, formatNumber, typeDescriptions } from "../utils/metrics";
-import { palette } from "../utils/coloring";
+import { formatNumber, metricList, typeDescriptions } from "../utils/metrics";
+import { palette, percentileColor } from "../utils/coloring";
 
 const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
   if (!selectedSample) return null;
@@ -115,6 +115,7 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
         </div>
         {metricList.map((item) => {
           const val = selectedSample[item.key];
+          const pct = selectedSample[item.key + "_pct"];
           let displayVal;
           if (val !== undefined && val !== null) {
             displayVal = formatNumber(val, item.decimals);
@@ -130,13 +131,40 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
                 marginBottom: "2px",
               }}
             >
+              {/* Label + Unit */}
               <span>
                 {item.label}
                 {item.unit && (
                   <span style={{ color: "#8b949e" }}> [{item.unit}]</span>
                 )}
               </span>
-              <span style={{ fontWeight: "bold" }}>{displayVal}</span>
+
+              <div style={{ textAlign: "right" }}>
+                {/* Metric value */}
+                <span style={{ fontWeight: "bold"}}>{displayVal}</span>
+
+                {/* Percentile chip */}
+                {pct != null && (
+                  <span
+                    title={`${pct}th percentile globally`}
+                    style={{
+                      marginLeft: "6px",
+                      padding: "2px 6px",
+                      borderRadius: "4px",
+                      backgroundColor: percentileColor(pct),
+                      color: "#0d1117",
+                      fontSize: "0.7em",
+                      fontWeight: "bold",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      minWidth: "15px",
+                    }}
+                  >
+                    {Math.round(pct)}%
+                  </span>
+                )}
+              </div>
             </div>
           );
         })}

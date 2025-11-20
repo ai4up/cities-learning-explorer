@@ -121,3 +121,13 @@ export const computeSizes = (
     return size;
   });
 };
+
+export function percentileColor(p) {
+  if (p == null || isNaN(p)) return "#8b949e"; // neutral gray
+
+  if (p < 20) return "#d35f5f";   // muted red
+  if (p < 40) return "#d7a06a";   // muted orange
+  if (p < 60) return "#d4c06a";   // muted yellow
+  if (p < 80) return "#7fbf8e";   // muted light green
+  return "#5f9f72";               // muted green
+}
