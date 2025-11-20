@@ -59,7 +59,12 @@ const Controls = ({
           style={viewBtnStyle("embedding")}
           onClick={() => setViewMode("embedding")}
         >
-          Embedding
+          <span className="type-tooltip">
+            Embedding
+            <span className="type-tooltip-content">
+              Shows cities in a 3D latent space learned with Deep Embedded Clustering (DEC), which groups cities based on similar characteristics.
+            </span>
+          </span>
         </button>
         <button
           style={viewBtnStyle("both")}
@@ -268,7 +273,7 @@ const Controls = ({
       {(viewMode === "embedding" || viewMode === "both") && (
         <div style={{ marginBottom: "18px", fontSize: "0.8em" }}>
           <div style={{ marginBottom: "4px" }}>
-            Select Embedding Dimensions (3 of 4):
+            Select embedding dimensions (3 of 4):
           </div>
           <div style={{ marginLeft: "8px" }}>
             {["0", "1", "2", "3"].map((dim) => {

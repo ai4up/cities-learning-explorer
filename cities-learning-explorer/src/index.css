@@ -162,11 +162,11 @@ body {
     opacity: 1;
   }
 }
+
 /* Type tooltip */
 .type-tooltip {
   position: relative;
   cursor: help;
-  border-bottom: 1px dotted #555;
 }
 
 .type-tooltip-content {
