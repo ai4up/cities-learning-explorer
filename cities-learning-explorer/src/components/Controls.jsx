@@ -1,4 +1,5 @@
 import React from "react";
+import { typeDescriptions } from "../utils/metrics";
 
 const Controls = ({
   viewMode,
@@ -314,7 +315,16 @@ const Controls = ({
               className="legend-color"
               style={{ backgroundColor: categoryColors[cat] }}
             ></div>
-            <span style={{ fontSize: "0.8em" }}>{cat}</span>
+            {typeDescriptions[cat] ? (
+              <span className="type-tooltip" style={{ fontSize: "0.8em" }}>
+                {cat}
+                <span className="type-tooltip-content">
+                  {typeDescriptions[cat]}
+                </span>
+              </span>
+            ) : (
+              <span style={{ fontSize: "0.8em" }}>{cat}</span>
+            )}
           </div>
         ))}
       </div>

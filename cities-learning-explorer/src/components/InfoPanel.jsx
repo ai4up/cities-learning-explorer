@@ -1,5 +1,5 @@
 import React from "react";
-import { metricList, getProbabilities } from "../utils/metrics";
+import { metricList, getProbabilities, typeDescriptions } from "../utils/metrics";
 import { palette } from "../utils/coloring";
 
 const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
@@ -21,8 +21,14 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
         {selectedSample.country ? ", " + selectedSample.country : ""}
       </h3>
       <div style={{ fontSize: "0.8em", lineHeight: "1.3em" }}>
-        <div>
-          <strong>Type:</strong> {selectedSample.type}
+        <div style={{ position: "relative" }}>
+          <strong>Type:</strong>{" "}
+          <span className="type-tooltip">
+            {selectedSample.type}
+            <span className="type-tooltip-content">
+              {typeDescriptions[selectedSample.type]}
+            </span>
+          </span>
         </div>
         <div>
           <strong>Region:</strong> {selectedSample.region}
