@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import LandingPage from "./components/LandingPage";
 import Controls from "./components/Controls";
 import EmbeddingPlot from "./components/EmbeddingPlot";
 import MapPlot from "./components/MapPlot";
@@ -38,7 +39,7 @@ const loadInitialURLState = (samples) => {
   return { selectedCity, viewMode };
 };
 
-const App = () => {
+const ExplorerApp = () => {
   const [samples, setSamples] = useState([]);
   const [viewMode, setViewMode] = useState("map");
   const [colorKey, setColorKey] = useState("type");
@@ -286,6 +287,17 @@ const App = () => {
       )}
     </div>
   );
+};
+
+const App = () => {
+  const path = window.location.pathname || "/";
+
+  if (path === "/" || path === "") {
+    return <LandingPage />;
+  }
+
+  // e.g. /explore or anything else
+  return <ExplorerApp />;
 };
 
 export default App;
