@@ -1,5 +1,5 @@
 import React from "react";
-import { metricList, typeDescriptions } from "../utils/metrics";
+import { metricList, formatNumber, typeDescriptions } from "../utils/metrics";
 import { palette } from "../utils/coloring";
 
 const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
@@ -117,10 +117,7 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
           const val = selectedSample[item.key];
           let displayVal;
           if (val !== undefined && val !== null) {
-            displayVal =
-              typeof val === "number"
-                ? val.toLocaleString(undefined, { maximumFractionDigits: 2 })
-                : val;
+            displayVal = formatNumber(val, item.decimals);
           } else {
             displayVal = "-";
           }

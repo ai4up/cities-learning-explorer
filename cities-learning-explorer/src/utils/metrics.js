@@ -1,15 +1,15 @@
 export const metricList = [
-    { key: "population", label: "Population" },
-    { key: "population_growth", label: "Population growth" },
-    { key: "population_density", label: "Population density" },
-    { key: "population_density_growth", label: "Population density growth" },
-    { key: "gdp_ppp", label: "GDP PPP" },
-    { key: "gdp_ppp_growth", label: "GDP PPP growth" },
-    { key: "hdd", label: "Heating Degree Days" },
-    { key: "cdd", label: "Cooling Degree Days" },
-    { key: "critical_infrastructure", label: "Critical infrastructure" },
-    { key: "greenness_index", label: "Greenness" },
-    { key: "precipitation", label: "Precipitation" },
+    { key: "population", label: "Population", decimals: -3 },
+    { key: "population_growth", label: "Population growth [%]", decimals: 1 },
+    { key: "population_density", label: "Population density [people/km²]", decimals: -2 },
+    { key: "population_density_growth", label: "Population density growth [%]", decimals: 1 },
+    { key: "gdp_ppp", label: "GDP PPP [int'l $]", decimals: -2 },
+    { key: "gdp_ppp_growth", label: "GDP PPP growth [%]", decimals: 1 },
+    { key: "hdd", label: "Heating Degree Days [°C]", decimals: -1 },
+    { key: "cdd", label: "Cooling Degree Days [°C]", decimals: -1 },
+    { key: "critical_infrastructure", label: "Critical infrastructure", decimals: 2 },
+    { key: "greenness_index", label: "Greenness", decimals: 2 },
+    { key: "precipitation", label: "Precipitation [mm]", decimals: -1 },
   ];
   
 export const typeDescriptions = {
@@ -18,3 +18,18 @@ export const typeDescriptions = {
   "Type 3": "Wealthier, low-growth cities with high per-capita emissions, strong infrastructure, and higher gender equality; mainly in the Global North, plus some in Latin America, Africa, and Asia.",
   "Type 4": "Large and megacities with high density, fast growth, strong infrastructure, and very high CO₂ emissions; globally distributed across both developing and developed contexts."
 };
+
+export function formatNumber(val, decimals) {
+  if (typeof val !== "number") return val;
+
+  // Positive precision → decimal rounding
+  if (decimals >= 0) {
+    const rounded = Number(val.toFixed(decimals));
+    return rounded.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: decimals });
+  }
+
+  // Negative precision → round to tens/hundreds/thousands
+  const factor = Math.pow(10, -decimals); // e.g. decimals = -2 → factor = 100
+  const rounded = Math.round(val / factor) * factor;
+  return rounded.toLocaleString();
+}
