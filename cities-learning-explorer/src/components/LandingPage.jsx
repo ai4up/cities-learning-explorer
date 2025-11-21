@@ -4,46 +4,51 @@ import TypeMap from "./TypeMap";
 import "../styles/landing.css"; // make sure this path matches your project
 
 const TYPE_ORDER = ["Type 1", "Type 2", "Type 3", "Type 4"];
-
 const TYPE_META = {
   "Type 1": {
-    title: "Type 1 – Emerging and rapidly growing cities",
+    title: "Type 1 – Cities with major development needs",
     subtitle:
-      "Fast-growing cities with lower economic capacity and infrastructure pressure.",
+      "Small, low-income cities with limited infrastructure, low emissions, and high basic service needs.",
     bullets: [
-      "Often smaller and mid-sized cities with rapid population and density growth.",
-      "Limited infrastructure and financial capacity can constrain climate action.",
-      "High potential to avoid carbon lock-in through early, strategic investments.",
+      "Relatively small populations and low GDP per capita.",
+      "Lowest mean GHG emissions, lowest HDI, and lowest levels of critical infrastructure among all types.",
+      "Often located in tropical regions with high cooling needs.",
+      "Most cities are in Asia (including South and Southeast Asia), followed by Africa.",
     ],
   },
+
   "Type 2": {
-    title: "Type 2 – Developing and expanding cities",
+    title: "Type 2 – Rapidly expanding developing-country cities",
     subtitle:
-      "Cities balancing growth, infrastructure expansion, and resilience needs.",
+      "Fast-growing cities with modest economic development, sprawled expansion, and rising exposure to climate extremes.",
     bullets: [
-      "Growing populations and built-up areas with rising infrastructure demands.",
-      "Moderate economic capacity with competing development and climate priorities.",
-      "Key opportunities for integrated planning of housing, mobility, and energy.",
+      "Characterised by rapid urban expansion and significant GDP growth.",
+      "Relatively low population density and sprawled development patterns.",
+      "Low levels of critical infrastructure and frequent cooling needs, mostly in subtropical climates.",
+      "Primarily found in developing countries.",
     ],
   },
+
   "Type 3": {
-    title: "Type 3 – Established and planning-focused cities",
+    title: "Type 3 – Wealthier, slower-growing, high-emitting cities",
     subtitle:
-      "More mature cities with significant planning and adaptation activity.",
+      "Cities with higher incomes, higher emissions, strong infrastructure, and more balanced climate solution portfolios.",
     bullets: [
-      "Moderate-to-high income levels with relatively stable population growth.",
-      "Stronger planning institutions and existing climate or sustainability agendas.",
-      "Focus on retrofitting, adaptation, and improving existing systems.",
+      "Wealthier cities with low GDP growth, low density, and limited spatial expansion.",
+      "Relatively high CO₂ emissions, higher critical infrastructure levels, and higher gender equality.",
+      "Largely located in the Global North: Europe, China, Russia, North America, and parts of South and Central America, with few cases in Africa and Asia.",
     ],
   },
+
   "Type 4": {
-    title: "Type 4 – Large and high-income cities",
+    title: "Type 4 – Large and megacities with complex climate challenges",
     subtitle:
-      "Wealthy or mega-cities with high emissions and complex challenges.",
+      "High-density cities with rapid growth, extensive infrastructure, and very high CO₂ emissions.",
     bullets: [
-      "High economic output, often with large populations and dense urban cores.",
-      "High per-capita or total emissions and large mitigation responsibilities.",
-      "Pioneers of ambitious climate policies with strong global learning potential.",
+      "Mostly large and megacities with high population density and high population growth.",
+      "Relatively high levels of critical infrastructure and very high mean CO₂ emissions.",
+      "Distributed across regions with diverse development levels; developing-country megacities have high cooling needs and large informal sectors.",
+      "Developed-country megacities face combined mitigation and adaptation pressures.",
     ],
   },
 };
@@ -70,19 +75,32 @@ const LandingPage = () => {
       );
   }, []);
 
-  // Basic stats per type (count + regions)
+  // Basic stats per type (count + region shares)
   const typeStats = useMemo(() => {
     if (!cities.length) return {};
     const stats = {};
+
     TYPE_ORDER.forEach((t) => {
-      const subset = cities.filter((c) => c.type === t);
+      const filtered = cities.filter((c) => c.type === t);
+
+      // count cities per region
+      const regionCounts = {};
+      filtered.forEach((c) => {
+        regionCounts[c.region] = (regionCounts[c.region] || 0) + 1;
+      });
+
+      const regions = Object.keys(regionCounts).sort();
+
       stats[t] = {
-        count: subset.length,
-        regions: Array.from(new Set(subset.map((c) => c.region))).sort(),
+        count: filtered.length,
+        regions,
+        regionCounts,
       };
     });
+
     return stats;
   }, [cities]);
+
 
   return (
     <div className="landing-root">
@@ -171,7 +189,13 @@ const LandingPage = () => {
             {TYPE_ORDER.map((t) => {
               const meta = TYPE_META[t];
               const isActive = activeType === t;
-              const stats = typeStats[t] || { count: 0, regions: [] };
+              const stats = typeStats[t] || { count: 0, regions: [], regionCounts: {} };
+              const regionShares = stats.regions
+                .map((r) => ({
+                  region: r,
+                  share: ((stats.regionCounts[r] / stats.count) * 100).toFixed(1),
+                }))
+                .sort((a, b) => b.share - a.share); // highest first
 
               return (
                 <div
@@ -194,7 +218,12 @@ const LandingPage = () => {
                     }}
                   >
                     {stats.count.toLocaleString()} cities ·{" "}
-                    {stats.regions.length > 0 ? stats.regions.join(" · ") : "—"}
+                    {regionShares.length > 0
+                      ? regionShares
+                          .slice(0, 3)
+                          .map((r) => `${r.region} (${r.share}%)`)
+                          .join(" · ")
+                      : "—"}
                   </p>
                   {meta?.bullets && (
                     <ul

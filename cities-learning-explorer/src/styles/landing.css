@@ -131,7 +131,7 @@
 
 .landing-root .landing-typology {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 2fr);
   gap: 36px;
   padding: 40px 40px;
   border-top: 1px solid #21262d;
@@ -147,8 +147,8 @@
 /* Left column */
 
 .landing-root .typology-left {
-  max-width: 540px;
-  max-height: calc(100vh - 120px);
+  max-width: 640px;
+  max-height: 120vh;
   padding-right: 6px;
 }
 
@@ -219,7 +219,7 @@
   border-radius: 12px;
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.06);
-  margin-top: 12px;
+  margin-top: 140px;
   padding: 16px 20px;
   backdrop-filter: blur(6px);
 }
