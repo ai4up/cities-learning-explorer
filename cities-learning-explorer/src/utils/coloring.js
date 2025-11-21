@@ -1,5 +1,12 @@
 export const TYPE_ALPHA_MIN = 0.2;
 
+export const typeColors = {
+  "Type 1": "#ff9f6e",
+  "Type 2": "#8fd48e",
+  "Type 3": "#6fb7ff",
+  "Type 4": "#d18bff",
+};
+
 export const palette = [
   "#e6194b",
   "#3cb44b",

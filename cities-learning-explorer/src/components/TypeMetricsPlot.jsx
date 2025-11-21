@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import Plotly from "plotly.js-dist";
-import { metricList } from "../utils/metrics";
+import { metricList, formatNumber } from "../utils/metrics";
+import { typeColors } from "../utils/coloring";
 
 const METRIC_KEYS = [
   "population",
@@ -11,35 +12,26 @@ const METRIC_KEYS = [
   "cdd",
 ];
 
-const TYPE_COLORS = {
-  "Type 1": "#ff9f6e",
-  "Type 2": "#8fd48e",
-  "Type 3": "#6fb7ff",
-  "Type 4": "#d18bff",
-};
-
 const LOG_SCALE = {
   population: true,
-  gdp_ppp: true,
-  population_density: true,
-  emissions: true,
+  gdp_ppp: false,
+  population_density: false,
+  emissions: false,
   hdd: false,
   cdd: false,
 };
 
+const RANGE = {
+  population: [10_000, 10_000_000],
+  gdp_ppp: [0, 50_000],
+  population_density: [0, 100_000],
+  emissions: [0, 15],
+  hdd: [0, 5000],
+  cdd: [0, 5000],
+};
+
 const TypeMetricsPlot = ({ cities, activeType }) => {
   const plotRef = useRef(null);
-  function formatDisplayValue(value, decimals) {
-    if (decimals == null) return value;
-
-    if (decimals >= 0) {
-      return value.toFixed(decimals);
-    }
-
-    // negative decimals → round visually to tens, hundreds, thousands…
-    const factor = Math.pow(10, -decimals);
-    return (Math.round(value / factor) * factor).toLocaleString();
-  }
 
   useEffect(() => {
     if (!plotRef.current || !cities?.length || !activeType) return;
@@ -95,10 +87,10 @@ const TypeMetricsPlot = ({ cities, activeType }) => {
         y: filtered.map((v) => v.val),      // REAL VALUES (no rounding)
         type: "box",
         marker: { 
-          color: TYPE_COLORS[activeType],
+          color: typeColors[activeType],
           size: 1
         },
-        line: { color: TYPE_COLORS[activeType], width: 2 },
+        line: { color: typeColors[activeType], width: 2 },
         boxpoints: "outliers",
         jitter: 0.4,
         pointpos: 0,
@@ -106,7 +98,7 @@ const TypeMetricsPlot = ({ cities, activeType }) => {
         customdata: filtered.map((v) => ({
           name: v.name,
           country: v.country,
-          display: formatDisplayValue(v.val, def.decimals),  // display-only
+          display: formatNumber(v.val, def.decimals),  // display-only
         })),
         hovertemplate:
           `<b>%{customdata.name}, %{customdata.country}</b><br>` +
@@ -136,12 +128,17 @@ const TypeMetricsPlot = ({ cities, activeType }) => {
     // Configure axes for each boxplot
     METRIC_KEYS.forEach((key, i) => {
       const idx = i + 1;
+      const l = RANGE[key][0];
+      const u = RANGE[key][1];
 
       layout["yaxis" + idx] = {
         type: LOG_SCALE[key] ? "log" : "linear",
         gridcolor: "#21262d",
         zerolinecolor: "#21262d",
         automargin: true,
+        range: LOG_SCALE[key] 
+          ? [Math.log10(l), Math.log10(u)]
+          : [l, u],
       };
 
       layout["xaxis" + idx] = {

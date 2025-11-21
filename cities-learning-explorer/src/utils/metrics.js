@@ -22,17 +22,15 @@ export const typeDescriptions = {
   "Type 4": "Large and megacities with high density, fast growth, strong infrastructure, and very high CO₂ emissions; globally distributed across both developing and developed contexts."
 };
 
-export function formatNumber(val, decimals) {
-  if (typeof val !== "number") return val;
+export function formatNumber(value, decimals) {
+  if (decimals == null) return value;
+  if (typeof value !== "number") return value;
 
-  // Positive precision → decimal rounding
   if (decimals >= 0) {
-    const rounded = Number(val.toFixed(decimals));
-    return rounded.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: decimals });
+    return value.toFixed(decimals);
   }
 
-  // Negative precision → round to tens/hundreds/thousands
-  const factor = Math.pow(10, -decimals); // e.g. decimals = -2 → factor = 100
-  const rounded = Math.round(val / factor) * factor;
-  return rounded.toLocaleString();
+  // negative decimals → round visually to tens, hundreds, thousands…
+  const factor = Math.pow(10, -decimals);
+  return (Math.round(value / factor) * factor).toLocaleString();
 }

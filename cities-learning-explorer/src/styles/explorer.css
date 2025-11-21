@@ -1,0 +1,237 @@
+.explorer-root {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* Control panel styling */
+.explorer-root .controls {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 420px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 12px;
+  border-radius: 4px;
+  z-index: 10;
+  box-sizing: border-box;
+}
+
+.explorer-root .controls input,
+.explorer-root .controls select,
+.explorer-root .controls button {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 6px;
+  border: none;
+  border-radius: 4px;
+  background-color: #161b22;
+  color: #c9d1d9;
+}
+
+.explorer-root .controls input::placeholder {
+  color: #586069;
+}
+
+.explorer-root .controls button {
+  cursor: pointer;
+}
+
+.explorer-root .controls button:hover {
+  background-color: #21262d;
+}
+
+.explorer-root .legend {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  text-align: center;
+}
+
+.explorer-root .legend-item {
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
+  margin-bottom: 4px;
+}
+
+.explorer-root .legend-color {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  margin-right: 4px;
+}
+
+/* Info panel */
+.explorer-root .info-panel {
+  position: absolute;
+  top: 60px;
+  right: 40px;
+  width: 300px;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 12px;
+  border-radius: 4px;
+  max-height: 90vh;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.explorer-root .info-panel h3 {
+  margin-top: 0;
+  margin-bottom: 9px;
+  font-size: 1.2em;
+}
+
+.explorer-root .info-panel ul {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 0;
+}
+
+.explorer-root .info-panel li {
+  cursor: pointer;
+  text-decoration: underline;
+  color: #58a6ff;
+  margin-bottom: 4px;
+}
+
+.explorer-root .info-panel li:hover {
+  color: #79b8ff;
+}
+
+/* Containers for the two plots */
+.explorer-root .plots-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.explorer-root .plot-container {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Toggle button — visible only on mobile */
+.explorer-root .controls-toggle {
+  display: none;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #161b22;
+  color: #c9d1d9;
+  border: 1px solid #30363d;
+  padding: 6px 10px;
+  border-radius: 4px;
+  z-index: 20;
+  cursor: pointer;
+}
+
+/* Mobile-only: show toggle button */
+@media (max-width: 768px) {
+  .explorer-root .controls-toggle {
+    display: block;
+  }
+
+  .explorer-root .controls {
+    top: 50px;
+    transition: max-height 0.35s ease-in-out, opacity 0.3s ease;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+  }
+
+  .explorer-root .controls[data-open="true"] {
+    max-height: 80vh; /* enough for scrolling */
+    opacity: 1;
+  }
+}
+
+/* Type tooltip */
+.explorer-root .type-tooltip {
+  position: relative;
+  cursor: help;
+}
+
+.explorer-root .type-tooltip-content {
+  visibility: hidden;
+  opacity: 0;
+  position: fixed;
+  transform: translate(-15px, 15px);
+  z-index: 9999;
+
+  background: rgba(20, 20, 20, 0.95);
+  color: #c9d1d9;
+  padding: 8px 10px;
+  border-radius: 6px;
+  width: 240px;
+  font-size: 0.75em;
+  line-height: 1.3em;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.4);
+
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.explorer-root .type-tooltip-content::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 12px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent transparent rgba(20, 20, 20, 0.95) transparent;
+}
+
+.explorer-root .type-tooltip:hover .type-tooltip-content {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Methodology block */
+.explorer-root .methodology-toggle {
+  display: inline-block;
+  margin-left: 6px;
+  cursor: pointer;
+  color: #8b949e;
+  font-size: 0.75em;
+}
+
+.explorer-root .methodology-toggle:hover {
+  color: #c9d1d9;
+  opacity: 1;
+}
+
+.explorer-root .methodology-box {
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 3px solid #444;
+  padding: 6px 10px;
+  margin: 8px 0 10px 0;
+  border-radius: 4px;
+  font-size: 0.75em;
+  color: #c9d1d9;
+  line-height: 1.35em;
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.explorer-root .methodology-box ul {
+  padding-left: 18px;
+  margin-top: 6px;
+}
+
+.explorer-root .methodology-box li {
+  margin-bottom: 4px;
+}
+
+.explorer-root .methodology-box a {
+  color: #8ab4f8;
+  text-decoration: none;
+  opacity: 0.85;
+}
+
+.explorer-root .methodology-box a:hover {
+  text-decoration: underline;
+  opacity: 1;
+}

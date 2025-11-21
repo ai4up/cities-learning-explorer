@@ -1,89 +1,137 @@
 import React, { useEffect, useRef } from "react";
-import Plotly from "plotly.js-dist";
+import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
+import { typeColors } from "../utils/coloring";
+import { formatNumber } from "../utils/metrics";
+
+const DARK_STYLE = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
 
 const TypeMap = ({ cities, activeType }) => {
+  const mapContainer = useRef(null);
   const mapRef = useRef(null);
 
+  // Adjust marker size by population
+  const scaledSize = (pop) => {
+    if (!pop || pop <= 0) return 3;
+    return 0.5 + Math.sqrt(pop / 500000); // tweak as needed
+  };
+
+  const toGeoJSON = (arr, scalePopulation = false) => ({
+    type: "FeatureCollection",
+    features: arr.map((c) => ({
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [c.lon, c.lat],
+      },
+      properties: {
+        name: c.name,
+        country: c.country,
+        population: c.population,
+        size: scalePopulation ? scaledSize(c.population) : 2,
+        color: typeColors[c.type] || "#888888",
+      },
+    })),
+  });
+
+  const allCitiesGeoJSON = toGeoJSON(cities, false);
+
+  const activeTypeGeoJSON = toGeoJSON(
+    cities.filter((c) => c.type === activeType),
+    true
+  );
+
   useEffect(() => {
-    if (!mapRef.current) return;
+    if (!mapContainer.current || mapRef.current) return;
 
-    // Fail-safe guards
-    if (!Array.isArray(cities) || cities.length === 0) {
-      Plotly.purge(mapRef.current);
-      return;
-    }
-
-    const typeCities = cities.filter((c) => c.type === activeType);
-
-    // Avoid crashes when switching types
-    if (typeCities.length === 0) {
-      Plotly.purge(mapRef.current);
-      return;
-    }
-
-    // Scale marker size by population (log-scale)
-    const markerSizes = typeCities.map((c) => {
-      const p = Number(c.population);
-      if (!p || p <= 0) return 6;
-      return 1 + Math.sqrt(p/100_000); // adjustable scaling
+    const map = new maplibregl.Map({
+      container: mapContainer.current,
+      style: DARK_STYLE,
+      center: [10, 20],
+      zoom: 1.4,
     });
 
-    const trace = {
-      type: "scattergeo",
-      mode: "markers",
-      lat: typeCities.map((c) => c.lat),
-      lon: typeCities.map((c) => c.lon),
-      text: typeCities.map(
-        (c) =>
-          `<b>${c.name}, ${c.country}</b><br>Population: ${Math.round(
-            c.population
-          ).toLocaleString()}`
-      ),
-      hovertemplate: "%{text}<extra></extra>",
-      marker: {
-        size: markerSizes,
-        color: "#58a6ff",
-        line: { width: 0.5, color: "#c9d1d9" },
-        opacity: 0.85,
-      },
-    };
+    mapRef.current = map;
 
-    const layout = {
-      dragmode: false,
-      geo: {
-        projection: { type: "natural earth" },
-        showland: true,
-        landcolor: "rgba(60,60,60,0.25)",
-        showcountries: true,
-        countrycolor: "#444",
-        coastlinecolor: "#555",
-        bgcolor: "rgba(0,0,0,0)",
-      },
-      margin: { l: 0, r: 0, t: 0, b: 0 },
-      paper_bgcolor: "rgba(0,0,0,0)",
-      plot_bgcolor: "rgba(0,0,0,0)",
-      height: 380,             // ⬅ Bigger map
-    };
+    map.on("load", () => {
+      // --- Background all cities ---
+      map.addSource("all-cities", {
+        type: "geojson",
+        data: allCitiesGeoJSON,
+      });
 
-    Plotly.newPlot(mapRef.current, [trace], layout, {
-      displayModeBar: false,
-      responsive: true,
+      map.addLayer({
+        id: "all-cities-layer",
+        type: "circle",
+        source: "all-cities",
+        paint: {
+          "circle-radius": 2,
+          "circle-color": "#999",
+          "circle-opacity": 0.25,
+        },
+      });
+
+      // --- Active type (pop-scaled) ---
+      map.addSource("active-type", {
+        type: "geojson",
+        data: activeTypeGeoJSON,
+      });
+
+      map.addLayer({
+        id: "active-type-layer",
+        type: "circle",
+        source: "active-type",
+        paint: {
+          "circle-radius": ["get", "size"],
+          "circle-color": ["get", "color"],
+          "circle-opacity": 0.9,
+        },
+      });
+
+      // --- Hover popup ---
+      const popup = new maplibregl.Popup({
+        closeButton: false,
+        closeOnClick: false,
+      });
+
+      map.on("mousemove", "active-type-layer", (e) => {
+        const f = e.features[0];
+        const { name, country, population } = f.properties;
+
+        popup
+          .setLngLat(f.geometry.coordinates)
+          .setHTML(
+            `<b>${name}</b>, ${country}<br>Population: ${(formatNumber(population, 0))}`
+          )
+          .addTo(map);
+      });
+
+      map.on("mouseleave", "active-type-layer", () => popup.remove());
     });
+  }, []);
 
-    const resize = () => Plotly.Plots.resize(mapRef.current);
-    window.addEventListener("resize", resize);
+  // Update active type data when switching types
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !map.getSource("active-type")) return;
 
-    return () => {
-      window.removeEventListener("resize", resize);
-      Plotly.purge(mapRef.current);
-    };
-  }, [cities, activeType]);
+    const nextData = toGeoJSON(
+      cities.filter((c) => c.type === activeType),
+      true
+    );
+
+    map.getSource("active-type").setData(nextData);
+  }, [activeType]);
 
   return (
     <div
-      ref={mapRef}
-      className="typology-map-plot"
-      style={{ width: "100%", height: "380px" }} // bigger display area
+      ref={mapContainer}
+      style={{
+        width: "100%",
+        height: "480px",
+        borderRadius: "6px",
+        overflow: "hidden",
+      }}
     />
   );
 };
