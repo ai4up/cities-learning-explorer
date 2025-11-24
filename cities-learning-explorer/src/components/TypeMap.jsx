@@ -49,6 +49,7 @@ const TypeMap = ({ cities, activeType }) => {
       style: DARK_STYLE,
       center: [10, 20],
       zoom: 1.4,
+      minZoom: 1.4,
     });
 
     mapRef.current = map;
