@@ -3,7 +3,7 @@ import { formatNumber, metricList, typeDescriptions } from "../utils/metrics";
 import { domainPalette, palette, percentileColor } from "../utils/coloring";
 import MethodologySection from "./MethodologySection";
 
-const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
+const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue }) => {
   if (!selectedSample) return null;
 
   const [openSections, setOpenSections] = React.useState({
@@ -28,7 +28,12 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample }) => {
 
   return (
     <div className="info-panel">
-      <div className="info-close" onClick={() => setSelectedSample(null)}>×</div>
+      <div className="info-close" onClick={() => {
+            setSearchValue("");
+            setSelectedSample(null);
+      }}>
+        ×
+      </div>
       <h3>
         {selectedSample.name}
         {selectedSample.country ? ", " + selectedSample.country : ""}

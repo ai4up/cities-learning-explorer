@@ -301,6 +301,7 @@ const Explorer = () => {
           selectedSample={selectedSample}
           samples={samples}
           setSelectedSample={setSelectedSample}
+          setSearchValue={setSearchValue}
         />
       )}
     </div>
