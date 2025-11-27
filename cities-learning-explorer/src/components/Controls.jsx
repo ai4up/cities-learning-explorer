@@ -72,6 +72,43 @@ const Controls = ({
     <button className="controls-toggle" onClick={() => setControlsOpen(o => !o)}>
       {controlsOpen ? "▲ Hide Control Panel" : "▼ Show Control Panel"}
     </button>
+
+    <div className="top-search-bar">
+      <div className="search-inner">
+        <span className="search-icon">🔍</span>
+
+        <input
+          type="text"
+          placeholder="Search city..."
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && suggestions.length > 0) {
+              const s = suggestions[0];
+              setSelectedSample(s);
+              setSearchValue(`${s.name}, ${s.country}`);
+            }
+          }}
+          list="suggestions"
+        />
+
+        {searchValue && (
+          <button className="clear-btn" onClick={() => {
+            setSearchValue("");
+            setSelectedSample(null);
+          }}>
+            &times;
+          </button>
+        )}
+      </div>
+
+      <datalist id="suggestions">
+        {suggestions.map((s, idx) => (
+          <option key={idx} value={`${s.name}, ${s.country}`} />
+        ))}
+      </datalist>
+    </div>
+
     <div className="controls" data-open={controlsOpen}>
       {/* View mode toggle */}
       <div style={{ display: "flex", marginBottom: "10px", gap: "4px" }}>
@@ -100,54 +137,16 @@ const Controls = ({
         </button>
       </div>
 
-      {/* Search input with clear button */}
-      <div
-        style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}
-      >
-        <input
-          type="text"
-          placeholder="Search city..."
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && suggestions.length > 0) {
-              const s = suggestions[0];
-              setSelectedSample(s);
-              setSearchValue(`${s.name}, ${s.country}`);
-            }
-          }}
-          list="suggestions"
-          style={{ flex: 1, padding: "6px" }}
-        />
-        {searchValue && (
-          <button
-            onClick={() => {
-              setSearchValue("");
-              setSelectedSample(null);
-            }}
-            style={{
-              marginLeft: "6px",
-              padding: "4px 6px",
-              border: "none",
-              borderRadius: "4px",
-              backgroundColor: "#21262d",
-              color: "#c9d1d9",
-              cursor: "pointer",
-              width: "26px",
-            }}
-          >
-            &times;
-          </button>
-        )}
-      </div>
-
-      <datalist id="suggestions">
-        {suggestions.map((s, idx) => (
-          <option key={idx} value={`${s.name}, ${s.country}`} />
-        ))}
-      </datalist>
-
       {/* Colour key selector */}
+      <div
+        style={{
+          fontSize: "0.8em",
+          marginBottom: "6px",
+          fontWeight: "bold",
+        }}
+      >
+      Color coding
+      </div>
       <select
         value={colorKey}
         onChange={(e) => setColorKey(e.target.value)}
@@ -156,7 +155,6 @@ const Controls = ({
           <option value="type">Type</option>
           <option value="region">Region</option>
         </optgroup>
-
         <optgroup label="Color by percentiles">
           {metricList.map((m) => (
             <option key={m.key + "_pct"} value={m.key + "_pct"}>
@@ -266,6 +264,46 @@ const Controls = ({
           </div>
         </div>
       </div>
+
+      {/* Embedding dimensions */}
+      {(viewMode === "embedding" || viewMode === "both") && (
+        <div style={{ marginTop: "8px", marginBottom: "8px", fontSize: "0.8em" }}>
+          <div style={{ marginBottom: "4px", fontWeight: "bold"}}>
+            Select embedding dimensions (3 of 4):
+          </div>
+          <div style={{ marginLeft: "8px" }}>
+            {["0", "1", "2", "3"].map((dim) => {
+              const checked = selectedDims.includes(dim);
+              const disabled = !checked && selectedDims.length === 3;
+
+              return (
+                <label
+                  key={dim}
+                  style={{
+                    marginRight: "10px",
+                    display: "inline-flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    disabled={disabled}
+                    onChange={() => {
+                      setSelectedDims((prev) =>
+                        prev.includes(dim)
+                          ? prev.filter((d) => d !== dim)
+                          : [...prev, dim]
+                      );
+                    }}
+                  />
+                  <span style={{ marginLeft: "4px" }}>{dim}</span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Population slider */}
       <div style={{ marginTop: "12px", marginBottom: "12px" }}>
@@ -416,46 +454,7 @@ const Controls = ({
         )}
       </div>
 
-      {/* Embedding dimensions */}
-      {(viewMode === "embedding" || viewMode === "both") && (
-        <div style={{ marginBottom: "18px", fontSize: "0.8em" }}>
-          <div style={{ marginBottom: "4px" }}>
-            Select embedding dimensions (3 of 4):
-          </div>
-          <div style={{ marginLeft: "8px" }}>
-            {["0", "1", "2", "3"].map((dim) => {
-              const checked = selectedDims.includes(dim);
-              const disabled = !checked && selectedDims.length === 3;
-
-              return (
-                <label
-                  key={dim}
-                  style={{
-                    marginRight: "10px",
-                    display: "inline-flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={checked}
-                    disabled={disabled}
-                    onChange={() => {
-                      setSelectedDims((prev) =>
-                        prev.includes(dim)
-                          ? prev.filter((d) => d !== dim)
-                          : [...prev, dim]
-                      );
-                    }}
-                  />
-                  <span style={{ marginLeft: "4px" }}>{dim}</span>
-                </label>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
+      {/* Reset buttons */}
       <div style={{ display: "flex", gap: "8px" }}>
         <button onClick={onResetView}>Reset view</button>
         <button onClick={onResetFilters}>Reset filters</button>
