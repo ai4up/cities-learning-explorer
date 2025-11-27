@@ -312,28 +312,28 @@ const Controls = ({
       {/* Buttons */}
       <button onClick={onResetView}>Reset view</button>
       <button onClick={onResetFilters}>Reset filters</button>
+    </div>
 
-      {/* Legend */}
-      <div className="legend">
-        {categories.map((cat) => (
-          <div className="legend-item" key={cat}>
-            <div
-              className="legend-color"
-              style={{ backgroundColor: categoryColors[cat] }}
-            ></div>
-            {typeDescriptions[cat] ? (
-              <span className="type-tooltip" style={{ fontSize: "0.8em" }}>
-                {cat}
-                <span className="type-tooltip-content">
-                  {typeDescriptions[cat]}
-                </span>
+    {/* Legend */}
+    <div className="legend">
+      {categories.map((cat) => (
+        <div className="legend-item" key={cat}>
+          <div
+            className="legend-color"
+            style={{ backgroundColor: categoryColors[cat] }}
+          ></div>
+          {typeDescriptions[cat] ? (
+            <span className="type-tooltip" style={{ fontSize: "0.8em" }}>
+              {cat}
+              <span className="type-tooltip-content">
+                {typeDescriptions[cat]}
               </span>
-            ) : (
-              <span style={{ fontSize: "0.8em" }}>{cat}</span>
-            )}
-          </div>
-        ))}
-      </div>
+            </span>
+          ) : (
+            <span style={{ fontSize: "0.8em" }}>{cat}</span>
+          )}
+        </div>
+      ))}
     </div>
     </>
   );
