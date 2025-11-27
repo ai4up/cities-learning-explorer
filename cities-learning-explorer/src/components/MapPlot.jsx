@@ -78,7 +78,7 @@ const MapPlot = ({ samples, colors, sizes, onSelectSample, viewMode }) => {
     };
 
     const config = {
-      displayModeBar: true,
+      displayModeBar: false,
       responsive: true,
     };
 

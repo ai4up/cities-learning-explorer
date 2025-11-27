@@ -7,9 +7,9 @@
 /* Control panel styling */
 .explorer-root .controls {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  width: 420px;
+  top: 15px;
+  left: 15px;
+  width: 380px;
   background: rgba(0, 0, 0, 0.7);
   padding: 12px;
   border-radius: 4px;
@@ -72,10 +72,10 @@
 /* Info panel */
 .explorer-root .info-panel {
   position: absolute;
-  top: 60px;
-  right: 40px;
+  top: 15px;
+  right: 15px;
   width: 300px;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.75);
   padding: 12px;
   border-radius: 4px;
   max-height: 90vh;

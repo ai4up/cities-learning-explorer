@@ -99,7 +99,7 @@ const EmbeddingPlot = ({
       height: size?.height,
     };
 
-    const config = { displayModeBar: true, responsive: true };
+    const config = { displayModeBar: false, responsive: true };
     const CLICK_SUPPRESS_MS = 200;
     const clickHandler = (ev) => {
       const now = performance.now();
