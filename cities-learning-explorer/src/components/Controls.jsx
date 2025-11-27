@@ -456,9 +456,10 @@ const Controls = ({
         </div>
       )}
 
-      {/* Buttons */}
-      <button onClick={onResetView}>Reset view</button>
-      <button onClick={onResetFilters}>Reset filters</button>
+      <div style={{ display: "flex", gap: "8px" }}>
+        <button onClick={onResetView}>Reset view</button>
+        <button onClick={onResetFilters}>Reset filters</button>
+      </div>
     </div>
 
     {/* Percentile legend */}
