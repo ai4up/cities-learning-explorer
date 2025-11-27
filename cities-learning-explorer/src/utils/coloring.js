@@ -92,14 +92,21 @@ export const computeColors = (
     colorKey,
     selectedSample,
     categoryColors,
+    metricFilters,
   }
 ) => {
   return samples.map((s) => {
     const inFilter =
-      (s.population >= populationThreshold) &&
-      (s.n_studies >= studyThreshold) &&
+      s.population >= populationThreshold.min &&
+      s.population <= populationThreshold.max &&
+      s.n_studies >= studyThreshold.min &&
+      s.n_studies <= studyThreshold.max &&
       selectedRegions.has(s.region) &&
-      selectedTypes.has(s.type);
+      selectedTypes.has(s.type) &&
+      metricFilters.every(f => {
+        const v = s[f.key];
+        return typeof v === "number" && v >= f.min && v <= f.max;
+      });
 
     if (!inFilter) return "rgba(0,0,0,0)";
 
@@ -129,14 +136,21 @@ export const computeSizes = (
     selectedRegions,
     selectedTypes,
     selectedSample,
+    metricFilters,
   }
 ) => {
   return samples.map((s) => {
     const inFilter =
-      (s.population >= populationThreshold) &&
-      (s.n_studies >= studyThreshold) &&
+      s.population >= populationThreshold.min &&
+      s.population <= populationThreshold.max &&
+      s.n_studies >= studyThreshold.min &&
+      s.n_studies <= studyThreshold.max &&
       selectedRegions.has(s.region) &&
-      selectedTypes.has(s.type);
+      selectedTypes.has(s.type) &&
+      metricFilters.every(f => {
+        const v = s[f.key];
+        return typeof v === "number" && v >= f.min && v <= f.max;
+      });
 
     if (!inFilter) return 0;
 

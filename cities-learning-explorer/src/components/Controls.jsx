@@ -1,6 +1,27 @@
 import React from "react";
+import { Range } from "react-range";
+import { SqrtRange } from "./SqrtRangeSlider";
 import { metricList, typeDescriptions } from "../utils/metrics";
 import { percentileColor } from "../utils/coloring";
+
+const StyledTrack = ({ props, children, minPct, maxPct }) => {
+  const { key, style, ...rest } = props;
+  return (
+    <div {...rest} className="slider-track" style={style}>
+      <div
+        className="slider-track-active"
+        style={{ left: `${minPct}%`, width: `${maxPct - minPct}%` }}
+      />
+      {children}
+    </div>
+  );
+};
+
+const StyledThumb = ({ props }) => {
+  const { key, ...rest } = props;
+  return <div {...rest} className="slider-thumb" />;
+};
+
 
 const Controls = ({
   viewMode,
@@ -28,7 +49,11 @@ const Controls = ({
   onResetView,
   onResetFilters,
   controlsOpen,
-  setControlsOpen
+  setControlsOpen,
+  metricFilters,
+  setMetricFilters,
+  pendingMetric,
+  setPendingMetric,
 }) => {
   const viewBtnStyle = (mode) => ({
     flex: 1,
@@ -243,41 +268,152 @@ const Controls = ({
       </div>
 
       {/* Population slider */}
-      <div style={{ marginTop: "12px" }}>
+      <div style={{ marginTop: "12px", marginBottom: "12px" }}>
         <label style={{ display: "block", fontSize: "0.8em" }}>
-          Population ≥ {populationThreshold.toLocaleString()}
+          Population:{" "}
+          {Math.round(populationThreshold.min).toLocaleString()} –{" "}
+          {Math.round(populationThreshold.max).toLocaleString()}
         </label>
-        <input
-          type="range"
-          min="0"
-          max={Math.sqrt(10_000_000)}
-          step="100"
-          value={Math.sqrt(populationThreshold)}
-          onChange={(e) => {
-            const real = Math.pow(Number(e.target.value), 2);
-            setPopulationThreshold(real);
-          }}
-          style={{ width: "90%" }}
+
+        <SqrtRange
+          minValue={populationThreshold.min}
+          maxValue={populationThreshold.max}
+          onChange={setPopulationThreshold}
+          max={10_000_000}
+          step={100}
+          StyledTrack={StyledTrack}
+          StyledThumb={StyledThumb}
         />
       </div>
 
       {/* Number of Studies slider */}
-      <div style={{ marginBottom: "6px" }}>
+      <div style={{ marginTop: "12px", marginBottom: "12px" }}>
         <label style={{ display: "block", fontSize: "0.8em" }}>
-          Number of studies ≥ {studyThreshold}
+          Studies: {Math.round(studyThreshold.min)} – {Math.round(studyThreshold.max)}
         </label>
-        <input
-          type="range"
-          min="0"
-          max={Math.sqrt(500)}
-          step="1"
-          value={Math.sqrt(studyThreshold)}
-          onChange={(e) => {
-            const real = Math.pow(Number(e.target.value), 2);
-            setStudyThreshold(real);
-          }}
-          style={{ width: "90%" }}
+
+        <SqrtRange
+          minValue={studyThreshold.min}
+          maxValue={studyThreshold.max}
+          onChange={setStudyThreshold}
+          max={500}
+          step={1}
+          StyledTrack={StyledTrack}
+          StyledThumb={StyledThumb}
         />
+      </div>
+
+      {/* Render Metric Sliders */}
+      {metricFilters.map((f, idx) => {
+        const metric = metricList.find(m => f.key === m.key + "_pct");
+
+        return (
+          <div key={f.key} style={{ marginTop: "12px", marginBottom: "12px" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                fontSize: "0.8em",
+                marginBottom: "12px",
+              }}
+            >
+              {metric.label}: {f.min}% – {f.max}%
+
+              <span
+                style={{ cursor: "pointer", opacity: 0.7 }}
+                onClick={() =>
+                  setMetricFilters(prev => prev.filter((_, i) => i !== idx))
+                }
+              >
+                ×
+              </span>
+            </div>
+
+            <Range
+              step={1}
+              min={0}
+              max={100}
+              values={[f.min, f.max]}
+              onChange={(values) => {
+                const [min, max] = values;
+                setMetricFilters(prev => {
+                  const copy = [...prev];
+                  copy[idx] = { ...copy[idx], min, max };
+                  return copy;
+                });
+              }}
+              renderTrack={({ props, children, index }) => (
+                <StyledTrack key={index} props={props} minPct={f.min} maxPct={f.max}>
+                  {children}
+                </StyledTrack>
+              )}
+              renderThumb={({ props, index }) => {
+                const { key, ...rest } = props;
+                return <StyledThumb key={index} props={rest} />;
+              }}
+            />
+          </div>
+        );
+      })}
+
+      {/* Add Metric Filter Button */}
+      <div style={{ marginTop: "16px" }}>
+        {!pendingMetric && (
+          <div
+            onClick={() => setPendingMetric("placeholder")}
+            style={{
+              marginBottom: "20px",
+              color: "#8b949e",
+              fontSize: "0.7em",
+              cursor: "pointer",
+              textAlign: "center",
+            }}
+          >
+            + Add metric filter
+          </div>
+        )}
+
+        {/* Inline selector appears only after clicking + Add */}
+        {pendingMetric && (
+          <div style={{ marginTop: "6px" }}>
+            <select
+              autoFocus
+              defaultValue=""
+              style={{
+                padding: "6px",
+                background: "#161b22",
+                color: "#c9d1d9",
+                border: "1px solid #30363d",
+                borderRadius: "4px",
+                width: "100%",
+              }}
+              onChange={(e) => {
+                const key = e.target.value;
+                if (key) {
+                  setMetricFilters(prev => [
+                    ...prev,
+                    { key, min: 0, max: 100 }
+                  ]);
+                }
+                setPendingMetric(null);
+              }}
+            >
+              <option value="" disabled>
+                Select metric…
+              </option>
+              {metricList
+                .filter(m =>
+                  m.key !== "population" &&
+                  !metricFilters.some(f => f.key === m.key + "_pct")
+                )
+                .map(m => (
+                  <option key={m.key + "_pct"} value={m.key + "_pct"}>
+                    {m.label}
+                  </option>
+                ))}
+            </select>
+          </div>
+        )}
       </div>
 
       {/* Embedding dimensions */}

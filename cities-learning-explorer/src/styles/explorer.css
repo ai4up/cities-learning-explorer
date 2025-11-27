@@ -259,3 +259,32 @@
   text-decoration: underline;
   opacity: 1;
 }
+
+/* Sliders */
+.slider-track {
+  height: 6px;
+  width: 90%;
+  margin-left: 5%;
+  background: #21262d;
+  border-radius: 4px;
+  position: relative;
+  margin-top: 8px;
+}
+
+.slider-track-active {
+  position: absolute;
+  top: 0;
+  height: 6px;
+  background: #204570;
+  border-radius: 4px;
+}
+
+.slider-thumb {
+  height: 14px !important;
+  width: 14px !important;
+  border-radius: 50%;
+  background-color: #c9d1d9;
+  border: 1px solid #30363d;
+  box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.4);
+  outline: none;
+}

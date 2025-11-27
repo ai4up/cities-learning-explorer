@@ -46,13 +46,21 @@ const Explorer = () => {
   const [initialURLProcessed, setInitialURLProcessed] = useState(false);
   const [selectedSample, setSelectedSample] = useState(null);
   const [searchValue, setSearchValue] = useState("");
-  const [populationThreshold, setPopulationThreshold] = useState(viewMode === "map" ? 250_000 : 1_000_000);
-  const [studyThreshold, setStudyThreshold] = useState(viewMode === "map" ? 0 : 5);
+  const [populationThreshold, setPopulationThreshold] = useState({
+    min: viewMode === "map" ? 250_000 : 1_000_000,
+    max: 10_000_000
+    });
+  const [studyThreshold, setStudyThreshold] = useState({
+    min: viewMode === "map" ? 0 : 5,
+    max: 500
+    });
   const [selectedRegions, setSelectedRegions] = useState(new Set());
   const [selectedTypes, setSelectedTypes] = useState(new Set());
   const [selectedDims, setSelectedDims] = useState(["0", "1", "2"]);
   const [resetToken, setResetToken] = useState(0);
   const [controlsOpen, setControlsOpen] = useState(true);
+  const [metricFilters, setMetricFilters] = useState([]);
+  const [pendingMetric, setPendingMetric] = useState(null);
 
   // ------------------------------------------------------
   // Load data + initialize URL-based state
@@ -120,6 +128,7 @@ const Explorer = () => {
         colorKey,
         selectedSample,
         categoryColors,
+        metricFilters,
       }),
     [
       samples,
@@ -130,6 +139,7 @@ const Explorer = () => {
       colorKey,
       selectedSample,
       categoryColors,
+      metricFilters,
     ]
   );
 
@@ -141,6 +151,7 @@ const Explorer = () => {
         selectedRegions,
         selectedTypes,
         selectedSample,
+        metricFilters,
       }),
     [
       samples,
@@ -149,6 +160,7 @@ const Explorer = () => {
       selectedRegions,
       selectedTypes,
       selectedSample,
+      metricFilters,
     ]
   );
 
@@ -184,10 +196,12 @@ const Explorer = () => {
   };
 
   const handleResetFilters = () => {
-    setPopulationThreshold(viewMode === "map" ? 250_000 : 1_000_000);
-    setStudyThreshold(viewMode === "map" ? 0 : 5);
+    setPopulationThreshold(viewMode === "map" ? { min: 250_000, max: 10_000_000 } : { min: 1_000_000, max: 10_000_000 });
+    setStudyThreshold(viewMode === "map" ? { min: 0, max: 500 } : { min: 5, max: 500 });
     setSelectedRegions(new Set(regions));
     setSelectedTypes(new Set(types));
+    setMetricFilters([]);
+    setPendingMetric(null);
     setSelectedSample(null);
 
     // Clear city from URL
@@ -275,6 +289,10 @@ const Explorer = () => {
         onResetFilters={handleResetFilters}
         controlsOpen={controlsOpen}
         setControlsOpen={setControlsOpen}
+        metricFilters={metricFilters}
+        setMetricFilters={setMetricFilters}
+        pendingMetric={pendingMetric}
+        setPendingMetric={setPendingMetric}
       />
 
       {/* Info panel */}
