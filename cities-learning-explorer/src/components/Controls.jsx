@@ -1,5 +1,6 @@
 import React from "react";
-import { typeDescriptions } from "../utils/metrics";
+import { metricList, typeDescriptions } from "../utils/metrics";
+import { percentileColor } from "../utils/coloring";
 
 const Controls = ({
   viewMode,
@@ -126,8 +127,18 @@ const Controls = ({
         value={colorKey}
         onChange={(e) => setColorKey(e.target.value)}
       >
-        <option value="type">Color by type</option>
-        <option value="region">Color by region</option>
+        <optgroup label="Color by categories">
+          <option value="type">Type</option>
+          <option value="region">Region</option>
+        </optgroup>
+
+        <optgroup label="Color by percentiles">
+          {metricList.map((m) => (
+            <option key={m.key + "_pct"} value={m.key + "_pct"}>
+              {m.label}
+            </option>
+          ))}
+        </optgroup>
       </select>
 
       {/* Region & Type filters */}
@@ -314,27 +325,43 @@ const Controls = ({
       <button onClick={onResetFilters}>Reset filters</button>
     </div>
 
+    {/* Percentile legend */}
+    {colorKey.endsWith("_pct") && (
+      <div className="legend" style={{ marginTop: "8px" }}>
+        {[10, 30, 50, 70, 90].map((p) => (
+          <div key={p} className="legend-item">
+            <div
+              className="legend-color"
+              style={{ backgroundColor: percentileColor(p) }}
+            ></div>
+            <span style={{ fontSize: "0.8em" }}>{p}%</span>
+          </div>
+        ))}
+      </div>
+    )}
     {/* Legend */}
-    <div className="legend">
-      {categories.map((cat) => (
-        <div className="legend-item" key={cat}>
-          <div
-            className="legend-color"
-            style={{ backgroundColor: categoryColors[cat] }}
-          ></div>
-          {typeDescriptions[cat] ? (
-            <span className="type-tooltip" style={{ fontSize: "0.8em" }}>
-              {cat}
-              <span className="type-tooltip-content">
-                {typeDescriptions[cat]}
+    {(colorKey === "type" || colorKey === "region") && (
+      <div className="legend">
+        {categories.map((cat) => (
+          <div className="legend-item" key={cat}>
+            <div
+              className="legend-color"
+              style={{ backgroundColor: categoryColors[cat] }}
+            ></div>
+            {typeDescriptions[cat] ? (
+              <span className="type-tooltip" style={{ fontSize: "0.8em" }}>
+                {cat}
+                <span className="type-tooltip-content">
+                  {typeDescriptions[cat]}
+                </span>
               </span>
-            </span>
-          ) : (
-            <span style={{ fontSize: "0.8em" }}>{cat}</span>
-          )}
-        </div>
-      ))}
-    </div>
+            ) : (
+              <span style={{ fontSize: "0.8em" }}>{cat}</span>
+            )}
+          </div>
+        ))}
+      </div>
+    )}
     </>
   );
 };

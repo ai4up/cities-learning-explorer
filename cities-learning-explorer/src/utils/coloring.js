@@ -62,13 +62,25 @@ export const toRgba = (hex, alpha) => {
 };
 
 export const getCategoryColor = (sample, colorKey, categoryColors) => {
-  const base = categoryColors[sample[colorKey]] || "#ffffff";
-  if (colorKey !== "type") return base;
+  if (colorKey === "type") {
+    const base = categoryColors[sample.type] || "#ffffff";
+    const alpha = Math.min(1, Math.max(TYPE_ALPHA_MIN, sample?.probability ?? 1));
+    if (alpha >= 0.999) return base;
+    return toRgba(base, alpha);
+  }
 
-  const alpha = Math.min(1, Math.max(TYPE_ALPHA_MIN, sample?.probability ?? 1));
-  if (alpha >= 0.999) return base;
-  return toRgba(base, alpha);
+  if (colorKey === "region") {
+    return categoryColors[sample.region] || "#ffffff";
+  }
+
+  if (colorKey.endsWith("_pct")) {
+    const p = sample[colorKey];
+    return percentileColor(p);
+  }
+
+  return "#999999";
 };
+
 
 export const computeColors = (
   samples,
