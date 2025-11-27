@@ -1,7 +1,7 @@
 import Plotly from 'plotly.js-dist';
 import React, { useEffect, useRef } from "react";
 
-const MapPlot = ({ samples, colors, sizes, onSelectSample, viewMode }) => {
+const MapPlot = ({ samples, colors, sizes, onSelectSample, setSearchValue, viewMode }) => {
   const plotRef = useRef(null);
   const initializedRef = useRef(false);
 
@@ -87,6 +87,7 @@ const MapPlot = ({ samples, colors, sizes, onSelectSample, viewMode }) => {
         const idx = ev.points[0].pointNumber;
         const realIndex = visible[idx].i;
         const selected = samples[realIndex];
+        setSearchValue("");
 
         if (selected) {
           onSelectSample((prev) =>

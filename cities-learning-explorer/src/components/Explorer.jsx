@@ -193,6 +193,7 @@ const Explorer = () => {
   const handleResetView = () => {
     setResetToken((t) => t + 1);
     setSelectedSample(null);
+    setSearchValue("");
   };
 
   const handleResetFilters = () => {
@@ -203,6 +204,7 @@ const Explorer = () => {
     setMetricFilters([]);
     setPendingMetric(null);
     setSelectedSample(null);
+    setSearchValue("");
 
     // Clear city from URL
     updateURLParams({ city: null });
@@ -256,6 +258,7 @@ const Explorer = () => {
             colors={colors}
             sizes={sizes}
             onSelectSample={setSelectedSample}
+            setSearchValue={setSearchValue}
             viewMode={viewMode}
           />
         )}
