@@ -110,10 +110,7 @@ const LandingPage = () => {
         <div className="landing-hero-inner">
           <h1 className="landing-title">A Global Typology of 11,000 Cities</h1>
           <p className="landing-subtitle">
-            Explore a data-driven typology of more than 11,000 cities worldwide.
-            We combine urban indicators, deep embedded clustering, and a systematic
-            map of climate solutions to highlight where evidence exists – and
-            where learning potential is greatest.
+            A data-driven classification of 11,000 cities that links urban structure to the global evidence base on climate solutions – enabling systematic comparison, gap detection, and evidence-based transfer learning.
           </p>
 
           <div className="landing-hero-actions">
