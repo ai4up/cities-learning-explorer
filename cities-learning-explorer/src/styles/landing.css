@@ -224,6 +224,22 @@
   backdrop-filter: blur(6px);
 }
 
+.landing-root .map-fallback {
+  width: 100%;
+  height: 480px;
+  border-radius: 10px;
+  background: #1b1f24;
+  color: #c9d1d9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
 .landing-root .typology-viz-title {
   font-size: 1rem;
   margin-bottom: 12px;

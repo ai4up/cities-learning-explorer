@@ -6,7 +6,19 @@ import { formatNumber } from "../utils/metrics";
 
 const DARK_STYLE = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
 
-const TypeMap = ({ cities, activeType }) => {
+function webglAvailable() {
+  try {
+    const canvas = document.createElement("canvas");
+    return !!(
+      window.WebGLRenderingContext &&
+      (canvas.getContext("webgl") || canvas.getContext("experimental-webgl"))
+    );
+  } catch (e) {
+    return false;
+  }
+}
+
+const TypeMap = ({ cities, activeType, onWebglError }) => {
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
 
@@ -44,13 +56,26 @@ const TypeMap = ({ cities, activeType }) => {
   useEffect(() => {
     if (!mapContainer.current || mapRef.current) return;
 
-    const map = new maplibregl.Map({
-      container: mapContainer.current,
-      style: DARK_STYLE,
-      center: [10, 20],
-      zoom: 1.4,
-      minZoom: 1.4,
-    });
+    if (!webglAvailable()) {
+      onWebglError?.();
+      return;
+    }
+
+    let map;
+    try {
+      map = new maplibregl.Map({
+        container: mapContainer.current,
+        style: DARK_STYLE,
+        center: [10, 20],
+        zoom: 1.4,
+        minZoom: 1.4,
+      });
+      mapRef.current = map;
+    } catch (err) {
+      console.error("MapLibre init failed:", err);
+      onWebglError?.();
+      return;
+    }
 
     mapRef.current = map;
 

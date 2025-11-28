@@ -56,6 +56,7 @@ const TYPE_META = {
 const LandingPage = () => {
   const [cities, setCities] = useState([]);
   const [activeType, setActiveType] = useState("Type 1");
+  const [webglFailed, setWebglFailed] = useState(false);
 
   // Load cities.json
   useEffect(() => {
@@ -257,7 +258,19 @@ const LandingPage = () => {
                   Cities of the selected type are highlighted.
                 </span>
               </div>
-              <TypeMap cities={cities} activeType={activeType} />
+
+              {webglFailed ? (
+                <div className="map-fallback">
+                  WebGL is disabled on this device.<br />
+                  The interactive map cannot be displayed.
+                </div>
+              ) : (
+                <TypeMap
+                  cities={cities}
+                  activeType={activeType}
+                  onWebglError={() => setWebglFailed(true)}
+                />
+              )}
             </div>
 
             <div className="typology-viz-panel">
