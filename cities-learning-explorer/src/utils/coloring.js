@@ -177,11 +177,11 @@ export const computeSizes = (
 };
 
 export function percentileColor(p) {
-  if (p == null || isNaN(p)) return "#8b949e"; // neutral gray
+  if (p == null || isNaN(p)) return "#8b949e"; // fallback gray
 
-  if (p < 20) return "#d35f5f";   // muted red
-  if (p < 40) return "#d7a06a";   // muted orange
-  if (p < 60) return "#d2c691ff";   // muted yellow
-  if (p < 80) return "#73a880ff";   // muted light green
-  return "#198038ff";               // muted green
+  if (p < 20) return "#7d5fa6";  // deep muted purple
+  if (p < 40) return "#a18bbcff";  // soft lavender-purple
+  if (p < 60) return "#c9c5d0ff";  // lavender-gray (midpoint)
+  if (p < 80) return "#7eb5b4";  // soft teal-gray
+  return "#397e7dff";              // deep muted teal
 }
