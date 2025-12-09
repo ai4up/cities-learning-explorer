@@ -3,7 +3,7 @@ import Controls from "./Controls";
 import EmbeddingPlot from "./EmbeddingPlot";
 import MapPlot from "./MapPlot";
 import InfoPanel from "./InfoPanel";
-import { palette, computeColors, computeSizes } from "../utils/coloring";
+import { palette, computeColors, computeSizes, typeColorsExplore } from "../utils/coloring";
 import "../styles/explorer.css";
 
 // ------------------------------------------------------
@@ -108,6 +108,7 @@ const Explorer = () => {
   );
 
   const categoryColors = useMemo(() => {
+    if (colorKey === "type") return typeColorsExplore;
     const map = {};
     categories.forEach((cat, idx) => {
       map[cat] = palette[idx % palette.length];

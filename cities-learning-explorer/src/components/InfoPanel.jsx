@@ -1,6 +1,6 @@
 import React from "react";
 import { formatNumber, metricList, typeDescriptions } from "../utils/metrics";
-import { domainPalette, palette, percentileColor } from "../utils/coloring";
+import { domainPalette, typeColorsExplore, percentileColor } from "../utils/coloring";
 import MethodologySection from "./MethodologySection";
 
 const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue }) => {
@@ -108,7 +108,7 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
                 >
                   <div
                     style={{
-                      backgroundColor: palette[idx % palette.length],
+                      backgroundColor: typeColorsExplore[`Type ${idx + 1}`],
                       height: `${pct}%`,
                       borderRadius: "2px",
                       width: "75%",

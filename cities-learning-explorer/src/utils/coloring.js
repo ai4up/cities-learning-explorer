@@ -7,6 +7,14 @@ export const typeColors = {
   "Type 4": "#d18bff",
 };
 
+export const typeColorsExplore = {
+  "Type 1": "#e6194b",
+  "Type 2": "#4363d8",
+  "Type 3": "#3cb44b",
+  "Type 4": "#ffe119",
+  "Mixed": "#3b3a3aff",
+};
+
 export const palette = [
   "#e6194b",
   "#3cb44b",
@@ -65,7 +73,7 @@ export const getCategoryColor = (sample, colorKey, categoryColors) => {
   if (colorKey === "type") {
     const base = categoryColors[sample.type] || "#ffffff";
     const alpha = Math.min(1, Math.max(TYPE_ALPHA_MIN, sample.probability - 0.2));
-    if (alpha >= 0.999) return base;
+    if (alpha >= 0.999 || sample.type === "Mixed") return base;
     return toRgba(base, alpha);
   }
 
