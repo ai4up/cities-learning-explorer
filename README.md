@@ -8,7 +8,6 @@ Single-page app built with Vite + React (React 19). Landing map uses MapLibre GL
 
 ### Run locally
 ```bash
-cd cities-learning-explorer
 npm install          # Node 20+ recommended
 npm run dev          # start Vite dev server
 ```
