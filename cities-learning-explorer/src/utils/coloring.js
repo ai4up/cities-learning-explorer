@@ -64,7 +64,7 @@ export const toRgba = (hex, alpha) => {
 export const getCategoryColor = (sample, colorKey, categoryColors) => {
   if (colorKey === "type") {
     const base = categoryColors[sample.type] || "#ffffff";
-    const alpha = Math.min(1, Math.max(TYPE_ALPHA_MIN, sample?.probability ?? 1));
+    const alpha = Math.min(1, Math.max(TYPE_ALPHA_MIN, sample.probability - 0.2));
     if (alpha >= 0.999) return base;
     return toRgba(base, alpha);
   }
