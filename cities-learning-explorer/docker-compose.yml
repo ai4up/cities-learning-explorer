@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  city-learning-explorer:
+    build: .
+    expose:
+      - "80"
+    container_name: cities-explorer
+    networks:
+      - proxy
+    labels:
+      # Service definition
+      - "traefik.enable=true"
+      - "traefik.http.routers.cities-explorer-http.service=cities-explorer"
+      - "traefik.http.routers.cities-explorer-https.service=cities-explorer"
+      - "traefik.http.services.cities-explorer.loadbalancer.server.port=80"
+
+      # Routers: HTTP to HTTPS redirect
+      - "traefik.http.routers.cities-explorer-http.rule=Host(`cities-explorer.eubucco.com`,`www.cities-explorer.eubucco.com`) && PathPrefix(`/`)"
+      - "traefik.http.routers.cities-explorer-http.entrypoints=http"
+      - "traefik.http.routers.cities-explorer-http.middlewares=redirect-to-https"
+
+      # Middleware: redirect HTTP to HTTPS
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+
+      # Routers: HTTPS
+      - "traefik.http.routers.cities-explorer-https.rule=Host(`cities-explorer.eubucco.com`,`www.cities-explorer.eubucco.com`) && PathPrefix(`/`)"
+      - "traefik.http.routers.cities-explorer-https.entrypoints=https"
+      - "traefik.http.routers.cities-explorer-https.tls=true"
+      - "traefik.http.routers.cities-explorer-https.tls.certresolver=http"
+    restart: always
+
+networks:
+  proxy:
+    external: true
