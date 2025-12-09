@@ -31,7 +31,7 @@ const MapPlot = ({ samples, colors, sizes, onSelectSample, setSearchValue, viewM
     const lons = visible.map(v =>
       v.s.lon !== undefined ? v.s.lon : v.s.longitude ?? null
     );
-    const markerSizes = visible.map(v => sizes[v.i] * 1.4);
+    const markerSizes = visible.map(v => sizes[v.i]);
     const markerColors = visible.map(v => colors[v.i]);
     const labels = visible.map(
       v => `${v.s.name}${v.s.country ? ", " + v.s.country : ""}`
