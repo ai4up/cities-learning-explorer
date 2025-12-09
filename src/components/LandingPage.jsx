@@ -8,35 +8,33 @@ const TYPE_META = {
   "Type 1": {
     title: "Type 1 – Cities with major development needs",
     subtitle:
-      "Small, low-income cities with limited infrastructure, low emissions, and high basic service needs.",
+      "Small, low-income cities with limited infrastructure, low emissions, and rising exposure to climate extremes.",
     bullets: [
       "Relatively small populations and low GDP per capita.",
-      "Lowest mean GHG emissions, lowest HDI, and lowest levels of critical infrastructure among all types.",
+      "Lowest CO₂ emissions, lowest human development index, and lowest levels of critical infrastructure among all types.",
       "Often located in tropical regions with high cooling needs.",
-      "Most cities are in Asia (including South and Southeast Asia), followed by Africa.",
     ],
   },
 
   "Type 2": {
-    title: "Type 2 – Rapidly expanding developing-country cities",
+    title: "Type 2 – Rapidly expanding cities with high urban planning potential",
     subtitle:
-      "Fast-growing cities with modest economic development, sprawled expansion, and rising exposure to climate extremes.",
+      "Fast-growing cities with moderate population density, incomes, and emissions.",
     bullets: [
       "Characterised by rapid urban expansion and significant GDP growth.",
       "Relatively low population density and sprawled development patterns.",
-      "Low levels of critical infrastructure and frequent cooling needs, mostly in subtropical climates.",
-      "Primarily found in developing countries.",
+      "Low levels of critical infrastructure.",
     ],
   },
 
   "Type 3": {
-    title: "Type 3 – Wealthier, slower-growing, high-emitting cities",
+    title: "Type 3 – Wealthier, slower-growing, high-emitting cities with large mitigation responsibilities",
     subtitle:
-      "Cities with higher incomes, higher emissions, strong infrastructure, and more balanced climate solution portfolios.",
+      "Cities with higher incomes, higher emissions, strong infrastructure, and lower growth rates.",
     bullets: [
-      "Wealthier cities with low GDP growth, low density, and limited spatial expansion.",
+      "Wealthier cities with low GDP growth, low population density, and limited population growth.",
       "Relatively high CO₂ emissions, higher critical infrastructure levels, and higher gender equality.",
-      "Largely located in the Global North: Europe, China, Russia, North America, and parts of South and Central America, with few cases in Africa and Asia.",
+      "Mostly located in temperate and cold regions with lower cooling and higher heating needs.",
     ],
   },
 
@@ -46,8 +44,7 @@ const TYPE_META = {
       "High-density cities with rapid growth, extensive infrastructure, and very high CO₂ emissions.",
     bullets: [
       "Mostly large and megacities with high population density and high population growth.",
-      "Relatively high levels of critical infrastructure and very high mean CO₂ emissions.",
-      "Distributed across regions with diverse development levels; developing-country megacities have high cooling needs and large informal sectors.",
+      "Relatively high levels of critical infrastructure and very high CO₂ emissions.",
       "Developed-country megacities face combined mitigation and adaptation pressures.",
     ],
   },
