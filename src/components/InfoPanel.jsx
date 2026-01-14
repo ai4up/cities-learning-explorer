@@ -230,6 +230,9 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
             <p>
               The bars show the number of case studies mentioning each domain for this city.
             </p>
+            <p>
+              Note that the total number of studies per city may differ from the number of solutions, as some studies do not cover specific solutions, while others address multiple domains.
+            </p>
 
             <div style={{ fontSize: "0.75em" }}>
               <a href="https://doi.org/10.1038/s44284-025-00260-8" target="_blank" rel="noopener noreferrer">[1] Montfort, S., Callaghan, M., Creutzig, F. et al. Systematic global stocktake of over 50,000 urban climate change studies. <em>Nat Cities 2, 613–625 (2025)</em>.</a>
