@@ -115,7 +115,7 @@ const LandingPage = () => {
               Explore the typology
             </a>
             <a
-              href="https://doi.org/10.48550/arXiv.XXXX.XXXXX"
+              href="https://doi.org/10.21203/rs.3.rs-8363797/v1"
               target="_blank"
               rel="noopener noreferrer"
               className="landing-btn-secondary"
