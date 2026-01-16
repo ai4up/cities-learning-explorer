@@ -47,7 +47,7 @@ const Explorer = () => {
   const [selectedSample, setSelectedSample] = useState(null);
   const [searchValue, setSearchValue] = useState("");
   const [populationThreshold, setPopulationThreshold] = useState({
-    min: viewMode === "map" ? 250_000 : 1_000_000,
+    min: viewMode === "map" ? 500_000 : 1_000_000,
     max: 50_000_000
     });
   const [studyThreshold, setStudyThreshold] = useState({
@@ -198,7 +198,7 @@ const Explorer = () => {
   };
 
   const handleResetFilters = () => {
-    setPopulationThreshold(viewMode === "map" ? { min: 250_000, max: 50_000_000 } : { min: 1_000_000, max: 50_000_000 });
+    setPopulationThreshold(viewMode === "map" ? { min: 500_000, max: 50_000_000 } : { min: 1_000_000, max: 50_000_000 });
     setStudyThreshold(viewMode === "map" ? { min: 0, max: 2000 } : { min: 5, max: 2000 });
     setSelectedRegions(new Set(regions));
     setSelectedTypes(new Set(types));
