@@ -49,11 +49,11 @@ const Explorer = () => {
   const [populationThreshold, setPopulationThreshold] = useState({
     min: viewMode === "map" ? 500_000 : 1_000_000,
     max: 50_000_000
-    });
+  });
   const [studyThreshold, setStudyThreshold] = useState({
     min: viewMode === "map" ? 0 : 5,
     max: 3000
-    });
+  });
   const [selectedRegions, setSelectedRegions] = useState(new Set());
   const [selectedTypes, setSelectedTypes] = useState(new Set());
   const [selectedDims, setSelectedDims] = useState(["0", "1", "2"]);
@@ -70,9 +70,6 @@ const Explorer = () => {
       .then((res) => res.json())
       .then((data) => {
         setSamples(data);
-        console.log("Example city:", data[0]);
-
-        // Pull initial state (city + viewMode) from URL
         const { selectedCity, viewMode: urlView } = loadInitialURLState(data);
 
         if (selectedCity) setSelectedSample(selectedCity);
@@ -114,7 +111,7 @@ const Explorer = () => {
       map[cat] = palette[idx % palette.length];
     });
     return map;
-  }, [categories]);
+  }, [categories, colorKey]);
 
   // ------------------------------------------------------
   // Compute per-city rendering colors and sizes
@@ -206,40 +203,25 @@ const Explorer = () => {
     setPendingMetric(null);
     setSelectedSample(null);
     setSearchValue("");
-
-    // Clear city from URL
     updateURLParams({ city: null });
   };
 
   // ------------------------------------------------------
-  // Sync viewMode -> URL
+  // Sync viewMode & selectedSample -> URL
   // ------------------------------------------------------
   useEffect(() => {
     if (!initialURLProcessed) return;
-
     updateURLParams({
       view: viewMode,
       city: selectedSample ? selectedSample.id : null,
     });
-  }, [viewMode, initialURLProcessed]);
-
-  // ------------------------------------------------------
-  // Sync selectedSample -> URL
-  // ------------------------------------------------------
-  useEffect(() => {
-    if (!initialURLProcessed) return;
-
-    updateURLParams({
-      city: selectedSample ? selectedSample.id : null,
-    });
-  }, [selectedSample, initialURLProcessed]);
+  }, [viewMode, selectedSample, initialURLProcessed]);
 
   // ------------------------------------------------------
   // Render UI
   // ------------------------------------------------------
   return (
     <div className={`explorer-root mode-${viewMode}`}>
-      {/* Plot area */}
       <div className="plots-wrapper">
         {(viewMode === "embedding" || viewMode === "both") && (
           <EmbeddingPlot
@@ -266,7 +248,6 @@ const Explorer = () => {
         )}
       </div>
 
-      {/* Controls */}
       <Controls
         viewMode={viewMode}
         setViewMode={setViewMode}
@@ -300,7 +281,6 @@ const Explorer = () => {
         setPendingMetric={setPendingMetric}
       />
 
-      {/* Info panel */}
       {selectedSample && (
         <InfoPanel
           selectedSample={selectedSample}
