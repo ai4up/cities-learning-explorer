@@ -208,6 +208,7 @@ const Explorer = () => {
     setResetToken((t) => t + 1);
     setSelectedSample(null);
     setSearchValue("");
+    updateURLParams({ city: null });
   };
 
   const handleResetFilters = () => {
@@ -260,6 +261,7 @@ const Explorer = () => {
             onSelectSample={setSelectedSample}
             setSearchValue={setSearchValue}
             viewMode={viewMode}
+            resetToken={resetToken}
           />
         )}
       </div>

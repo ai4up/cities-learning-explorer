@@ -1,13 +1,26 @@
 import Plotly from 'plotly.js-dist';
 import React, { useEffect, useRef } from "react";
 
-const MapPlot = ({ samples, colors, sizes, onSelectSample, selectedSample, setSearchValue, viewMode }) => {
+const MapPlot = ({ samples, colors, sizes, onSelectSample, selectedSample, setSearchValue, viewMode, resetToken }) => {
   const plotRef = useRef(null);
   const initializedRef = useRef(false);
   const isInternalClick = useRef(false);
   const lastScaleRef = useRef(1);
   const lastCenterRef = useRef({ lat: 0, lon: 0 });
   const MAX_ZOOM_MULTIPLIER = 3;
+
+  useEffect(() => {
+    if (!plotRef.current || resetToken === 0) return;
+
+    lastScaleRef.current = 1;
+    lastCenterRef.current = { lat: 0, lon: 0 };
+
+    Plotly.relayout(plotRef.current, {
+      "geo.projection.scale": 1,
+      "geo.center": { lat: 0, lon: 0 },
+      "geo.showcountries": false,
+    });
+  }, [resetToken]);
 
   useEffect(() => {
     if (!plotRef.current || !samples.length) return;
@@ -83,7 +96,7 @@ const MapPlot = ({ samples, colors, sizes, onSelectSample, selectedSample, setSe
       plot_bgcolor: "#0d1117",
       margin: { l: 0, r: 0, b: 0, t: 0 },
       showlegend: false,
-      uirevision: "map_state",
+      uirevision: resetToken,
       autosize: true,
     };
 
