@@ -1,9 +1,13 @@
 import Plotly from 'plotly.js-dist';
 import React, { useEffect, useRef } from "react";
 
-const MapPlot = ({ samples, colors, sizes, onSelectSample, setSearchValue, viewMode }) => {
+const MapPlot = ({ samples, colors, sizes, onSelectSample, selectedSample, setSearchValue, viewMode }) => {
   const plotRef = useRef(null);
   const initializedRef = useRef(false);
+  const isInternalClick = useRef(false);
+  const lastScaleRef = useRef(1);
+  const lastCenterRef = useRef({ lat: 0, lon: 0 });
+  const MAX_ZOOM_MULTIPLIER = 3;
 
   const computeLayoutSize = () => {
     if (!plotRef.current) return null;
@@ -20,39 +24,48 @@ const MapPlot = ({ samples, colors, sizes, onSelectSample, setSearchValue, viewM
   useEffect(() => {
     if (!plotRef.current || !samples.length) return;
 
-    let currentShowCountries = false;
-    let currentScale = 1;
+    // 1. Determine current state from layout or refs
+    let currentShowCountries = plotRef.current?.layout?.geo?.showcountries || false;
+    let currentScale = lastScaleRef.current;
+    let currentCenter = lastCenterRef.current;
 
-    if (plotRef.current && plotRef.current.layout && plotRef.current.layout.geo) {
-      currentShowCountries = plotRef.current.layout.geo.showcountries || false;
-      currentScale = plotRef.current.layout.geo.projection?.scale || 1;
+    // 2. Handle External Selection (Auto-zoom to city)
+    if (selectedSample && !isInternalClick.current) {
+      const lat = selectedSample.lat ?? selectedSample.latitude;
+      const lon = selectedSample.lon ?? selectedSample.longitude;
+
+      if (lat !== undefined && lon !== undefined) {
+        currentScale = 3;
+        currentCenter = { lat, lon };
+        currentShowCountries = true;
+        lastScaleRef.current = 3;
+        lastCenterRef.current = currentCenter;
+      }
     }
 
+    isInternalClick.current = false;
+
+    // 3. Filter visible points based on colors and sizes
     const visible = samples
       .map((s, i) => ({ s, i }))
       .filter(({ s, i }) => sizes[i] > 0 && colors[i] !== "rgba(0,0,0,0)");
 
-    const lats = visible.map(v =>
-      v.s.lat !== undefined ? v.s.lat : v.s.latitude ?? null
+    // 4. Uniform Scaling Calculation with Max Cap
+    const zoomMultiplier = Math.min(
+      MAX_ZOOM_MULTIPLIER,
+      Math.max(1, Math.sqrt(currentScale))
     );
-    const lons = visible.map(v =>
-      v.s.lon !== undefined ? v.s.lon : v.s.longitude ?? null
-    );
-
-    const zoomMultiplier = Math.max(1, Math.sqrt(currentScale));
     const markerSizes = visible.map(v => sizes[v.i] * zoomMultiplier);
-    const markerColors = visible.map(v => colors[v.i]);
-    const labels = visible.map(v => `${v.s.name}${v.s.country ? ", " + v.s.country : ""}`);
 
     const trace = {
       type: "scattergeo",
       mode: "markers",
-      lat: lats,
-      lon: lons,
-      text: labels,
+      lat: visible.map(v => v.s.lat ?? v.s.latitude ?? null),
+      lon: visible.map(v => v.s.lon ?? v.s.longitude ?? null),
+      text: visible.map(v => `${v.s.name}${v.s.country ? ", " + v.s.country : ""}`),
       hovertemplate: "%{text}<extra></extra>",
       marker: {
-        color: markerColors,
+        color: visible.map(v => colors[v.i]),
         size: markerSizes,
         line: { width: 0 },
         opacity: 1.0,
@@ -65,9 +78,9 @@ const MapPlot = ({ samples, colors, sizes, onSelectSample, setSearchValue, viewM
       geo: {
         projection: {
           type: "natural earth",
-          scale: plotRef.current?.layout?.geo?.projection?.scale
+          scale: currentScale
         },
-        center: plotRef.current?.layout?.geo?.center,
+        center: currentCenter,
         showframe: false,
         showland: true,
         landcolor: "#1b1f23",
@@ -84,7 +97,7 @@ const MapPlot = ({ samples, colors, sizes, onSelectSample, setSearchValue, viewM
       plot_bgcolor: "#0d1117",
       margin: { l: 0, r: 0, b: 0, t: 0 },
       showlegend: false,
-      uirevision: "map-view",
+      uirevision: "map_state",
       autosize: true,
       width: size?.width,
       height: size?.height,
@@ -96,6 +109,7 @@ const MapPlot = ({ samples, colors, sizes, onSelectSample, setSearchValue, viewM
       if (ev?.points?.length > 0) {
         const idx = ev.points[0].pointNumber;
         const selected = samples[visible[idx].i];
+        isInternalClick.current = true;
         setSearchValue("");
         if (selected) {
           onSelectSample(prev => prev?.id === selected.id ? null : selected);
@@ -104,20 +118,25 @@ const MapPlot = ({ samples, colors, sizes, onSelectSample, setSearchValue, viewM
     };
 
     const handleRelayout = (eventData) => {
-      let lonSpan = null;
-      if (eventData["geo.lonaxis.range"]) {
-        lonSpan = Math.abs(eventData["geo.lonaxis.range"][1] - eventData["geo.lonaxis.range"][0]);
-      } else if (eventData["geo.projection.scale"]) {
-        lonSpan = 360 / eventData["geo.projection.scale"];
+      let scale = eventData["geo.projection.scale"];
+      if (!scale && eventData["geo.lonaxis.range"]) {
+        scale = 360 / Math.abs(eventData["geo.lonaxis.range"][1] - eventData["geo.lonaxis.range"][0]);
       }
 
-      if (lonSpan !== null) {
-        const shouldShowCountries = lonSpan < 180;
+      if (eventData["geo.center"]) {
+        lastCenterRef.current = eventData["geo.center"];
+      }
+
+      if (scale) {
+        lastScaleRef.current = scale;
+
+        const shouldShowCountries = scale > 2;
         if (shouldShowCountries !== plotRef.current.layout.geo.showcountries) {
           Plotly.relayout(plotRef.current, { "geo.showcountries": shouldShowCountries });
         }
-        const zoomMultiplier = Math.max(1, Math.sqrt(180 / lonSpan));
-        const newSizes = visible.map(v => sizes[v.i] * zoomMultiplier);
+
+        const zoomMult = Math.min(MAX_ZOOM_MULTIPLIER, Math.max(1, Math.sqrt(scale)));
+        const newSizes = visible.map(v => sizes[v.i] * zoomMult);
         Plotly.restyle(plotRef.current, { "marker.size": [newSizes] }, [0]);
       }
     };
@@ -140,7 +159,7 @@ const MapPlot = ({ samples, colors, sizes, onSelectSample, setSearchValue, viewM
         plotRef.current.removeAllListeners("plotly_relayout");
       }
     };
-  }, [samples, colors, sizes, onSelectSample]);
+  }, [samples, colors, sizes, onSelectSample, selectedSample, viewMode]);
 
   return <div className="plot-container" ref={plotRef} />;
 };

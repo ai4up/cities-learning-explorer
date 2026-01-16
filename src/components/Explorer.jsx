@@ -258,6 +258,7 @@ const Explorer = () => {
             samples={samples}
             colors={colors}
             sizes={sizes}
+            selectedSample={selectedSample}
             onSelectSample={setSelectedSample}
             setSearchValue={setSearchValue}
             viewMode={viewMode}
