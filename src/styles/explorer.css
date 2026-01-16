@@ -372,6 +372,23 @@
   opacity: 1;
 }
 
+.explorer-root .plots-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.explorer-root .plot-container {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
+.js-plotly-plot, .plot-container .user-select-none {
+  height: 100% !important;
+  width: 100% !important;
+}
+
 @media (max-width: 768px) {
   .explorer-root .top-search-bar .search-inner {
     width: 90%;

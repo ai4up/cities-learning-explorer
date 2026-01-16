@@ -9,18 +9,6 @@ const MapPlot = ({ samples, colors, sizes, onSelectSample, selectedSample, setSe
   const lastCenterRef = useRef({ lat: 0, lon: 0 });
   const MAX_ZOOM_MULTIPLIER = 3;
 
-  const computeLayoutSize = () => {
-    if (!plotRef.current) return null;
-    const rect = plotRef.current.getBoundingClientRect();
-    const width = rect.width || plotRef.current.offsetWidth || 0;
-    if (!width) return null;
-    const desiredHeight =
-      viewMode === "both"
-        ? Math.max(width / 2, 360)
-        : Math.max(rect.height, width / 2);
-    return { width, height: desiredHeight };
-  };
-
   useEffect(() => {
     if (!plotRef.current || !samples.length) return;
 
@@ -72,8 +60,6 @@ const MapPlot = ({ samples, colors, sizes, onSelectSample, selectedSample, setSe
       },
     };
 
-    const size = computeLayoutSize();
-
     const layout = {
       geo: {
         projection: {
@@ -99,8 +85,6 @@ const MapPlot = ({ samples, colors, sizes, onSelectSample, selectedSample, setSe
       showlegend: false,
       uirevision: "map_state",
       autosize: true,
-      width: size?.width,
-      height: size?.height,
     };
 
     const config = { displayModeBar: false, responsive: true };
