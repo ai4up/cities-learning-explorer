@@ -81,6 +81,22 @@ const Explorer = () => {
   }, []);
 
   // ------------------------------------------------------
+  // Keyboard Listeners (Escape to deselect)
+  // ------------------------------------------------------
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setSelectedSample(null);
+        setSearchValue("");
+        updateURLParams({ city: null });
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // ------------------------------------------------------
   // Derived lists (regions/types/categories)
   // ------------------------------------------------------
   const regions = useMemo(
