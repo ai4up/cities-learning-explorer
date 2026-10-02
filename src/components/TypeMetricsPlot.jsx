@@ -46,7 +46,7 @@ const TypeMetricsPlot = ({ cities, activeType }) => {
 
       const allVals = cities
         .map((c) => ({
-          val: Number(c[key]),
+          val: Number(c.characteristics?.[key]),
           name: c.name,
           country: c.country,
         }))
@@ -55,7 +55,7 @@ const TypeMetricsPlot = ({ cities, activeType }) => {
       const filtered = cities
         .filter((c) => c.type === activeType)
         .map((c) => ({
-          val: Number(c[key]),
+          val: Number(c.characteristics?.[key]),
           name: c.name,
           country: c.country,
         }))

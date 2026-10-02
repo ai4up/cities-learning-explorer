@@ -116,7 +116,14 @@ const Explorer = () => {
   }, [regions, types]);
 
   const categories = useMemo(
-    () => Array.from(new Set(samples.map((s) => s[colorKey]))).sort(),
+    () =>
+      Array.from(
+        new Set(
+          samples
+            .map((s) => s[colorKey])
+            .filter((value) => value !== null && value !== undefined)
+        )
+      ).sort(),
     [samples, colorKey]
   );
 
@@ -186,7 +193,10 @@ const Explorer = () => {
     if (!val) return [];
     return samples
       .filter((s) => `${s.name} ${s.country}`.toLowerCase().includes(val))
-      .sort((a, b) => (b.population || 0) - (a.population || 0))
+      .sort(
+        (a, b) =>
+          (b.characteristics?.population || 0) - (a.characteristics?.population || 0)
+      )
       .slice(0, 10);
   }, [searchValue, samples]);
 

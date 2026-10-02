@@ -39,8 +39,8 @@ const TypeMap = ({ cities, activeType, onWebglError }) => {
       properties: {
         name: c.name,
         country: c.country,
-        population: c.population,
-        size: scalePopulation ? scaledSize(c.population) : 2,
+        population: c.characteristics?.population,
+        size: scalePopulation ? scaledSize(c.characteristics?.population) : 2,
         color: typeColors[c.type] || "#888888",
       },
     })),

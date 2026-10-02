@@ -1,17 +1,25 @@
 import React from "react";
-import { formatNumber, metricList, typeDescriptions } from "../utils/metrics";
+import {
+  formatNumber,
+  getEuropeanSubtype,
+  groupEuropeanCharacteristics,
+  metricList,
+  typeEuropeSubtypeDescriptions,
+  typeDescriptions,
+} from "../utils/metrics";
 import { domainPalette, typeColorsExplore, percentileColor } from "../utils/coloring";
 import MethodologySection from "./MethodologySection";
 
 const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue }) => {
-  if (!selectedSample) return null;
-
   const [openSections, setOpenSections] = React.useState({
     type: false,
     domains: false,
     similar: false,
     metrics: false,
+    euMetrics: false,
   });
+
+  if (!selectedSample) return null;
 
   const similarWithStudies =
     selectedSample.neighbors
@@ -25,6 +33,16 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
   const toggle = (key) => {
     setOpenSections(s => ({ ...s, [key]: !s[key] }));
   };
+
+  const euCharacteristicGroups = groupEuropeanCharacteristics(
+    selectedSample.eu_characteristics,
+    selectedSample.eu_percentiles,
+  );
+  const globalTypeDescription = typeDescriptions[selectedSample.type];
+  const europeanSubtype = getEuropeanSubtype(selectedSample);
+  const europeanSubtypeDescription = europeanSubtype
+    ? typeEuropeSubtypeDescriptions[europeanSubtype]
+    : null;
 
   return (
     <div className="info-panel">
@@ -43,11 +61,26 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
           <strong>Type:</strong>{" "}
           <span className="type-tooltip">
             {selectedSample.type}
-            <span className="type-tooltip-content">
-              {typeDescriptions[selectedSample.type]}
-            </span>
+            {globalTypeDescription && (
+              <span className="type-tooltip-content">
+                {globalTypeDescription}
+              </span>
+            )}
           </span>
         </div>
+        {europeanSubtype && (
+          <div style={{ position: "relative" }}>
+            <strong>Subtype (Europe only):</strong>{" "}
+            <span className="type-tooltip type-tooltip-right">
+              {europeanSubtype}
+              {europeanSubtypeDescription && (
+                <span className="type-tooltip-content">
+                  {europeanSubtypeDescription}
+                </span>
+              )}
+            </span>
+          </div>
+        )}
         <div>
           <strong>Region:</strong> {selectedSample.region}
         </div>
@@ -152,8 +185,8 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
           }}
         >
           {metricList.map((item) => {
-            const val = selectedSample[item.key];
-            const pct = selectedSample[item.key + "_pct"];
+            const val = selectedSample.characteristics?.[item.key];
+            const pct = selectedSample.percentiles?.[item.key];
             let displayVal;
             if (val !== undefined && val !== null) {
               displayVal = formatNumber(val, item.decimals);
@@ -207,6 +240,72 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
             );
           })}
         </div>
+
+        {euCharacteristicGroups.length > 0 && (
+          <div style={{ marginTop: "12px" }}>
+            <strong>Additional indicators (Europe only)</strong>
+            <MethodologySection
+              isOpen={openSections.euMetrics}
+              onToggle={() => toggle("euMetrics")}
+            >
+              <p>
+                Metrics are sourced from [1]. Variable definitions and calculation details are documented in the <a href="https://doi.org/10.1088/1748-9326/ae7e97/data2" target="_blank" rel="noopener noreferrer"> Supplementary data</a>.
+              </p>
+              <div style={{ fontSize: "0.75em" }}>
+                [1] <a href="https://doi.org/10.1088/1748-9326/ae7e97" target="_blank" rel="noopener noreferrer">Kopp, Mira, et al. "Climate mitigation and adaptation strategies tailored for different types of European cities: A typology and associated systematic review." <em>Environmental Research Letters</em> 21.14 (2026)</a>
+              </div>
+            </MethodologySection>
+            <div style={{ fontSize: "0.7em", marginTop: "8px" }}>
+            {euCharacteristicGroups.map(({ group, items }) => (
+              <div key={group} style={{ marginBottom: "8px" }}>
+                <div style={{ color: "#8b949e", marginBottom: "2px" }}>
+                  {group}
+                </div>
+                {items.map(({ key, label, unit, displayValue, pct }) => (
+                  <div
+                    key={key}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      marginBottom: "2px",
+                    }}
+                  >
+                    <span>
+                      {label}
+                      {unit && <span style={{ color: "#8b949e" }}> [{unit}]</span>}
+                    </span>
+                    <div style={{ textAlign: "right" }}>
+                      <span style={{ fontWeight: "bold" }}>
+                        {displayValue}
+                      </span>
+                      {pct != null && (
+                        <span
+                          title={`${pct}th percentile among all cities`}
+                          style={{
+                            marginLeft: "6px",
+                            padding: "2px 6px",
+                            borderRadius: "4px",
+                            backgroundColor: percentileColor(pct),
+                            color: "#0d1117",
+                            fontSize: "0.7em",
+                            fontWeight: "bold",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            minWidth: "15px",
+                          }}
+                        >
+                          {Math.round(pct)}%
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Domain solution counts (horizontal bar chart) */}
@@ -235,7 +334,7 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
             </p>
 
             <div style={{ fontSize: "0.75em" }}>
-              <a href="https://doi.org/10.1038/s44284-025-00260-8" target="_blank" rel="noopener noreferrer">[1] Montfort, S., Callaghan, M., Creutzig, F. et al. Systematic global stocktake of over 50,000 urban climate change studies. <em>Nat Cities 2, 613–625 (2025)</em>.</a>
+              [1] <a href="https://doi.org/10.1038/s44284-025-00260-8" target="_blank" rel="noopener noreferrer">Montfort, Simon, et al. "Systematic global stocktake of over 50,000 urban climate change studies." <em>Nature Cities</em> 2.7 (2025).</a>
             </div>
 
           </MethodologySection>
@@ -247,7 +346,7 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
           ) : (
             <div style={{ marginTop: "10px" }}>
               {Object.entries(selectedSample.solution_domain_counts)
-                .filter(([label, val]) => val > 0)
+                .filter(([, val]) => val > 0)
                 .map(([label, val], idx) => {
                   const max = Math.max(
                     ...Object.values(selectedSample.solution_domain_counts)

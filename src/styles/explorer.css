@@ -74,7 +74,7 @@
   position: absolute;
   top: 15px;
   right: 15px;
-  width: 320px;
+  width: 348px;
   background: rgba(0, 0, 0, 0.75);
   padding: 12px;
   border-radius: 4px;
@@ -212,6 +212,15 @@
 .explorer-root .type-tooltip:hover .type-tooltip-content {
   visibility: visible;
   opacity: 1;
+}
+
+.explorer-root .type-tooltip-right .type-tooltip-content {
+  transform: translate(calc(-100% + 20px), 15px);
+}
+
+.explorer-root .type-tooltip-right .type-tooltip-content::after {
+  left: auto;
+  right: 12px;
 }
 
 /* Methodology block */

@@ -1,7 +1,7 @@
 import React from "react";
 import { Range } from "react-range";
 import { SqrtRange } from "./SqrtRangeSlider";
-import { metricList, typeDescriptions } from "../utils/metrics";
+import { metricList, typeDescriptions, typeEuropeSubtypeDescriptions } from "../utils/metrics";
 import { percentileColor } from "../utils/coloring";
 
 const StyledTrack = ({ props, children, minPct, maxPct }) => {
@@ -153,6 +153,7 @@ const Controls = ({
       >
         <optgroup label="Color by categories">
           <option value="type">Type</option>
+          <option value="subtype_europe">Subtype (Europe only)</option>
           <option value="region">Region</option>
         </optgroup>
         <optgroup label="Color by percentiles">
@@ -476,7 +477,7 @@ const Controls = ({
       </div>
     )}
     {/* Legend */}
-    {(colorKey === "type" || colorKey === "region") && (
+    {(colorKey === "type" || colorKey === "subtype_europe" || colorKey === "region") && (
       <div className="legend">
         {categories.map((cat) => (
           <div className="legend-item" key={cat}>
@@ -484,11 +485,14 @@ const Controls = ({
               className="legend-color"
               style={{ backgroundColor: categoryColors[cat] }}
             ></div>
-            {typeDescriptions[cat] ? (
+            {(colorKey === "type" && typeDescriptions[cat]) ||
+            (colorKey === "subtype_europe" && typeEuropeSubtypeDescriptions[cat]) ? (
               <span className="type-tooltip" style={{ fontSize: "0.8em" }}>
                 {cat}
                 <span className="type-tooltip-content">
-                  {typeDescriptions[cat]}
+                  {colorKey === "type"
+                    ? typeDescriptions[cat]
+                    : typeEuropeSubtypeDescriptions[cat]}
                 </span>
               </span>
             ) : (

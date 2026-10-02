@@ -69,7 +69,27 @@ export const toRgba = (hex, alpha) => {
   return `rgba(${r},${g},${b},${alpha})`;
 };
 
+const getSubtypeProbability = (sample) => {
+  const probs = sample?.subtype_europe_probabilities;
+  if (Array.isArray(probs)) {
+    const numeric = probs.filter((p) => typeof p === "number" && !Number.isNaN(p));
+    return numeric.length ? Math.max(...numeric) : 1;
+  }
+  if (probs && typeof probs === "object") {
+    const numeric = Object.values(probs).filter((p) => typeof p === "number" && !Number.isNaN(p));
+    return numeric.length ? Math.max(...numeric) : 1;
+  }
+  return 1;
+};
+
+const getMetricValue = (sample, key) => sample?.characteristics?.[key];
+const getPercentileValue = (sample, key) => {
+  const baseKey = key.endsWith("_pct") ? key.slice(0, -4) : key;
+  return sample?.percentiles?.[baseKey];
+};
+
 export const getCategoryColor = (sample, colorKey, categoryColors) => {
+
   if (colorKey === "type") {
     const base = categoryColors[sample.type] || "#ffffff";
     const alpha = Math.min(1, Math.max(TYPE_ALPHA_MIN, sample.probability - 0.2));
@@ -81,8 +101,16 @@ export const getCategoryColor = (sample, colorKey, categoryColors) => {
     return categoryColors[sample.region] || "#ffffff";
   }
 
+  if (colorKey === "subtype_europe") {
+    const base = categoryColors[sample.subtype_europe] || "#8b949e";
+    const subtypeProb = getSubtypeProbability(sample);
+    const alpha = Math.min(1, Math.max(TYPE_ALPHA_MIN, subtypeProb - 0.2));
+    if (alpha >= 0.999) return base;
+    return toRgba(base, alpha);
+  }
+
   if (colorKey.endsWith("_pct")) {
-    const p = sample[colorKey];
+    const p = getPercentileValue(sample, colorKey);
     return percentileColor(p);
   }
 
@@ -104,15 +132,16 @@ export const computeColors = (
   }
 ) => {
   return samples.map((s) => {
+    const population = getMetricValue(s, "population");
     const inFilter =
-      s.population >= populationThreshold.min &&
-      s.population <= populationThreshold.max &&
+      population >= populationThreshold.min &&
+      population <= populationThreshold.max &&
       s.n_studies >= studyThreshold.min &&
       s.n_studies <= studyThreshold.max &&
       selectedRegions.has(s.region) &&
       selectedTypes.has(s.type) &&
       metricFilters.every(f => {
-        const v = s[f.key];
+        const v = getPercentileValue(s, f.key);
         return typeof v === "number" && v >= f.min && v <= f.max;
       });
 
@@ -125,10 +154,16 @@ export const computeColors = (
       if (selectedSample.neighbors && selectedSample.neighbors.includes(s.id)) {
         return categoryColor;
       }
-      return colorKey === "type"
+      return colorKey === "type" || colorKey === "subtype_europe"
         ? toRgba(
             "#555555",
-            Math.min(1, Math.max(TYPE_ALPHA_MIN, s?.probability ?? 1))
+            Math.min(
+              1,
+              Math.max(
+                TYPE_ALPHA_MIN,
+                (colorKey === "type" ? s?.probability : getSubtypeProbability(s)) ?? 1
+              )
+            )
           )
         : "#555555";
     }
@@ -148,15 +183,16 @@ export const computeSizes = (
   }
 ) => {
   return samples.map((s) => {
+    const population = getMetricValue(s, "population");
     const inFilter =
-      s.population >= populationThreshold.min &&
-      s.population <= populationThreshold.max &&
+      population >= populationThreshold.min &&
+      population <= populationThreshold.max &&
       s.n_studies >= studyThreshold.min &&
       s.n_studies <= studyThreshold.max &&
       selectedRegions.has(s.region) &&
       selectedTypes.has(s.type) &&
       metricFilters.every(f => {
-        const v = s[f.key];
+        const v = getPercentileValue(s, f.key);
         return typeof v === "number" && v >= f.min && v <= f.max;
       });
 

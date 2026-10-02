@@ -60,10 +60,11 @@ const LandingPage = () => {
     fetch("/cities.json")
       .then((res) => res.json())
       .then((data) => {
-        setCities(data || []);
+        const normalized = data || [];
+        setCities(normalized);
 
         // Ensure activeType exists in data
-        const availableTypes = Array.from(new Set(data.map((c) => c.type))).sort();
+        const availableTypes = Array.from(new Set(normalized.map((c) => c.type))).sort();
         if (!availableTypes.includes("Type 1") && availableTypes.length > 0) {
           setActiveType(availableTypes[0]);
         }
