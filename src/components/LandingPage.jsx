@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import TypeMetricsPlot from "./TypeMetricsPlot";
 import TypeMap from "./TypeMap";
 import "../styles/landing.css"; // make sure this path matches your project
@@ -57,7 +58,8 @@ const LandingPage = () => {
 
   // Load cities.json
   useEffect(() => {
-    fetch("/cities.json")
+    const citiesUrl = `${import.meta.env.BASE_URL}cities.json`;
+    fetch(citiesUrl)
       .then((res) => res.json())
       .then((data) => {
         const normalized = data || [];
@@ -112,9 +114,9 @@ const LandingPage = () => {
           </p>
 
           <div className="landing-hero-actions">
-            <a href="/explore" className="landing-btn-primary">
+            <Link to="/explore" className="landing-btn-primary">
               Explore the typology
-            </a>
+            </Link>
             <a
               href="https://doi.org/10.21203/rs.3.rs-8363797/v1"
               target="_blank"
@@ -293,9 +295,9 @@ const LandingPage = () => {
               evidence on climate solutions, and similar cities in detail.
             </p>
           </div>
-          <a href="/explore" className="landing-btn-primary">
+          <Link to="/explore" className="landing-btn-primary">
             Go to Explorer
-          </a>
+          </Link>
         </div>
       </section>
     </div>

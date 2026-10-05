@@ -20,7 +20,8 @@ const updateURLParams = (updates = {}) => {
   });
 
   const qs = params.toString();
-  window.history.replaceState({}, "", qs ? `?${qs}` : "/");
+  const basePath = window.location.pathname;
+  window.history.replaceState({}, "", qs ? `${basePath}?${qs}` : basePath);
 };
 
 const loadInitialURLState = (samples) => {
@@ -66,7 +67,8 @@ const Explorer = () => {
   // Load data + initialize URL-based state
   // ------------------------------------------------------
   useEffect(() => {
-    fetch("/cities.json")
+    const citiesUrl = `${import.meta.env.BASE_URL}cities.json`;
+    fetch(citiesUrl)
       .then((res) => res.json())
       .then((data) => {
         setSamples(data);
