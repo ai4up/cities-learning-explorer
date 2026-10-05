@@ -147,17 +147,25 @@ const TypeMetricsPlot = ({ cities, activeType }) => {
       };
     });
 
-    Plotly.newPlot(plotRef.current, traces, layout, {
+    const plotElement = plotRef.current;
+
+    Plotly.newPlot(plotElement, traces, layout, {
       displayModeBar: false,
       responsive: true,
     });
 
-    const resize = () => Plotly.Plots.resize(plotRef.current);
+    const resize = () => {
+      if (plotElement) {
+        Plotly.Plots.resize(plotElement);
+      }
+    };
     window.addEventListener("resize", resize);
 
     return () => {
       window.removeEventListener("resize", resize);
-      Plotly.purge(plotRef.current);
+      if (plotElement) {
+        Plotly.purge(plotElement);
+      }
     };
   }, [cities, activeType]);
 
