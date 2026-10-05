@@ -5,7 +5,7 @@ import { metricList, typeDescriptions, typeEuropeSubtypeDescriptions } from "../
 import { percentileColor } from "../utils/coloring";
 
 const StyledTrack = ({ props, children, minPct, maxPct }) => {
-  const { key, style, ...rest } = props;
+  const { style, ...rest } = props;
   return (
     <div {...rest} className="slider-track" style={style}>
       <div
@@ -18,7 +18,7 @@ const StyledTrack = ({ props, children, minPct, maxPct }) => {
 };
 
 const StyledThumb = ({ props }) => {
-  const { key, ...rest } = props;
+  const { ...rest } = props;
   return <div {...rest} className="slider-thumb" />;
 };
 
@@ -387,7 +387,7 @@ const Controls = ({
                 </StyledTrack>
               )}
               renderThumb={({ props, index }) => {
-                const { key, ...rest } = props;
+                const { ...rest } = props;
                 return <StyledThumb key={index} props={rest} />;
               }}
             />

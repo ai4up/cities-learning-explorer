@@ -49,7 +49,7 @@ const MapPlot = ({ samples, colors, sizes, onSelectSample, selectedSample, setSe
     // 3. Filter visible points based on colors and sizes
     const visible = samples
       .map((s, i) => ({ s, i }))
-      .filter(({ s, i }) => sizes[i] > 0 && colors[i] !== "rgba(0,0,0,0)");
+      .filter(({ i }) => sizes[i] > 0 && colors[i] !== "rgba(0,0,0,0)");
 
     // 4. Uniform Scaling Calculation with Max Cap
     const zoomMultiplier = Math.min(

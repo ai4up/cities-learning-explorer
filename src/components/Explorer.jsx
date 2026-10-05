@@ -70,6 +70,10 @@ const Explorer = () => {
       .then((res) => res.json())
       .then((data) => {
         setSamples(data);
+        const allRegions = Array.from(new Set(data.map((s) => s.region)));
+        const allTypes = Array.from(new Set(data.map((s) => s.type)));
+        setSelectedRegions(new Set(allRegions));
+        setSelectedTypes(new Set(allTypes));
         const { selectedCity, viewMode: urlView } = loadInitialURLState(data);
 
         if (selectedCity) setSelectedSample(selectedCity);
@@ -108,12 +112,6 @@ const Explorer = () => {
     () => Array.from(new Set(samples.map((s) => s.type))).sort(),
     [samples]
   );
-
-  // Initialize selected filters
-  useEffect(() => {
-    setSelectedRegions(new Set(regions));
-    setSelectedTypes(new Set(types));
-  }, [regions, types]);
 
   const categories = useMemo(
     () =>
@@ -198,17 +196,6 @@ const Explorer = () => {
           (b.characteristics?.population || 0) - (a.characteristics?.population || 0)
       )
       .slice(0, 10);
-  }, [searchValue, samples]);
-
-  // Auto-select exact match
-  useEffect(() => {
-    const exact = samples.find((s) =>
-      s.name.toLowerCase() === searchValue.toLowerCase() ||
-      (`${s.name}, ${s.country}`.toLowerCase() === searchValue.toLowerCase())
-    );
-    if (exact) {
-      setSelectedSample(exact);
-    }
   }, [searchValue, samples]);
 
   // ------------------------------------------------------

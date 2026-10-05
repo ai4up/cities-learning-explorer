@@ -1,15 +1,16 @@
 import React from "react";
 import { Range } from "react-range";
 
-export const SqrtRange = ({
-  minValue,
-  maxValue,
-  onChange,
-  max,
-  step,
-  StyledTrack: TrackComponent = StyledTrack,
-  StyledThumb: ThumbComponent = StyledThumb,
-}) => {
+export const SqrtRange = (props) => {
+  const {
+    minValue,
+    maxValue,
+    onChange,
+    max,
+    step,
+    StyledTrack,
+    StyledThumb,
+  } = props;
   const sqrtMax = Math.sqrt(max);
 
   // Ensure the slider's max is a multiple of `step`
@@ -21,7 +22,7 @@ export const SqrtRange = ({
 
   // Compute sqrt values and snap them to the [0, sliderMax] step grid
   const sqrtValues = React.useMemo(() => {
-    const snapToStep = (v, number) => {
+    const snapToStep = (v) => {
       if (!step) return v;
 
       const snapped = Math.round(v / step) * step;
@@ -48,7 +49,7 @@ export const SqrtRange = ({
         });
       }}
       renderTrack={({ props, children, index }) => {
-        const { key, ...rest } = props;
+        const { ...rest } = props;
 
         const [curMinS, curMaxS] = sqrtValues;
         const minPct =
@@ -57,19 +58,19 @@ export const SqrtRange = ({
           sliderMax > 0 ? (curMaxS / sliderMax) * 100 : 0;
 
         return (
-          <TrackComponent
+          <StyledTrack
             key={index}
             props={rest}
             minPct={minPct}
             maxPct={maxPct}
           >
             {children}
-          </TrackComponent>
+          </StyledTrack>
         );
       }}
       renderThumb={({ props, index }) => {
-        const { key, ...rest } = props;
-        return <ThumbComponent key={index} props={rest} />;
+        const { ...rest } = props;
+        return <StyledThumb key={index} props={rest} />;
       }}
     />
   );
