@@ -33,7 +33,9 @@ npm run preview      # serve the production build locally
 
 ### Dockerized
 - Local: `docker compose -f docker-compose-local.yml up --build -d` then visit `http://localhost:8080`.
-- Production: `docker compose up --build -d` then visit `https://cities-explorer.eubucco.com/`. Compose config contains labels for Traefik routing. Traefik is deployed separately.
+- Production: `docker compose --env-file .env.prod up --build -d` (Traefik is deployed separately).
+
+For full production setup (Traefik + DNS + Plausible CE + maintenance), see [PRODUCTION_DEPLOYMENT.md](./PRODUCTION_DEPLOYMENT.md).
 
 ### Notes
 - Linting: `npm run lint`.

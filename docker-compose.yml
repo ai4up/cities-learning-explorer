@@ -2,7 +2,11 @@ version: "3.8"
 
 services:
   city-learning-explorer:
-    build: .
+    build:
+      context: .
+      args:
+        VITE_PLAUSIBLE_DOMAIN: ${VITE_PLAUSIBLE_DOMAIN:-}
+        VITE_PLAUSIBLE_SCRIPT_SRC: ${VITE_PLAUSIBLE_SCRIPT_SRC:-}
     expose:
       - "80"
     container_name: cities-explorer
@@ -30,6 +34,77 @@ services:
       - "traefik.http.routers.cities-explorer-https.tls.certresolver=http"
     restart: always
 
+  plausible_db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${PLAUSIBLE_DB_PASSWORD}
+    volumes:
+      - plausible-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      start_period: 1m
+
+  plausible_events_db:
+    image: clickhouse/clickhouse-server:24.12-alpine
+    restart: always
+    environment:
+      - CLICKHOUSE_SKIP_USER_SETUP=1
+    volumes:
+      - plausible-events-data:/var/lib/clickhouse
+      - plausible-events-logs:/var/log/clickhouse-server
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 -O - http://127.0.0.1:8123/ping || exit 1",
+        ]
+      start_period: 1m
+
+  plausible:
+    image: ghcr.io/plausible/community-edition:v3.2.1
+    restart: always
+    depends_on:
+      plausible_db:
+        condition: service_healthy
+      plausible_events_db:
+        condition: service_healthy
+    command: sh -c "/entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh run"
+    environment:
+      - BASE_URL=${PLAUSIBLE_BASE_URL}
+      - SECRET_KEY_BASE=${PLAUSIBLE_SECRET_KEY_BASE}
+      - DATABASE_URL=postgres://postgres:${PLAUSIBLE_DB_PASSWORD}@plausible_db:5432/postgres
+      - CLICKHOUSE_DATABASE_URL=http://plausible_events_db:8123/plausible_events_db
+      - DISABLE_REGISTRATION=${PLAUSIBLE_DISABLE_REGISTRATION:-true}
+    volumes:
+      - plausible-data:/var/lib/plausible
+    networks:
+      - default
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.cities-explorer-plausible-http.service=cities-explorer-plausible"
+      - "traefik.http.routers.cities-explorer-plausible-https.service=cities-explorer-plausible"
+      - "traefik.http.services.cities-explorer-plausible.loadbalancer.server.port=8000"
+      - "traefik.http.routers.cities-explorer-plausible-http.rule=Host(`${PLAUSIBLE_HOST}`) && PathPrefix(`/`)"
+      - "traefik.http.routers.cities-explorer-plausible-http.entrypoints=http"
+      - "traefik.http.routers.cities-explorer-plausible-http.middlewares=redirect-to-https"
+      - "traefik.http.routers.cities-explorer-plausible-https.rule=Host(`${PLAUSIBLE_HOST}`) && PathPrefix(`/`)"
+      - "traefik.http.routers.cities-explorer-plausible-https.entrypoints=https"
+      - "traefik.http.routers.cities-explorer-plausible-https.tls=true"
+      - "traefik.http.routers.cities-explorer-plausible-https.tls.certresolver=http"
+
 networks:
   proxy:
     external: true
+
+volumes:
+  plausible-db-data:
+  plausible-events-data:
+  plausible-events-logs:
+  plausible-data:

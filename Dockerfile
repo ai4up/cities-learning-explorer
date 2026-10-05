@@ -6,6 +6,10 @@ COPY package.json package-lock.json* ./
 RUN npm install --production=false
 
 COPY . .
+ARG VITE_PLAUSIBLE_DOMAIN=""
+ARG VITE_PLAUSIBLE_SCRIPT_SRC=""
+ENV VITE_PLAUSIBLE_DOMAIN=${VITE_PLAUSIBLE_DOMAIN}
+ENV VITE_PLAUSIBLE_SCRIPT_SRC=${VITE_PLAUSIBLE_SCRIPT_SRC}
 RUN npm run build
 
 # ---------- Production Stage ----------

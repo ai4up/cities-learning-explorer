@@ -3,7 +3,10 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Explorer from "./components/Explorer.jsx";
 import LandingPage from "./components/LandingPage.jsx";
+import { initializeAnalytics } from "./utils/analytics.js";
 import "./index.css";
+
+initializeAnalytics();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
