@@ -40,3 +40,18 @@ For full production setup (Traefik + DNS + Plausible CE + maintenance), see [PRO
 ### Notes
 - Linting: `npm run lint`.
 - If the map on the landing page does not render, ensure WebGL is available/enabled in your browser.
+
+## PR preview deployments
+
+This repository includes a GitHub Actions workflow (`.github/workflows/pr-preview.yml`) that:
+- triggers on PR `opened`, `synchronize`, and `reopened`;
+- builds the app with `npm ci` and `npm run build`;
+- deploys the built `dist/` to `gh-pages` under `pr-<PR_NUMBER>/`;
+- creates or updates a PR comment with the preview URL;
+- on PR close, updates that comment to mark the preview as no longer maintained (lightweight cleanup).
+
+Expected preview URL format:
+`https://<owner>.github.io/<repo>/pr-<PR_NUMBER>/`
+
+Repository setting required once:
+- **Settings → Pages**: source must be the `gh-pages` branch (root folder).
