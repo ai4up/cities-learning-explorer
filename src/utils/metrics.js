@@ -9,6 +9,7 @@ export const metricList = [
   { key: "hdd", label: "Heating Degree Days", unit: "°C", decimals: -1 },
   { key: "cdd", label: "Cooling Degree Days", unit: "°C", decimals: -1 },
   { key: "critical_infrastructure", label: "Critical infrastructure index", decimals: 2 },
+  { key: "public_transport_accessibility", label: "Public transport accessibility (SDG 11.2.1)", unit: "%", decimals: 1 },
   { key: "female_gender_index", label: "Female gender index", decimals: 2 },
   { key: "hdi", label: "Human development index", decimals: 2 },
   { key: "emissions", label: "GHG emissions", unit: "tCO₂e/cap", decimals: 2 },

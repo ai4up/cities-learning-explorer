@@ -174,6 +174,9 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
             Metrics are sourced from the <a href="https://human-settlement.emergency.copernicus.eu/ghs_ucdb_2024.php" target="_blank" rel="noopener noreferrer"> Global Human Settlement Layer (GHSL)</a> and related datasets.
           </p>
           <p>
+            Public transport accessibility is based on SDG indicator 11.2.1 from <a href="https://doi.org/10.7927/1A5Z-3H71" target="_blank" rel="noopener noreferrer">CIESIN (2023)</a>.
+          </p>
+          <p>
             Percentile ranks indicate the share of cities worldwide that have lower values, showing how each city compares to its global peers for each characteristic.
           </p>
         </MethodologySection>
