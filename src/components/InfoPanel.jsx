@@ -171,7 +171,7 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
           onToggle={() => toggle("metrics")}
         >
           <p>
-            Metrics are sourced from the <a href="https://human-settlement.emergency.copernicus.eu/ghs_ucdb_2024.php" target="_blank" rel="noopener noreferrer"> Global Human Settlement Layer (GHSL)</a> and related datasets.
+            Metrics are sourced from the <a href="https://human-settlement.emergency.copernicus.eu/ghs_ucdb_2024.php" target="_blank" rel="noopener noreferrer"> Global Human Settlement Layer (GHSL)</a> and related datasets. The built-up share is the share of the urban centre area covered by settlements in the <a href="https://geoservice.dlr.de/web/maps/eoc:wsf2019" target="_blank" rel="noopener noreferrer">World Settlement Footprint 2019</a> (DLR).
           </p>
           <p>
             Percentile ranks indicate the share of cities worldwide that have lower values, showing how each city compares to its global peers for each characteristic.

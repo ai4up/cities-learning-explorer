@@ -3,6 +3,7 @@ export const metricList = [
   { key: "population_growth", label: "Population growth", unit: "%", decimals: 1 },
   { key: "population_density", label: "Population density", unit: "people/km²", decimals: -2 },
   { key: "population_density_growth", label: "Population density growth", unit: "%", decimals: 1 },
+  { key: "built_up_share", label: "Built-up share", unit: "%", decimals: 1 },
   { key: "population_age", label: "Population age index", decimals: 2 },
   { key: "gdp_ppp", label: "GDP PPP", unit: "int'l $/cap", decimals: -2 },
   { key: "gdp_ppp_growth", label: "GDP PPP growth", unit: "%", decimals: 1 },

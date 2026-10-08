@@ -1,0 +1,3 @@
+# Temporary base data (UCDB polygons, WSF tiles, checkpoint) — deleted by run.sh
+data_raw/
+.venv/
