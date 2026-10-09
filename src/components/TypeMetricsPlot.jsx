@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Plotly from "plotly.js-dist";
 import { metricList, formatNumber } from "../utils/metrics";
 import { typeColors } from "../utils/coloring";
@@ -30,75 +30,89 @@ const RANGE = {
   cdd: [0, 5000],
 };
 
+const columnsForWidth = (width) => {
+  if (width >= 840) return 6;
+  if (width >= 480) return 3;
+  return 2;
+};
+
+const heightForRows = (rows) => (rows === 1 ? 340 : rows * 270);
+
 const TypeMetricsPlot = ({ cities, activeType }) => {
+  const frameRef = useRef(null);
   const plotRef = useRef(null);
+  const [columns, setColumns] = useState(6);
+
+  const rows = Math.ceil(METRIC_KEYS.length / columns);
+  const height = heightForRows(rows);
 
   useEffect(() => {
-    if (!plotRef.current || !cities?.length || !activeType) return;
+    const frame = frameRef.current;
+    if (!frame) return undefined;
+
+    const update = () => setColumns(columnsForWidth(frame.clientWidth));
+    update();
+
+    const observer = new ResizeObserver(update);
+    observer.observe(frame);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const plotElement = plotRef.current;
+    if (!plotElement || !cities?.length || !activeType) return;
 
     const traces = [];
+    const annotations = [];
+    const color = typeColors[activeType];
 
     METRIC_KEYS.forEach((key, i) => {
       const def = metricList.find((m) => m.key === key);
       if (!def) return;
 
+      const idx = i + 1;
       const label = def.label;
 
-      const allVals = cities
-        .map((c) => ({
-          val: Number(c.characteristics?.[key]),
-          name: c.name,
-          country: c.country,
-        }))
-        .filter((d) => !isNaN(d.val));
+      const toPoints = (list) =>
+        list
+          .map((c) => ({
+            val: Number(c.characteristics?.[key]),
+            name: c.name,
+            country: c.country,
+          }))
+          .filter((d) => !isNaN(d.val));
 
-      const filtered = cities
-        .filter((c) => c.type === activeType)
-        .map((c) => ({
-          val: Number(c.characteristics?.[key]),
-          name: c.name,
-          country: c.country,
-        }))
-        .filter((d) => !isNaN(d.val));
-
+      const allVals = toPoints(cities);
+      const filtered = toPoints(cities.filter((c) => c.type === activeType));
       if (!allVals.length || !filtered.length) return;
 
-      const idx = i + 1; // horizontal axis index
-
-      // All cities (background)
       traces.push({
-        name: `${label} (all)`,
-        x: allVals.map(() => label),
+        name: "All cities",
+        x: allVals.map(() => "All"),
         y: allVals.map((v) => v.val),
         type: "box",
         marker: { color: "rgba(139,148,158,0.4)" },
-        line: { color: "rgba(139,148,158,0.9)" },
-        opacity: 0.4,
+        line: { color: "rgba(139,148,158,0.8)", width: 1 },
+        fillcolor: "rgba(139,148,158,0.12)",
         boxpoints: false,
         xaxis: "x" + idx,
         yaxis: "y" + idx,
         hoverinfo: "skip",
       });
 
-      // Selected type (foreground)
       traces.push({
-        name: `${label} (${activeType})`,
-        x: filtered.map(() => label),
-        y: filtered.map((v) => v.val),      // REAL VALUES (no rounding)
+        name: activeType,
+        x: filtered.map(() => activeType),
+        y: filtered.map((v) => v.val),
         type: "box",
-        marker: { 
-          color: typeColors[activeType],
-          size: 1
-        },
-        line: { color: typeColors[activeType], width: 2 },
+        marker: { color, size: 2 },
+        line: { color, width: 1.5 },
         boxpoints: "outliers",
-        jitter: 0.4,
-        pointpos: 0,
         opacity: 0.95,
         customdata: filtered.map((v) => ({
           name: v.name,
           country: v.country,
-          display: formatNumber(v.val, def.decimals),  // display-only
+          display: formatNumber(v.val, def.decimals),
         })),
         hovertemplate:
           `<b>%{customdata.name}, %{customdata.country}</b><br>` +
@@ -107,69 +121,96 @@ const TypeMetricsPlot = ({ cities, activeType }) => {
         xaxis: "x" + idx,
         yaxis: "y" + idx,
       });
+
+      annotations.push({
+        text: def.unit
+          ? `${label}<br><span style="font-size:10px;color:#8b949e">${def.unit}</span>`
+          : `${label}<br> `,
+        xref: `x${idx} domain`,
+        yref: `y${idx} domain`,
+        x: 0.5,
+        y: 1,
+        yanchor: "bottom",
+        yshift: 6,
+        showarrow: false,
+        font: { size: 11, color: "#c9d1d9" },
+      });
     });
 
-    // Layout: ALL BOX PLOTS IN A SINGLE ROW
     const layout = {
       uirevision: "stay",
+      height,
       grid: {
-        rows: 1,
-        columns: METRIC_KEYS.length,
+        rows,
+        columns,
         pattern: "independent",
+        xgap: 0.35,
+        ygap: rows > 1 ? 0.4 : 0,
       },
       showlegend: false,
-      margin: { l: 40, r: 20, t: 10, b: 70 },
-      height: 420, // more height for horizontal layout
+      annotations,
+      margin: { l: 44, r: 8, t: 44, b: 12 },
       paper_bgcolor: "rgba(0,0,0,0)",
       plot_bgcolor: "rgba(0,0,0,0)",
-      font: { color: "#c9d1d9" },
+      font: { color: "#c9d1d9", size: 10 },
+      hoverlabel: { bgcolor: "#161b22", bordercolor: "#30363d", font: { color: "#e6edf3" } },
     };
 
-    // Configure axes for each boxplot
     METRIC_KEYS.forEach((key, i) => {
       const idx = i + 1;
-      const l = RANGE[key][0];
-      const u = RANGE[key][1];
+      const [lower, upper] = RANGE[key];
 
       layout["yaxis" + idx] = {
         type: LOG_SCALE[key] ? "log" : "linear",
         gridcolor: "#21262d",
         zerolinecolor: "#21262d",
+        tickformat: "~s",
         automargin: true,
-        range: LOG_SCALE[key] 
-          ? [Math.log10(l), Math.log10(u)]
-          : [l, u],
+        range: LOG_SCALE[key] ? [Math.log10(lower), Math.log10(upper)] : [lower, upper],
       };
 
       layout["xaxis" + idx] = {
-        tickangle: -45,
-        automargin: true,
+        showticklabels: false,
+        showgrid: false,
+        zeroline: false,
+        fixedrange: true,
       };
     });
 
-    const plotElement = plotRef.current;
-
-    Plotly.newPlot(plotElement, traces, layout, {
+    Plotly.react(plotElement, traces, layout, {
       displayModeBar: false,
       responsive: true,
     });
+  }, [cities, activeType, columns, rows, height]);
 
-    const resize = () => {
-      if (plotElement) {
-        Plotly.Plots.resize(plotElement);
-      }
-    };
-    window.addEventListener("resize", resize);
-
+  useEffect(() => {
+    const plotElement = plotRef.current;
     return () => {
-      window.removeEventListener("resize", resize);
-      if (plotElement) {
-        Plotly.purge(plotElement);
-      }
+      if (plotElement) Plotly.purge(plotElement);
     };
-  }, [cities, activeType]);
+  }, []);
 
-  return <div ref={plotRef} className="typology-metrics-plot" />;
+  return (
+    <div className="metrics-plot">
+      <div className="metrics-legend" aria-hidden="true">
+        <span>
+          <i className="metrics-legend-swatch metrics-legend-swatch-all" />
+          All cities
+        </span>
+        <span>
+          <i
+            className="metrics-legend-swatch"
+            style={{ background: typeColors[activeType] }}
+          />
+          {activeType}
+        </span>
+      </div>
+      {/* Explicit height is required: explorer.css forces .js-plotly-plot to height: 100% */}
+      <div ref={frameRef} className="metrics-plot-frame" style={{ height }}>
+        <div ref={plotRef} />
+      </div>
+    </div>
+  );
 };
 
 export default TypeMetricsPlot;

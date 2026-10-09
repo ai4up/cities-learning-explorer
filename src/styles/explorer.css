@@ -76,18 +76,87 @@
   right: 15px;
   width: 348px;
   background: rgba(0, 0, 0, 0.75);
-  padding: 12px;
+  padding: 12px 4px 12px 12px;
   border-radius: 4px;
-  max-height: 97vh;
+  max-height: calc(100vh - 72px);
   box-sizing: border-box;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   z-index: 30;
+}
+
+.explorer-root .info-panel-body {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+/* Feedback note (bottom right) */
+.explorer-root .feedback-note {
+  position: absolute;
+  right: 15px;
+  bottom: 12px;
+  z-index: 25;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+  width: 348px;
+  max-width: calc(100% - 30px);
+  padding: 6px 10px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #6e7681;
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
+.explorer-root .feedback-note a {
+  color: #8b949e;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(139, 148, 158, 0.35);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.explorer-root .feedback-note a:hover,
+.explorer-root .feedback-note a:focus-visible {
+  color: #c9d1d9;
+  border-bottom-color: #c9d1d9;
+}
+
+.explorer-root .feedback-note-text-short {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .explorer-root .feedback-note-text-short {
+    display: inline;
+  }
+
+  .explorer-root .feedback-note {
+    right: 10px;
+    bottom: 60px;
+  }
+
+  .explorer-root .feedback-note-text {
+    display: none;
+  }
+
+  .explorer-root .info-panel {
+    max-height: calc(100vh - 118px);
+  }
 }
 
 .explorer-root .info-close {
   position: absolute;
-  top: 6px;
-  right: 8px;
+  top: -6px;
+  right: 0;
   font-size: 1.2em;
   color: #c9d1d9;
   cursor: pointer;

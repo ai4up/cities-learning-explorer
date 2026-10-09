@@ -3,6 +3,7 @@ import Controls from "./Controls";
 import EmbeddingPlot from "./EmbeddingPlot";
 import MapPlot from "./MapPlot";
 import InfoPanel from "./InfoPanel";
+import FeedbackNote from "./FeedbackNote";
 import { palette, computeColors, computeSizes, typeColorsExplore } from "../utils/coloring";
 import "../styles/explorer.css";
 
@@ -297,6 +298,8 @@ const Explorer = () => {
         pendingMetric={pendingMetric}
         setPendingMetric={setPendingMetric}
       />
+
+      <FeedbackNote />
 
       {selectedSample && (
         <InfoPanel

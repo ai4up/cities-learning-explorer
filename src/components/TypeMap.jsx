@@ -5,6 +5,10 @@ import { typeColors } from "../utils/coloring";
 import { formatNumber } from "../utils/metrics";
 
 const DARK_STYLE = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
+const WORLD_BOUNDS = [
+  [-160, -50],
+  [170, 68],
+];
 
 function webglAvailable() {
   try {
@@ -18,91 +22,80 @@ function webglAvailable() {
   }
 }
 
+const scaledSize = (pop) => {
+  if (!pop || pop <= 0) return 3;
+  return 0.5 + Math.sqrt(pop / 500000);
+};
+
+const toGeoJSON = (arr) => ({
+  type: "FeatureCollection",
+  features: arr.map((c) => ({
+    type: "Feature",
+    geometry: { type: "Point", coordinates: [c.lon, c.lat] },
+    properties: {
+      name: c.name,
+      country: c.country,
+      population: c.characteristics?.population,
+      size: scaledSize(c.characteristics?.population),
+      color: typeColors[c.type] || "#888888",
+    },
+  })),
+});
+
+const syncData = (map, { cities, activeType }) => {
+  map
+    .getSource("active-type")
+    ?.setData(toGeoJSON(cities.filter((c) => c.type === activeType)));
+};
+
+const fitWorld = (map) =>
+  map.fitBounds(WORLD_BOUNDS, { padding: 8, animate: false });
+
 const TypeMap = ({ cities, activeType, onWebglError }) => {
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
-
-  // Adjust marker size by population
-  const scaledSize = (pop) => {
-    if (!pop || pop <= 0) return 3;
-    return 0.5 + Math.sqrt(pop / 500000); // tweak as needed
-  };
-
-  const toGeoJSON = (arr, scalePopulation = false) => ({
-    type: "FeatureCollection",
-    features: arr.map((c) => ({
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [c.lon, c.lat],
-      },
-      properties: {
-        name: c.name,
-        country: c.country,
-        population: c.characteristics?.population,
-        size: scalePopulation ? scaledSize(c.characteristics?.population) : 2,
-        color: typeColors[c.type] || "#888888",
-      },
-    })),
-  });
-
-  const allCitiesGeoJSON = toGeoJSON(cities, false);
-
-  const activeTypeGeoJSON = toGeoJSON(
-    cities.filter((c) => c.type === activeType),
-    true
-  );
+  const loadedRef = useRef(false);
+  const dataRef = useRef({ cities, activeType });
+  const onWebglErrorRef = useRef(onWebglError);
 
   useEffect(() => {
-    if (!mapContainer.current || mapRef.current) return;
+    onWebglErrorRef.current = onWebglError;
+  }, [onWebglError]);
+
+  useEffect(() => {
+    const container = mapContainer.current;
+    if (!container || mapRef.current) return undefined;
 
     if (!webglAvailable()) {
-      onWebglError?.();
-      return;
+      onWebglErrorRef.current?.();
+      return undefined;
     }
 
     let map;
     try {
       map = new maplibregl.Map({
-        container: mapContainer.current,
+        container,
         style: DARK_STYLE,
-        center: [10, 20],
-        zoom: 1.4,
-        minZoom: 1.4,
+        bounds: WORLD_BOUNDS,
+        fitBoundsOptions: { padding: 8 },
+        minZoom: 0,
+        renderWorldCopies: false,
+        attributionControl: { compact: true },
+        dragRotate: false,
+        pitchWithRotate: false,
       });
-      mapRef.current = map;
     } catch (err) {
       console.error("MapLibre init failed:", err);
-      onWebglError?.();
-      return;
+      onWebglErrorRef.current?.();
+      return undefined;
     }
 
     mapRef.current = map;
+    map.scrollZoom.disable();
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
 
     map.on("load", () => {
-      // --- Background all cities ---
-      map.addSource("all-cities", {
-        type: "geojson",
-        data: allCitiesGeoJSON,
-      });
-
-      map.addLayer({
-        id: "all-cities-layer",
-        type: "circle",
-        source: "all-cities",
-        paint: {
-          "circle-radius": 2,
-          "circle-color": "#999",
-          "circle-opacity": 0.25,
-        },
-      });
-
-      // --- Active type (pop-scaled) ---
-      map.addSource("active-type", {
-        type: "geojson",
-        data: activeTypeGeoJSON,
-      });
-
+      map.addSource("active-type", { type: "geojson", data: toGeoJSON([]) });
       map.addLayer({
         id: "active-type-layer",
         type: "circle",
@@ -110,56 +103,57 @@ const TypeMap = ({ cities, activeType, onWebglError }) => {
         paint: {
           "circle-radius": ["get", "size"],
           "circle-color": ["get", "color"],
-          "circle-opacity": 0.9,
+          "circle-opacity": 0.85,
         },
       });
 
-      // --- Hover popup ---
-      const popup = new maplibregl.Popup({
-        closeButton: false,
-        closeOnClick: false,
-      });
+      loadedRef.current = true;
+      syncData(map, dataRef.current);
+
+      const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false });
 
       map.on("mousemove", "active-type-layer", (e) => {
         const f = e.features[0];
         const { name, country, population } = f.properties;
-
+        map.getCanvas().style.cursor = "pointer";
         popup
           .setLngLat(f.geometry.coordinates)
           .setHTML(
-            `<b>${name}</b>, ${country}<br>Population: ${(formatNumber(population, 0))}`
+            `<b>${name}</b>, ${country}<br>Population: ${formatNumber(population, 0)}`
           )
           .addTo(map);
       });
 
-      map.on("mouseleave", "active-type-layer", () => popup.remove());
+      map.on("mouseleave", "active-type-layer", () => {
+        map.getCanvas().style.cursor = "";
+        popup.remove();
+      });
     });
+
+    let lastWidth = container.clientWidth;
+    const observer = new ResizeObserver(() => {
+      map.resize();
+      if (container.clientWidth !== lastWidth) {
+        lastWidth = container.clientWidth;
+        fitWorld(map);
+      }
+    });
+    observer.observe(container);
+
+    return () => {
+      observer.disconnect();
+      loadedRef.current = false;
+      mapRef.current = null;
+      map.remove();
+    };
   }, []);
 
-  // Update active type data when switching types
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map || !map.getSource("active-type")) return;
+    dataRef.current = { cities, activeType };
+    if (mapRef.current && loadedRef.current) syncData(mapRef.current, dataRef.current);
+  }, [cities, activeType]);
 
-    const nextData = toGeoJSON(
-      cities.filter((c) => c.type === activeType),
-      true
-    );
-
-    map.getSource("active-type").setData(nextData);
-  }, [activeType]);
-
-  return (
-    <div
-      ref={mapContainer}
-      style={{
-        width: "100%",
-        height: "480px",
-        borderRadius: "6px",
-        overflow: "hidden",
-      }}
-    />
-  );
+  return <div ref={mapContainer} className="type-map-canvas" />;
 };
 
 export default TypeMap;
