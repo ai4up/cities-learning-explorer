@@ -5,6 +5,7 @@ import MapPlot from "./MapPlot";
 import InfoPanel from "./InfoPanel";
 import FeedbackNote from "./FeedbackNote";
 import { palette, computeColors, computeSizes, typeColorsExplore } from "../utils/coloring";
+import { isCompactViewport } from "../utils/viewport";
 import "../styles/explorer.css";
 
 // ------------------------------------------------------
@@ -41,8 +42,6 @@ const loadInitialURLState = (samples) => {
   return { selectedCity, viewMode };
 };
 
-const MOBILE_QUERY = "(max-width: 768px)";
-const isMobileViewport = () => window.matchMedia(MOBILE_QUERY).matches;
 
 const Explorer = () => {
   const [samples, setSamples] = useState([]);
@@ -63,7 +62,7 @@ const Explorer = () => {
   const [selectedTypes, setSelectedTypes] = useState(new Set());
   const [selectedDims, setSelectedDims] = useState(["0", "1", "2"]);
   const [resetToken, setResetToken] = useState(0);
-  const [controlsOpen, setControlsOpen] = useState(() => !isMobileViewport());
+  const [controlsOpen, setControlsOpen] = useState(() => !isCompactViewport());
   const [metricFilters, setMetricFilters] = useState([]);
   const [pendingMetric, setPendingMetric] = useState(null);
 
@@ -208,7 +207,7 @@ const Explorer = () => {
   // space, so picking a city collapses the filters.
   const selectSample = useCallback((next) => {
     setSelectedSample(next);
-    if (isMobileViewport()) setControlsOpen(false);
+    if (isCompactViewport()) setControlsOpen(false);
   }, []);
 
   // ------------------------------------------------------

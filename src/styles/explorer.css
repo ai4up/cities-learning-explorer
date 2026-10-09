@@ -17,14 +17,6 @@ html.explorer-active body {
   overscroll-behavior: none;
 }
 
-@media (max-width: 768px) {
-  .explorer-root {
-    position: fixed;
-    inset: 0;
-    height: auto;
-  }
-}
-
 /* Control panel styling */
 .explorer-root .controls {
   position: absolute;
@@ -36,6 +28,11 @@ html.explorer-active body {
   border-radius: 4px;
   z-index: 10;
   box-sizing: border-box;
+  /* Never run into the legend on short windows */
+  max-height: calc(100dvh - 85px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
 .explorer-root .controls input,
@@ -164,34 +161,6 @@ html.explorer-active body {
   visibility: hidden;
 }
 
-@media (max-width: 768px) {
-  .explorer-root .feedback-note-text-short {
-    display: inline;
-  }
-
-  .explorer-root .feedback-note {
-    right: 10px;
-    bottom: 60px;
-    width: auto;
-  }
-
-  .explorer-root .feedback-note-text {
-    display: none;
-  }
-
-  .explorer-root .info-panel {
-    top: 64px;
-    left: 10px;
-    right: 10px;
-    width: auto;
-    max-height: calc(100svh - 160px);
-  }
-
-  .explorer-root.controls-open .info-panel {
-    display: none;
-  }
-}
-
 .explorer-root .info-close {
   position: absolute;
   top: -6px;
@@ -247,66 +216,6 @@ html.explorer-active body {
   overflow: hidden;
   /* All touch gestures on the map/embedding go to Plotly (pan, pinch-zoom) */
   touch-action: none;
-}
-
-/* Toggle button — visible only on mobile */
-.explorer-root .controls-toggle {
-  display: none;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 44px;
-  height: 44px;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  box-sizing: border-box;
-  background: rgba(20, 20, 20, 0.55);
-  backdrop-filter: blur(10px) saturate(160%);
-  -webkit-backdrop-filter: blur(10px) saturate(160%);
-  color: #c9d1d9;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 6px;
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.28);
-  z-index: 40;
-  cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-}
-
-.explorer-root .controls-toggle[aria-expanded="true"] {
-  background: rgba(35, 134, 54, 0.85);
-  border-color: rgba(46, 160, 67, 0.9);
-  color: #ffffff;
-}
-
-/* Mobile-only: show toggle button */
-@media (max-width: 768px) {
-  .explorer-root .controls-toggle {
-    display: inline-flex;
-  }
-
-  .explorer-root .controls {
-    top: 64px;
-    left: 10px;
-    right: 10px;
-    width: auto;
-    transition: max-height 0.3s ease-in-out, opacity 0.25s ease, visibility 0.3s;
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    visibility: hidden;
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-
-  .explorer-root .controls[data-open="true"] {
-    max-height: calc(100svh - 128px);
-    overflow-y: auto;
-    opacity: 1;
-    visibility: visible;
-    padding-top: 12px;
-    padding-bottom: 12px;
-  }
 }
 
 /* Type tooltip */
@@ -434,32 +343,78 @@ html.explorer-active body {
   outline: none;
 }
 
-.explorer-root .top-search-bar {
+/* Top bar: home | search | filters (compact screens only) */
+.explorer-root .top-bar {
   position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 40;
+  top: 15px;
+  /* Centered in the free space between controls (15 + 380) and info panel (15 + 348) */
+  left: 411px;
+  right: 379px;
+  max-width: 460px;
+  margin: 0 auto;
   display: flex;
-  justify-content: center;
-  width: 100%;
-  pointer-events: none;
+  gap: 8px;
+  z-index: 40;
 }
 
+.explorer-root .top-bar-btn,
 .explorer-root .top-search-bar .search-inner {
-  pointer-events: auto;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  height: 44px;
+  box-sizing: border-box;
   background: rgba(20, 20, 20, 0.55);
   backdrop-filter: blur(10px) saturate(160%);
   -webkit-backdrop-filter: blur(10px) saturate(160%);
-  padding: 8px;
-  border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  width: 380px;
-  max-width: 90%;
+  border-radius: 6px;
   box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.28);
+}
+
+.explorer-root .top-bar-btn {
+  flex: 0 0 44px;
+  width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: #c9d1d9;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.explorer-root .top-bar-btn:hover {
+  background: rgba(30, 30, 30, 0.75);
+  color: #ffffff;
+}
+
+.explorer-root .top-bar-btn:focus-visible {
+  outline: 2px solid rgba(88, 166, 255, 0.6);
+  outline-offset: 2px;
+}
+
+.explorer-root .controls-toggle {
+  display: none;
+}
+
+.explorer-root .controls-toggle[aria-expanded="true"] {
+  background: rgba(35, 134, 54, 0.85);
+  border-color: rgba(46, 160, 67, 0.9);
+  color: #ffffff;
+}
+
+.explorer-root .top-search-bar {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+}
+
+.explorer-root .top-search-bar .search-inner {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
   transition: all 0.25s ease;
 }
 
@@ -485,6 +440,7 @@ html.explorer-active body {
 /* Input */
 .explorer-root .top-search-bar input {
   flex: 1;
+  min-width: 0;
   padding: 8px 4px;
   font-size: 0.95em;
 
@@ -533,25 +489,122 @@ html.explorer-active body {
   width: 100% !important;
 }
 
-@media (max-width: 768px) {
-  .explorer-root .top-search-bar {
-    top: 10px;
-    left: 10px;
-    right: 62px;
-    width: auto;
-    transform: none;
+/* ------------------------------------------------------------------
+   Responsive layout
+   ------------------------------------------------------------------ */
+
+/* Tablets / narrow windows: no room for a centered search bar, so stack it
+   above the controls panel */
+@media (max-width: 1129px) {
+  .explorer-root .top-bar {
+    left: 15px;
+    right: auto;
+    width: 380px;
+    max-width: none;
+    margin: 0;
   }
 
-  .explorer-root .top-search-bar .search-inner {
-    width: 100%;
+  .explorer-root .controls {
+    top: 69px;
+    max-height: calc(100dvh - 139px);
+  }
+}
+
+/* Phones (portrait + landscape) and short windows. Keep in sync with utils/viewport.js */
+@media (max-width: 768px), (max-height: 540px) {
+  .explorer-root {
+    position: fixed;
+    inset: 0;
+    height: auto;
+  }
+
+  .explorer-root .top-bar {
+    top: 10px;
+    left: 10px;
+    right: auto;
+    width: min(400px, calc(100% - 20px));
     max-width: none;
-    height: 44px;
-    box-sizing: border-box;
-    padding: 4px 8px;
+    margin: 0;
+  }
+
+  .explorer-root .controls-toggle {
+    display: inline-flex;
   }
 
   /* Prevent iOS from zooming into the field on focus */
   .explorer-root .top-search-bar input {
     font-size: 16px;
+  }
+
+  .explorer-root .controls {
+    top: 64px;
+    left: 10px;
+    right: auto;
+    width: min(400px, calc(100% - 20px));
+    transition: max-height 0.3s ease-in-out, opacity 0.25s ease, visibility 0.3s;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .explorer-root .controls[data-open="true"] {
+    max-height: calc(100dvh - 128px);
+    overflow-y: auto;
+    opacity: 1;
+    visibility: visible;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  .explorer-root .info-panel {
+    top: 64px;
+    left: auto;
+    right: 10px;
+    width: min(400px, calc(100% - 20px));
+    max-height: calc(100dvh - 160px);
+  }
+
+  .explorer-root.controls-open .info-panel {
+    display: none;
+  }
+
+  .explorer-root .feedback-note {
+    right: 10px;
+    bottom: 60px;
+    width: auto;
+  }
+
+  .explorer-root .feedback-note-text {
+    display: none;
+  }
+
+  .explorer-root .feedback-note-text-short {
+    display: inline;
+  }
+}
+
+/* Landscape phones: little height, so the info panel may cover the legend */
+@media (max-height: 540px) {
+  .explorer-root .info-panel {
+    max-height: calc(100dvh - 74px);
+  }
+
+  .explorer-root .feedback-note {
+    bottom: 10px;
+  }
+}
+
+/* Wide enough for top bar and info panel side by side */
+@media (max-height: 540px) and (min-width: 830px) {
+  .explorer-root .info-panel {
+    top: 10px;
+    max-height: calc(100dvh - 20px);
+  }
+
+  .explorer-root.controls-open .info-panel {
+    display: flex;
   }
 }

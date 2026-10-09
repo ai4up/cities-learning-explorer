@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { isCompactViewport } from "../utils/viewport";
 
 const ISSUE_URL =
   "https://github.com/ai4up/cities-learning-explorer/issues/new";
@@ -12,7 +13,7 @@ const FeedbackNote = () => {
 
   // On small screens space is scarce, so the note fades out after a few seconds.
   useEffect(() => {
-    if (!window.matchMedia("(max-width: 768px)").matches) return undefined;
+    if (!isCompactViewport()) return undefined;
     const timer = window.setTimeout(() => setHidden(true), AUTO_HIDE_MS);
     return () => window.clearTimeout(timer);
   }, []);

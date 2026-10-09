@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Range } from "react-range";
 import { SqrtRange } from "./SqrtRangeSlider";
 import { metricList, typeDescriptions, typeEuropeSubtypeDescriptions } from "../utils/metrics";
@@ -69,14 +70,8 @@ const Controls = ({
 
   return (
     <>
-    <button
-      type="button"
-      className="controls-toggle"
-      onClick={() => setControlsOpen(o => !o)}
-      aria-label={controlsOpen ? "Hide filters" : "Show filters"}
-      aria-expanded={controlsOpen}
-      title={controlsOpen ? "Hide filters" : "Show filters"}
-    >
+    <div className="top-bar">
+    <Link to="/" className="top-bar-btn home-button" aria-label="Back to home page" title="Home">
       <svg
         width="18"
         height="18"
@@ -88,9 +83,10 @@ const Controls = ({
         strokeLinejoin="round"
         aria-hidden="true"
       >
-        <path d="M3 4h18l-7 8.5V19l-4 2v-8.5L3 4z" />
+        <path d="M3 10.5 12 3l9 7.5" />
+        <path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5" />
       </svg>
-    </button>
+    </Link>
 
     <div className="top-search-bar">
       <div className="search-inner">
@@ -126,6 +122,30 @@ const Controls = ({
           <option key={idx} value={`${s.name}, ${s.country}`} />
         ))}
       </datalist>
+    </div>
+
+    <button
+      type="button"
+      className="top-bar-btn controls-toggle"
+      onClick={() => setControlsOpen(o => !o)}
+      aria-label={controlsOpen ? "Hide filters" : "Show filters"}
+      aria-expanded={controlsOpen}
+      title={controlsOpen ? "Hide filters" : "Show filters"}
+    >
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M3 4h18l-7 8.5V19l-4 2v-8.5L3 4z" />
+      </svg>
+    </button>
     </div>
 
     <div className="controls" data-open={controlsOpen}>
