@@ -27,7 +27,7 @@ const scaledSize = (pop) => {
   return 0.5 + Math.sqrt(pop / 500000);
 };
 
-const toGeoJSON = (arr, scalePopulation = false) => ({
+const toGeoJSON = (arr) => ({
   type: "FeatureCollection",
   features: arr.map((c) => ({
     type: "Feature",
@@ -36,17 +36,16 @@ const toGeoJSON = (arr, scalePopulation = false) => ({
       name: c.name,
       country: c.country,
       population: c.characteristics?.population,
-      size: scalePopulation ? scaledSize(c.characteristics?.population) : 2,
+      size: scaledSize(c.characteristics?.population),
       color: typeColors[c.type] || "#888888",
     },
   })),
 });
 
 const syncData = (map, { cities, activeType }) => {
-  map.getSource("all-cities")?.setData(toGeoJSON(cities, false));
   map
     .getSource("active-type")
-    ?.setData(toGeoJSON(cities.filter((c) => c.type === activeType), true));
+    ?.setData(toGeoJSON(cities.filter((c) => c.type === activeType)));
 };
 
 const fitWorld = (map) =>
@@ -96,18 +95,6 @@ const TypeMap = ({ cities, activeType, onWebglError }) => {
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
 
     map.on("load", () => {
-      map.addSource("all-cities", { type: "geojson", data: toGeoJSON([]) });
-      map.addLayer({
-        id: "all-cities-layer",
-        type: "circle",
-        source: "all-cities",
-        paint: {
-          "circle-radius": 1.6,
-          "circle-color": "#9aa4af",
-          "circle-opacity": 0.25,
-        },
-      });
-
       map.addSource("active-type", { type: "geojson", data: toGeoJSON([]) });
       map.addLayer({
         id: "active-type-layer",

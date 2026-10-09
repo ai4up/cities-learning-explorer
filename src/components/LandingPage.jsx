@@ -290,6 +290,8 @@ const LandingPage = () => {
                   className="type-tab"
                   style={{ "--type-color": typeColors[t] }}
                   onClick={() => setActiveType(t)}
+                  onMouseEnter={() => setActiveType(t)}
+                  onFocus={() => setActiveType(t)}
                 >
                   <span className="type-tab-label">{t}</span>
                   <span className="type-tab-name">{TYPE_META[t].name}</span>

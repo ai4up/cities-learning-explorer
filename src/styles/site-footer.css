@@ -8,19 +8,18 @@
 
 .site-footer-inner {
   box-sizing: border-box;
-  max-width: 1160px;
-  margin: 0 auto;
-  padding: 28px clamp(16px, 4vw, 32px);
+  width: 100%;
+  padding: 24px clamp(16px, 3vw, 40px);
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   gap: 14px 40px;
 }
 
 .site-footer-ack {
+  flex: 1 1 auto;
+  min-width: 0;
   margin: 0;
-  max-width: 620px;
   line-height: 1.6;
 }
 
@@ -30,6 +29,7 @@
 }
 
 .site-footer-links {
+  flex-shrink: 0;
   display: flex;
   flex-wrap: wrap;
   gap: 8px 22px;
