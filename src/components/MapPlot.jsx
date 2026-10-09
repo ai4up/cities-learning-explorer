@@ -1,29 +1,102 @@
 import Plotly from 'plotly.js-dist';
 import React, { useEffect, useRef } from "react";
 
+const MAX_ZOOM_MULTIPLIER = 3;
+
+// Latitudes covering all cities; used as the visible band on portrait screens.
+const PORTRAIT_LAT_RANGE = [-58, 78];
+const PORTRAIT_CENTER_LON = 15;
+
+// Natural earth projection (y in radians-units; x scale at the equator).
+const naturalEarthY = (deg) => {
+  const phi = (deg * Math.PI) / 180;
+  const p2 = phi * phi;
+  const p4 = p2 * p2;
+  return phi * (1.007226 + p2 * (0.015085 + p4 * (-0.044475 + 0.028874 * p2 - 0.005916 * p4)));
+};
+const NATURAL_EARTH_X_EQUATOR = 0.8707;
+
+// Plotly fits the whole world into the container width, which letterboxes the
+// map into a thin band on portrait screens. There, show a lon/lat box with the
+// container's aspect ratio instead, so the map fills the full screen.
+const getDefaultView = (el) => {
+  const w = el?.clientWidth || 0;
+  const h = el?.clientHeight || 0;
+  if (!w || !h || h <= w) {
+    return { center: { lat: 0, lon: 0 }, lonRange: null, latRange: null };
+  }
+
+  const [latMin, latMax] = PORTRAIT_LAT_RANGE;
+  const height = naturalEarthY(latMax) - naturalEarthY(latMin);
+  const lonSpan = ((w / h) * height * 180) / (Math.PI * NATURAL_EARTH_X_EQUATOR);
+  const lon = PORTRAIT_CENTER_LON;
+  return {
+    center: { lat: (latMin + latMax) / 2, lon },
+    lonRange: [lon - lonSpan / 2, lon + lonSpan / 2],
+    latRange: [...PORTRAIT_LAT_RANGE],
+  };
+};
+
+const defaultViewLayout = (view) => ({
+  "geo.projection.scale": 1,
+  "geo.center": view.center,
+  "geo.lonaxis.range": view.lonRange,
+  "geo.lataxis.range": view.latRange,
+  "geo.showcountries": false,
+});
+
+const sameView = (a, b) =>
+  JSON.stringify([a?.lonRange, a?.latRange]) === JSON.stringify([b?.lonRange, b?.latRange]);
+
 const MapPlot = ({ samples, colors, sizes, onSelectSample, selectedSample, setSearchValue, viewMode, resetToken }) => {
   const plotRef = useRef(null);
   const initializedRef = useRef(false);
   const isInternalClick = useRef(false);
   const lastScaleRef = useRef(1);
-  const lastCenterRef = useRef({ lat: 0, lon: 0 });
-  const MAX_ZOOM_MULTIPLIER = 3;
+  const lastCenterRef = useRef(null);
+  const defaultViewRef = useRef(null);
+  const userMovedRef = useRef(false);
 
   useEffect(() => {
     if (!plotRef.current || resetToken === 0) return;
 
+    const view = getDefaultView(plotRef.current);
+    defaultViewRef.current = view;
     lastScaleRef.current = 1;
-    lastCenterRef.current = { lat: 0, lon: 0 };
+    lastCenterRef.current = view.center;
+    userMovedRef.current = false;
 
-    Plotly.relayout(plotRef.current, {
-      "geo.projection.scale": 1,
-      "geo.center": { lat: 0, lon: 0 },
-      "geo.showcountries": false,
-    });
+    Plotly.relayout(plotRef.current, defaultViewLayout(view));
   }, [resetToken]);
+
+  // Keep the default view filling the container on resize / rotation, unless the user has moved the map.
+  useEffect(() => {
+    const el = plotRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+
+    const observer = new ResizeObserver(() => {
+      if (!initializedRef.current || userMovedRef.current) return;
+      const view = getDefaultView(el);
+      if (sameView(view, defaultViewRef.current)) return;
+
+      defaultViewRef.current = view;
+      lastScaleRef.current = 1;
+      lastCenterRef.current = view.center;
+      Plotly.relayout(el, defaultViewLayout(view));
+    });
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!plotRef.current || !samples.length) return;
+
+    if (!defaultViewRef.current) {
+      defaultViewRef.current = getDefaultView(plotRef.current);
+      lastCenterRef.current = defaultViewRef.current.center;
+    }
+    const defaultView = defaultViewRef.current;
 
     // 1. Determine current state from layout or refs
     let currentShowCountries = plotRef.current?.layout?.geo?.showcountries || false;
@@ -41,6 +114,7 @@ const MapPlot = ({ samples, colors, sizes, onSelectSample, selectedSample, setSe
         currentShowCountries = true;
         lastScaleRef.current = 3;
         lastCenterRef.current = currentCenter;
+        userMovedRef.current = true;
       }
     }
 
@@ -89,8 +163,8 @@ const MapPlot = ({ samples, colors, sizes, onSelectSample, selectedSample, setSe
         showcountries: currentShowCountries,
         countrycolor: "#444",
         countrywidth: 0.5,
-        lataxis: { showgrid: false, zeroline: false },
-        lonaxis: { showgrid: false, zeroline: false },
+        lataxis: { showgrid: false, zeroline: false, ...(defaultView.latRange && { range: defaultView.latRange }) },
+        lonaxis: { showgrid: false, zeroline: false, ...(defaultView.lonRange && { range: defaultView.lonRange }) },
       },
       paper_bgcolor: "#0d1117",
       plot_bgcolor: "#0d1117",
@@ -115,8 +189,18 @@ const MapPlot = ({ samples, colors, sizes, onSelectSample, selectedSample, setSe
     };
 
     const handleRelayout = (eventData) => {
+      const isUserGesture =
+        "geo.center.lon" in eventData || "geo.center.lat" in eventData;
+      if (isUserGesture) {
+        userMovedRef.current = true;
+        lastCenterRef.current = {
+          lon: eventData["geo.center.lon"] ?? lastCenterRef.current?.lon ?? 0,
+          lat: eventData["geo.center.lat"] ?? lastCenterRef.current?.lat ?? 0,
+        };
+      }
+
       let scale = eventData["geo.projection.scale"];
-      if (!scale && eventData["geo.lonaxis.range"]) {
+      if (!scale && !defaultViewRef.current?.lonRange && eventData["geo.lonaxis.range"]) {
         scale = 360 / Math.abs(eventData["geo.lonaxis.range"][1] - eventData["geo.lonaxis.range"][0]);
       }
 

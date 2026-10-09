@@ -244,6 +244,31 @@ const Explorer = () => {
     });
   }, [viewMode, selectedSample, initialURLProcessed]);
 
+  // Behave like a native map app: lock page scroll/zoom so gestures only move the map.
+  useEffect(() => {
+    const html = document.documentElement;
+    html.classList.add("explorer-active");
+
+    const viewport = document.querySelector('meta[name="viewport"]');
+    const prevViewport = viewport?.getAttribute("content");
+    viewport?.setAttribute(
+      "content",
+      "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    );
+
+    // iOS Safari ignores user-scalable=no, so block its proprietary pinch gestures.
+    const preventGesture = (e) => e.preventDefault();
+    document.addEventListener("gesturestart", preventGesture);
+    document.addEventListener("gesturechange", preventGesture);
+
+    return () => {
+      html.classList.remove("explorer-active");
+      if (viewport && prevViewport) viewport.setAttribute("content", prevViewport);
+      document.removeEventListener("gesturestart", preventGesture);
+      document.removeEventListener("gesturechange", preventGesture);
+    };
+  }, []);
+
   // ------------------------------------------------------
   // Render UI
   // ------------------------------------------------------

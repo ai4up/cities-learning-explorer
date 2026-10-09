@@ -1,7 +1,28 @@
 .explorer-root {
   width: 100%;
   height: 100vh;
+  height: 100dvh;
   position: relative;
+  overflow: hidden;
+  overscroll-behavior: none;
+  /* Allow scrolling inside panels but never page pinch-zoom */
+  touch-action: pan-x pan-y;
+}
+
+/* While the explorer is shown, the page itself never scrolls or bounces */
+html.explorer-active,
+html.explorer-active body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+@media (max-width: 768px) {
+  .explorer-root {
+    position: fixed;
+    inset: 0;
+    height: auto;
+  }
 }
 
 /* Control panel styling */
@@ -224,6 +245,8 @@
   flex: 1;
   position: relative;
   overflow: hidden;
+  /* All touch gestures on the map/embedding go to Plotly (pan, pinch-zoom) */
+  touch-action: none;
 }
 
 /* Toggle button — visible only on mobile */
@@ -496,7 +519,7 @@
 .explorer-root .plots-wrapper {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
 }
 
 .explorer-root .plot-container {
