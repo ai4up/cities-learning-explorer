@@ -546,12 +546,17 @@
 /* ------------------------------------------------------
    CITATION
 ------------------------------------------------------ */
+.landing-citation {
+  text-align: center;
+}
+
 .landing-root .citation-text {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .citation-bibtex-wrap {
   position: relative;
+  text-align: left;
 }
 
 .citation-copy-icon {

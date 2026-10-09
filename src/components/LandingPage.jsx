@@ -375,7 +375,7 @@ const LandingPage = () => {
       </section>
 
       {/* CITATION */}
-      <section className="landing-section">
+      <section className="landing-section landing-citation">
         <div className="landing-container landing-narrow">
           <h2 className="landing-h2">Citation</h2>
           <p className="citation-text">

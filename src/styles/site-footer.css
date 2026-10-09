@@ -9,23 +9,19 @@
 .site-footer-inner {
   box-sizing: border-box;
   width: 100%;
-  padding: 24px clamp(16px, 3vw, 40px);
+  padding: 24px clamp(20px, 4.5vw, 64px);
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 14px 40px;
 }
 
-.site-footer-ack {
+.site-footer .site-footer-ack {
   flex: 1 1 auto;
   min-width: 0;
   margin: 0;
+  font-size: inherit;
   line-height: 1.6;
-}
-
-.site-footer-ack strong {
-  color: #c9d1d9;
-  font-weight: 500;
 }
 
 .site-footer-links {
