@@ -1,0 +1,54 @@
+.site-footer {
+  border-top: 1px solid #21262d;
+  background: #07090c;
+  color: #8b949e;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  font-size: 0.82rem;
+}
+
+.site-footer-inner {
+  box-sizing: border-box;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 28px clamp(16px, 4vw, 32px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 40px;
+}
+
+.site-footer-ack {
+  margin: 0;
+  max-width: 620px;
+  line-height: 1.6;
+}
+
+.site-footer-ack strong {
+  color: #c9d1d9;
+  font-weight: 500;
+}
+
+.site-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+}
+
+.site-footer-links a {
+  color: #8b949e;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.site-footer-links a:hover,
+.site-footer-links a:focus-visible {
+  color: #e6edf3;
+}
+
+@media (max-width: 640px) {
+  .site-footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

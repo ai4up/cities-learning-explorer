@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Explorer from "./components/Explorer.jsx";
 import LandingPage from "./components/LandingPage.jsx";
+import ImpressumPage from "./components/ImpressumPage.jsx";
 import { initializeAnalytics } from "./utils/analytics.js";
 import "./index.css";
 
@@ -14,7 +15,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/explore" element={<Explorer />} />
-        {/* fallback: send unknown routes to explorer */}
+        <Route path="/impressum" element={<ImpressumPage />} />
         <Route path="*" element={<LandingPage />} />
       </Routes>
     </BrowserRouter>

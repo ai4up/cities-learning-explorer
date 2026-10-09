@@ -1,0 +1,95 @@
+.impressum-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(ellipse at top, #161b22 0%, #0d1117 35%, #07090c 100%);
+  color: #c9d1d9;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+}
+
+.impressum-main {
+  box-sizing: border-box;
+  flex: 1;
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: clamp(32px, 6vw, 64px) clamp(16px, 4vw, 32px) clamp(48px, 8vw, 88px);
+}
+
+.impressum-back {
+  display: inline-block;
+  margin-bottom: 28px;
+  font-size: 0.88rem;
+  color: #8b949e;
+  text-decoration: none;
+}
+
+.impressum-back:hover {
+  color: #e6edf3;
+}
+
+.impressum-main h1 {
+  margin: 0 0 32px;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #e6edf3;
+}
+
+.impressum-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 32px;
+}
+
+@media (min-width: 860px) {
+  .impressum-grid {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: 48px;
+  }
+}
+
+.impressum-details {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.impressum-details h2 {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8b949e;
+}
+
+.impressum-details address,
+.impressum-details p {
+  margin: 0;
+  font-style: normal;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.impressum-map {
+  min-height: 320px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.impressum-map iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  border: 0;
+}
+
+@media (min-width: 860px) {
+  .impressum-map,
+  .impressum-map iframe {
+    min-height: 420px;
+  }
+}
