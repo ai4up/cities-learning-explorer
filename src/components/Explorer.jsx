@@ -195,7 +195,11 @@ const Explorer = () => {
     const val = searchValue.toLowerCase();
     if (!val) return [];
     return samples
-      .filter((s) => `${s.name} ${s.country}`.toLowerCase().includes(val))
+      .filter((s) => {
+        const name = s.name.toLowerCase();
+        const country = (s.country || "").toLowerCase();
+        return `${name} ${country}`.includes(val) || `${name}, ${country}`.includes(val);
+      })
       .sort(
         (a, b) =>
           (b.characteristics?.population || 0) - (a.characteristics?.population || 0)
