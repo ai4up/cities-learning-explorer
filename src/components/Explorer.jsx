@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Controls from "./Controls";
 import EmbeddingPlot from "./EmbeddingPlot";
 import MapPlot from "./MapPlot";
@@ -41,6 +41,9 @@ const loadInitialURLState = (samples) => {
   return { selectedCity, viewMode };
 };
 
+const MOBILE_QUERY = "(max-width: 768px)";
+const isMobileViewport = () => window.matchMedia(MOBILE_QUERY).matches;
+
 const Explorer = () => {
   const [samples, setSamples] = useState([]);
   const [viewMode, setViewMode] = useState("map");
@@ -60,7 +63,7 @@ const Explorer = () => {
   const [selectedTypes, setSelectedTypes] = useState(new Set());
   const [selectedDims, setSelectedDims] = useState(["0", "1", "2"]);
   const [resetToken, setResetToken] = useState(0);
-  const [controlsOpen, setControlsOpen] = useState(true);
+  const [controlsOpen, setControlsOpen] = useState(() => !isMobileViewport());
   const [metricFilters, setMetricFilters] = useState([]);
   const [pendingMetric, setPendingMetric] = useState(null);
 
@@ -201,6 +204,13 @@ const Explorer = () => {
       .slice(0, 10);
   }, [searchValue, samples]);
 
+  // On small screens the filter panel and the city panel share the same
+  // space, so picking a city collapses the filters.
+  const selectSample = useCallback((next) => {
+    setSelectedSample(next);
+    if (isMobileViewport()) setControlsOpen(false);
+  }, []);
+
   // ------------------------------------------------------
   // Reset handlers
   // ------------------------------------------------------
@@ -238,7 +248,9 @@ const Explorer = () => {
   // Render UI
   // ------------------------------------------------------
   return (
-    <div className={`explorer-root mode-${viewMode}`}>
+    <div
+      className={`explorer-root mode-${viewMode}${controlsOpen ? " controls-open" : ""}`}
+    >
       <div className="plots-wrapper">
         {(viewMode === "embedding" || viewMode === "both") && (
           <EmbeddingPlot
@@ -246,7 +258,7 @@ const Explorer = () => {
             colors={colors}
             sizes={sizes}
             selectedDims={selectedDims}
-            onSelectSample={setSelectedSample}
+            onSelectSample={selectSample}
             resetToken={resetToken}
             viewMode={viewMode}
           />
@@ -258,7 +270,7 @@ const Explorer = () => {
             colors={colors}
             sizes={sizes}
             selectedSample={selectedSample}
-            onSelectSample={setSelectedSample}
+            onSelectSample={selectSample}
             setSearchValue={setSearchValue}
             viewMode={viewMode}
             resetToken={resetToken}
@@ -272,7 +284,7 @@ const Explorer = () => {
         searchValue={searchValue}
         setSearchValue={setSearchValue}
         suggestions={suggestions}
-        setSelectedSample={setSelectedSample}
+        setSelectedSample={selectSample}
         colorKey={colorKey}
         setColorKey={setColorKey}
         regions={regions}
@@ -305,7 +317,7 @@ const Explorer = () => {
         <InfoPanel
           selectedSample={selectedSample}
           samples={samples}
-          setSelectedSample={setSelectedSample}
+          setSelectedSample={selectSample}
           setSearchValue={setSearchValue}
         />
       )}

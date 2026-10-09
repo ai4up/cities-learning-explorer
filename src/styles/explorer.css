@@ -134,6 +134,15 @@
   display: none;
 }
 
+.explorer-root .feedback-note {
+  transition: opacity 0.6s ease, visibility 0.6s;
+}
+
+.explorer-root .feedback-note-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
 @media (max-width: 768px) {
   .explorer-root .feedback-note-text-short {
     display: inline;
@@ -142,6 +151,7 @@
   .explorer-root .feedback-note {
     right: 10px;
     bottom: 60px;
+    width: auto;
   }
 
   .explorer-root .feedback-note-text {
@@ -149,7 +159,15 @@
   }
 
   .explorer-root .info-panel {
-    max-height: calc(100vh - 118px);
+    top: 64px;
+    left: 10px;
+    right: 10px;
+    width: auto;
+    max-height: calc(100svh - 160px);
+  }
+
+  .explorer-root.controls-open .info-panel {
+    display: none;
   }
 }
 
@@ -213,33 +231,58 @@
   display: none;
   position: absolute;
   top: 10px;
-  left: 10px;
-  background: #161b22;
+  right: 10px;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-sizing: border-box;
+  background: rgba(20, 20, 20, 0.55);
+  backdrop-filter: blur(10px) saturate(160%);
+  -webkit-backdrop-filter: blur(10px) saturate(160%);
   color: #c9d1d9;
-  border: 1px solid #30363d;
-  padding: 6px 10px;
-  border-radius: 4px;
-  z-index: 20;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.28);
+  z-index: 40;
   cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.explorer-root .controls-toggle[aria-expanded="true"] {
+  background: rgba(35, 134, 54, 0.85);
+  border-color: rgba(46, 160, 67, 0.9);
+  color: #ffffff;
 }
 
 /* Mobile-only: show toggle button */
 @media (max-width: 768px) {
   .explorer-root .controls-toggle {
-    display: block;
+    display: inline-flex;
   }
 
   .explorer-root .controls {
-    top: 50px;
-    transition: max-height 0.35s ease-in-out, opacity 0.3s ease;
+    top: 64px;
+    left: 10px;
+    right: 10px;
+    width: auto;
+    transition: max-height 0.3s ease-in-out, opacity 0.25s ease, visibility 0.3s;
     overflow: hidden;
     max-height: 0;
     opacity: 0;
+    visibility: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
   }
 
   .explorer-root .controls[data-open="true"] {
-    max-height: 80vh; /* enough for scrolling */
+    max-height: calc(100svh - 128px);
+    overflow-y: auto;
     opacity: 1;
+    visibility: visible;
+    padding-top: 12px;
+    padding-bottom: 12px;
   }
 }
 
@@ -468,8 +511,24 @@
 }
 
 @media (max-width: 768px) {
+  .explorer-root .top-search-bar {
+    top: 10px;
+    left: 10px;
+    right: 62px;
+    width: auto;
+    transform: none;
+  }
+
   .explorer-root .top-search-bar .search-inner {
-    width: 90%;
-    border-radius: 4px;
+    width: 100%;
+    max-width: none;
+    height: 44px;
+    box-sizing: border-box;
+    padding: 4px 8px;
+  }
+
+  /* Prevent iOS from zooming into the field on focus */
+  .explorer-root .top-search-bar input {
+    font-size: 16px;
   }
 }

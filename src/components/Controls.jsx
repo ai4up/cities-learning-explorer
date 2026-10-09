@@ -69,8 +69,27 @@ const Controls = ({
 
   return (
     <>
-    <button className="controls-toggle" onClick={() => setControlsOpen(o => !o)}>
-      {controlsOpen ? "▲ Hide Control Panel" : "▼ Show Control Panel"}
+    <button
+      type="button"
+      className="controls-toggle"
+      onClick={() => setControlsOpen(o => !o)}
+      aria-label={controlsOpen ? "Hide filters" : "Show filters"}
+      aria-expanded={controlsOpen}
+      title={controlsOpen ? "Hide filters" : "Show filters"}
+    >
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M3 4h18l-7 8.5V19l-4 2v-8.5L3 4z" />
+      </svg>
     </button>
 
     <div className="top-search-bar">
