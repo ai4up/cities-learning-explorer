@@ -13,13 +13,18 @@ const ImpressumPage = () => (
         ← Back to overview
       </Link>
       <h1>Impressum</h1>
+      <p className="impressum-legal-basis">
+        Angaben gemäß § 18 Abs. 1 MStV und, soweit anwendbar, § 5 DDG
+      </p>
 
       <div className="impressum-grid">
         <div className="impressum-details">
           <section>
-            <h2>Address</h2>
+            <h2>Responsible</h2>
             <address>
-              Potsdam-Institut für Klimafolgenforschung (PIK) e.V.
+              Florian Nachtigall
+              <br />
+              c/o Potsdam-Institut für Klimafolgenforschung (PIK) e.V.
               <br />
               Telegrafenberg A 31
               <br />

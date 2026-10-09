@@ -29,11 +29,17 @@
 }
 
 .impressum-main h1 {
-  margin: 0 0 32px;
+  margin: 0 0 10px;
   font-size: clamp(1.8rem, 4vw, 2.4rem);
   font-weight: 600;
   letter-spacing: -0.02em;
   color: #e6edf3;
+}
+
+.impressum-legal-basis {
+  margin: 0 0 32px;
+  font-size: 0.88rem;
+  color: #8b949e;
 }
 
 .impressum-grid {
@@ -43,7 +49,13 @@
 }
 
 @media (min-width: 860px) {
-  .impressum-grid {
+  .impressum-legal-basis {
+  margin: 0 0 32px;
+  font-size: 0.88rem;
+  color: #8b949e;
+}
+
+.impressum-grid {
     grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
     gap: 48px;
   }
