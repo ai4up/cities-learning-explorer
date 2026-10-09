@@ -176,6 +176,9 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
           <p>
             Percentile ranks indicate the share of cities worldwide that have lower values, showing how each city compares to its global peers for each characteristic.
           </p>
+          <p>
+            The indicator &ldquo;Informal settlements proportion&rdquo; describes the proportion of urban population living in slums or informal settlements. It uses UN-Habitat SDG 11.1.1 at national level, mapped to cities by country, using the latest non-null country value (typically 2022, earlier if 2022 is unavailable).
+          </p>
         </MethodologySection>
         <div
           style={{

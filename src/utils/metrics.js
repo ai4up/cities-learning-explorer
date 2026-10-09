@@ -12,6 +12,7 @@ export const metricList = [
   { key: "critical_infrastructure", label: "Critical infrastructure index", decimals: 2 },
   { key: "female_gender_index", label: "Female gender index", decimals: 2 },
   { key: "hdi", label: "Human development index", decimals: 2 },
+  { key: "informal_settlements_proportion", label: "Informal settlements proportion", unit: "%", decimals: 1 },
   { key: "emissions", label: "GHG emissions", unit: "tCO₂e/cap", decimals: 2 },
 ];
 
