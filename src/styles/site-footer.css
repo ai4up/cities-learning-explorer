@@ -45,6 +45,20 @@
 @media (max-width: 640px) {
   .site-footer-inner {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 0;
+    text-align: center;
+  }
+
+  .site-footer .site-footer-ack {
+    max-width: 34em;
+    margin: 0 auto;
+    padding-bottom: 16px;
+  }
+
+  .site-footer-links {
+    justify-content: center;
+    padding-top: 16px;
+    border-top: 1px solid #21262d;
   }
 }

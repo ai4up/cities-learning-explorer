@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Controls from "./Controls";
 import EmbeddingPlot from "./EmbeddingPlot";
 import MapPlot from "./MapPlot";
 import InfoPanel from "./InfoPanel";
 import FeedbackNote from "./FeedbackNote";
 import { palette, computeColors, computeSizes, typeColorsExplore } from "../utils/coloring";
+import { isCompactViewport } from "../utils/viewport";
 import "../styles/explorer.css";
 
 // ------------------------------------------------------
@@ -41,6 +42,7 @@ const loadInitialURLState = (samples) => {
   return { selectedCity, viewMode };
 };
 
+
 const Explorer = () => {
   const [samples, setSamples] = useState([]);
   const [viewMode, setViewMode] = useState("map");
@@ -60,7 +62,7 @@ const Explorer = () => {
   const [selectedTypes, setSelectedTypes] = useState(new Set());
   const [selectedDims, setSelectedDims] = useState(["0", "1", "2"]);
   const [resetToken, setResetToken] = useState(0);
-  const [controlsOpen, setControlsOpen] = useState(true);
+  const [controlsOpen, setControlsOpen] = useState(() => !isCompactViewport());
   const [metricFilters, setMetricFilters] = useState([]);
   const [pendingMetric, setPendingMetric] = useState(null);
 
@@ -201,6 +203,13 @@ const Explorer = () => {
       .slice(0, 10);
   }, [searchValue, samples]);
 
+  // On small screens the filter panel and the city panel share the same
+  // space, so picking a city collapses the filters.
+  const selectSample = useCallback((next) => {
+    setSelectedSample(next);
+    if (isCompactViewport()) setControlsOpen(false);
+  }, []);
+
   // ------------------------------------------------------
   // Reset handlers
   // ------------------------------------------------------
@@ -234,11 +243,38 @@ const Explorer = () => {
     });
   }, [viewMode, selectedSample, initialURLProcessed]);
 
+  // Behave like a native map app: lock page scroll/zoom so gestures only move the map.
+  useEffect(() => {
+    const html = document.documentElement;
+    html.classList.add("explorer-active");
+
+    const viewport = document.querySelector('meta[name="viewport"]');
+    const prevViewport = viewport?.getAttribute("content");
+    viewport?.setAttribute(
+      "content",
+      "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    );
+
+    // iOS Safari ignores user-scalable=no, so block its proprietary pinch gestures.
+    const preventGesture = (e) => e.preventDefault();
+    document.addEventListener("gesturestart", preventGesture);
+    document.addEventListener("gesturechange", preventGesture);
+
+    return () => {
+      html.classList.remove("explorer-active");
+      if (viewport && prevViewport) viewport.setAttribute("content", prevViewport);
+      document.removeEventListener("gesturestart", preventGesture);
+      document.removeEventListener("gesturechange", preventGesture);
+    };
+  }, []);
+
   // ------------------------------------------------------
   // Render UI
   // ------------------------------------------------------
   return (
-    <div className={`explorer-root mode-${viewMode}`}>
+    <div
+      className={`explorer-root mode-${viewMode}${controlsOpen ? " controls-open" : ""}`}
+    >
       <div className="plots-wrapper">
         {(viewMode === "embedding" || viewMode === "both") && (
           <EmbeddingPlot
@@ -246,7 +282,7 @@ const Explorer = () => {
             colors={colors}
             sizes={sizes}
             selectedDims={selectedDims}
-            onSelectSample={setSelectedSample}
+            onSelectSample={selectSample}
             resetToken={resetToken}
             viewMode={viewMode}
           />
@@ -258,7 +294,7 @@ const Explorer = () => {
             colors={colors}
             sizes={sizes}
             selectedSample={selectedSample}
-            onSelectSample={setSelectedSample}
+            onSelectSample={selectSample}
             setSearchValue={setSearchValue}
             viewMode={viewMode}
             resetToken={resetToken}
@@ -272,7 +308,7 @@ const Explorer = () => {
         searchValue={searchValue}
         setSearchValue={setSearchValue}
         suggestions={suggestions}
-        setSelectedSample={setSelectedSample}
+        setSelectedSample={selectSample}
         colorKey={colorKey}
         setColorKey={setColorKey}
         regions={regions}
@@ -305,7 +341,7 @@ const Explorer = () => {
         <InfoPanel
           selectedSample={selectedSample}
           samples={samples}
-          setSelectedSample={setSelectedSample}
+          setSelectedSample={selectSample}
           setSearchValue={setSearchValue}
         />
       )}
