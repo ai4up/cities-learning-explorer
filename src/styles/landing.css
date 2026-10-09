@@ -79,10 +79,31 @@
    HERO
 ------------------------------------------------------ */
 .landing-hero {
+  position: relative;
+  isolation: isolate;
   min-height: min(88vh, 820px);
   min-height: min(88svh, 820px);
   display: flex;
   flex-direction: column;
+}
+
+.landing-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url("../assets/hero-network.webp") center / cover no-repeat;
+  opacity: 0.55;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent);
+  mask-image: linear-gradient(to bottom, #000 60%, transparent);
+}
+
+@media (max-width: 700px) {
+  .landing-hero::before {
+    background-position: 8% 40%;
+    opacity: 0.45;
+  }
 }
 
 .landing-hero-inner {
