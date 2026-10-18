@@ -154,6 +154,11 @@
   object-fit: contain;
 }
 
+/* Stacked logos with small wordmarks need extra height to stay legible. */
+.landing-brand-logo--tall {
+  height: 40px;
+}
+
 .landing-root .landing-title {
   font-size: clamp(2rem, 5vw, 3rem);
   line-height: 1.12;

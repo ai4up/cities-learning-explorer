@@ -75,6 +75,13 @@ const AFFILIATIONS = [
     logoAlt: "EPFL logo",
   },
   {
+    name: "University of Sussex",
+    url: "https://www.sussex.ac.uk/",
+    logo: "logos/sussex.svg",
+    logoAlt: "University of Sussex logo",
+    logoClassName: "landing-brand-logo--tall",
+  },
+  {
     name: "ETH Zurich",
     url: "https://ethz.ch/",
     logo: "logos/eth-zurich.svg",
@@ -198,7 +205,7 @@ const LandingPage = () => {
                 <img
                   src={`${import.meta.env.BASE_URL}${institution.logo}`}
                   alt={institution.logoAlt}
-                  className="landing-brand-logo"
+                  className={["landing-brand-logo", institution.logoClassName].filter(Boolean).join(" ")}
                 />
               </a>
             ))}
