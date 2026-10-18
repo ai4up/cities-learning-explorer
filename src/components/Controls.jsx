@@ -96,12 +96,23 @@ const Controls = ({
           type="text"
           placeholder="Search city..."
           value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            setSearchValue(value);
+            // Picking a datalist entry only fires a change event, so open
+            // the city when the value equals one of the offered suggestions.
+            const picked = suggestions.find((s) => `${s.name}, ${s.country}` === value);
+            if (picked) {
+              setSelectedSample(picked);
+              e.target.blur();
+            }
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter" && suggestions.length > 0) {
               const s = suggestions[0];
               setSelectedSample(s);
               setSearchValue(`${s.name}, ${s.country}`);
+              e.currentTarget.blur();
             }
           }}
           list="suggestions"
