@@ -4,6 +4,7 @@ import EmbeddingPlot from "./EmbeddingPlot";
 import MapPlot from "./MapPlot";
 import InfoPanel from "./InfoPanel";
 import FeedbackNote from "./FeedbackNote";
+import Plotly from "plotly.js-dist";
 import { palette, computeColors, computeSizes, typeColorsExplore } from "../utils/coloring";
 import { isCompactViewport } from "../utils/viewport";
 import "../styles/explorer.css";
@@ -214,6 +215,15 @@ const Explorer = () => {
     if (isCompactViewport()) setControlsOpen(false);
   }, []);
 
+  // A tap on a touch screen leaves the hover label in place; drop it whenever
+  // the selection changes so it does not linger behind or after the panel.
+  useEffect(() => {
+    if (!isCompactViewport()) return;
+    document
+      .querySelectorAll(".explorer-root .js-plotly-plot")
+      .forEach((gd) => Plotly.Fx.unhover(gd));
+  }, [selectedSample]);
+
   // ------------------------------------------------------
   // Reset handlers
   // ------------------------------------------------------
@@ -277,7 +287,7 @@ const Explorer = () => {
   // ------------------------------------------------------
   return (
     <div
-      className={`explorer-root mode-${viewMode}${controlsOpen ? " controls-open" : ""}`}
+      className={`explorer-root mode-${viewMode}${controlsOpen ? " controls-open" : ""}${selectedSample ? " city-selected" : ""}`}
     >
       <div className="plots-wrapper">
         {(viewMode === "embedding" || viewMode === "both") && (

@@ -46,17 +46,27 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
 
   return (
     <div className="info-panel">
-      <div className="info-panel-body">
-        <div className="info-close" onClick={() => {
-              setSearchValue("");
-              setSelectedSample(null);
-        }}>
-          ×
-        </div>
+      <div className="info-panel-header">
         <h3>
           {selectedSample.name}
           {selectedSample.country ? ", " + selectedSample.country : ""}
         </h3>
+        <button
+          type="button"
+          className="info-close"
+          aria-label="Close city details"
+          title="Close"
+          onClick={() => {
+            setSearchValue("");
+            setSelectedSample(null);
+          }}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6 6 18" />
+          </svg>
+        </button>
+      </div>
+      <div className="info-panel-body">
         <div style={{ fontSize: "0.8em", lineHeight: "1.3em" }}>
           <div style={{ position: "relative" }}>
             <strong>Type:</strong>{" "}
