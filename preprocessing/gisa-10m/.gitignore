@@ -1,0 +1,9 @@
+# Temporary base data (UCDB polygons, GISA tiles, checkpoint) — deleted by run.sh
+data_raw/
+.venv/
+__pycache__/
+.claude/
+# Presentation slides are kept outside the repo
+slides/
+# Plots are not committed; run.sh regenerates them
+output/plots/

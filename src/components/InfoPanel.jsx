@@ -185,6 +185,9 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
               Metrics are sourced from the <a href="https://human-settlement.emergency.copernicus.eu/ghs_ucdb_2024.php" target="_blank" rel="noopener noreferrer"> Global Human Settlement Layer (GHSL)</a> and related datasets. The built-up share is the share of the urban centre area covered by settlements in the <a href="https://geoservice.dlr.de/web/maps/eoc:wsf2019" target="_blank" rel="noopener noreferrer">World Settlement Footprint 2019</a> (DLR).
             </p>
             <p>
+              The impervious surface share is the share of the urban centre&rsquo;s land area (water excluded) that is sealed, including roads, according to <a href="https://doi.org/10.5194/essd-14-3649-2022" target="_blank" rel="noopener noreferrer">GISA-10m</a> (reference year 2016). The unevenness describes how the sealing is distributed across ~1 km cells within the city: 0 means evenly spread, 1 means the city is split into fully sealed and fully unsealed areas. It is only reported for cities with at least 10 cells.
+            </p>
+            <p>
               Percentile ranks indicate the share of cities worldwide that have lower values, showing how each city compares to its global peers for each characteristic.
             </p>
             <p>
