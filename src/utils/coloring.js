@@ -97,6 +97,10 @@ export const getCategoryColor = (sample, colorKey, categoryColors) => {
     return toRgba(base, alpha);
   }
 
+  if (colorKey === "lens_subtype") {
+    return categoryColors[sample.lens_subtype] || "#8b949e";
+  }
+
   if (colorKey === "region") {
     return categoryColors[sample.region] || "#ffffff";
   }

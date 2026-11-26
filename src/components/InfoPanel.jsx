@@ -9,8 +9,10 @@ import {
 } from "../utils/metrics";
 import { domainPalette, typeColorsExplore, percentileColor } from "../utils/coloring";
 import MethodologySection from "./MethodologySection";
+import { EvidenceSection, LensPeers } from "./MockEvidence";
+import { OVERALL_LENS } from "../utils/mockLens";
 
-const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue }) => {
+const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue, mock, lens, setLens, byId, openEvidence }) => {
   const [openSections, setOpenSections] = React.useState({
     type: false,
     domains: false,
@@ -29,6 +31,11 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
         dist: selectedSample.neighbor_distances?.[i],
       }))
       .filter((x) => x.neighbour && x.neighbour.n_studies > 0) || [];
+
+  // MOCK: lens peers and hand-tagged evidence
+  const lensInfo = lens && lens !== OVERALL_LENS ? mock?.lenses?.lenses?.[lens] : null;
+  const hasEvidence = Boolean(mock?.evidence?.cities?.[selectedSample.id]);
+  const lensSubtype = lensInfo?.subtypes.find((s) => s.name === selectedSample.lens_subtype);
 
   const toggle = (key) => {
     setOpenSections(s => ({ ...s, [key]: !s[key] }));
@@ -92,6 +99,15 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
               </span>
             </div>
           )}
+          {lensSubtype && (
+            <div style={{ position: "relative" }}>
+              <strong>{lensInfo.label}:</strong>{" "}
+              <span className="type-tooltip type-tooltip-right">
+                {lensSubtype.name}
+                <span className="type-tooltip-content">{lensSubtype.description}</span>
+              </span>
+            </div>
+          )}
           <div>
             <strong>Region:</strong> {selectedSample.region}
           </div>
@@ -106,6 +122,7 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
         {/* Cluster assignment probabilities */}
         {selectedSample.type_probabilities && (
           <div
+            className="mock-sec-type"
             style={{
               marginTop: "18px",
               borderTop: "1px solid #444",
@@ -170,6 +187,7 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
 
         {/* Additional metrics */}
         <div
+          className="mock-sec-characteristics"
           style={{
             marginTop: "18px",
             borderTop: "1px solid #444",
@@ -183,6 +201,9 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
           >
             <p>
               Metrics are sourced from the <a href="https://human-settlement.emergency.copernicus.eu/ghs_ucdb_2024.php" target="_blank" rel="noopener noreferrer"> Global Human Settlement Layer (GHSL)</a> and related datasets. The built-up share is the share of the urban centre area covered by settlements in the <a href="https://geoservice.dlr.de/web/maps/eoc:wsf2019" target="_blank" rel="noopener noreferrer">World Settlement Footprint 2019</a> (DLR).
+            </p>
+            <p>
+              The impervious surface share is the share of the urban centre&rsquo;s land area (water excluded) that is sealed, including roads, according to <a href="https://doi.org/10.5194/essd-14-3649-2022" target="_blank" rel="noopener noreferrer">GISA-10m</a> (reference year 2016). The unevenness describes how the sealing is distributed across ~1 km cells within the city: 0 means evenly spread, 1 means the city is split into fully sealed and fully unsealed areas. It is only reported for cities with at least 10 cells.
             </p>
             <p>
               Percentile ranks indicate the share of cities worldwide that have lower values, showing how each city compares to its global peers for each characteristic.
@@ -322,8 +343,24 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
           )}
         </div>
 
+        {/* MOCK: verified solution tags replace the domain bars for the evidence cities */}
+        {hasEvidence && (
+          <EvidenceSection city={selectedSample} evidence={mock.evidence} openEvidence={openEvidence} lens={lens} setLens={setLens} />
+        )}
+
+        {lensInfo && (
+          <LensPeers
+            selected={selectedSample}
+            byId={byId}
+            mock={mock}
+            lens={lens}
+            setSelectedSample={setSelectedSample}
+            openEvidence={openEvidence}
+          />
+        )}
+
         {/* Domain solution counts (horizontal bar chart) */}
-        {selectedSample.solution_domain_counts && (
+        {!hasEvidence && selectedSample.solution_domain_counts && (
           <div
             style={{
               marginTop: "18px",
@@ -407,6 +444,8 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
         )}
 
         {/* Nearest neighbours list */}
+        {!lensInfo && (
+        <>
         <div
           style={{
             marginTop: "18px",
@@ -460,6 +499,13 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
             </ul>
           )}
         </div>
+        {mock?.lenses && (
+          <div className="mock-note" style={{ marginTop: "8px" }}>
+            Choose a solution domain in the filter panel to find similar cities for that domain.
+          </div>
+        )}
+        </>
+        )}
       </div>
     </div>
   );
