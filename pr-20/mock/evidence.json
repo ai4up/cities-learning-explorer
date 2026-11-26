@@ -1,0 +1,700 @@
+{
+ "mock": true,
+ "domains": [
+  "Mobility",
+  "Energy"
+ ],
+ "tags": {
+  "M1": {
+   "domain": "Mobility",
+   "label": "Switch to cycling and walking, public transit, and shared mobility",
+   "short": "Cycling, walking, transit, shared mobility",
+   "definition": "The study documents walking and cycling promotion through infrastructure (bike lanes, sidewalks), incentives or behavioural change; a modal shift from private vehicles to buses, subways, trams or other public transit; or mobility services that enable shared use of vehicles, such as car-sharing, ride-hailing or micro-mobility, to reduce individual car ownership and trips.",
+   "example": "Bike-sharing systems to reduce urban carbon emissions."
+  },
+  "M2": {
+   "domain": "Mobility",
+   "label": "Uptake of battery electric vehicles and electric 2- and 3-wheelers",
+   "short": "Battery electric vehicles",
+   "definition": "The study documents adoption, diffusion or promotion of battery-electric cars, buses, motorcycles, scooters or other small electric vehicles, including policies, incentives, charging infrastructure or behavioural changes that increase the use of electric-powered transport instead of fossil-fuel vehicles.",
+   "example": "Electric vehicle adoption programs to reduce urban transport emissions."
+  },
+  "E1": {
+   "domain": "Energy",
+   "label": "District heating/cooling systems",
+   "short": "District heating/cooling",
+   "definition": "The study documents centralized systems distributing heat or cooling to multiple buildings using efficient or low-carbon energy sources (e.g. waste heat, renewables).",
+   "example": "Waste heat recovery for district heating."
+  },
+  "E2": {
+   "domain": "Energy",
+   "label": "Renewable energy generation & grid integration",
+   "short": "Renewable generation & grid integration",
+   "definition": "The study documents generation of electricity from renewable sources (solar, wind, hydro, geothermal, biomass) within the urban context, including rooftop PV; grid upgrades or energy storage that accommodate renewables; or integration of renewable energy systems into buildings, transport networks or urban infrastructure.",
+   "example": "Rooftop solar PV deployment in cities."
+  }
+ },
+ "cities": {
+  "698": {
+   "name": "Copenhagen",
+   "studies": [
+    {
+     "id": "W4239510715",
+     "title": "Street Fights in Copenhagen",
+     "authors": "Jason Henderson, Natalie Marie Gulsrud",
+     "year": "2019",
+     "doi": "https://doi.org/10.4324/9780429444135",
+     "openalex": "https://openalex.org/W4239510715",
+     "abstract": "This book considers the underlying political conditions that enabled cycling to appeal to such a wide range of citizens in Copenhagen and asks how this can be replicated elsewhere.",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "M1",
+       "start": 0,
+       "end": 180
+      }
+     ]
+    },
+    {
+     "id": "W1141250769",
+     "title": "The spatio-temporal development of Copenhagen’s bicycle infrastructure 1912–2013",
+     "authors": "Trine Agervig Carstensen, Anton Stahl Olafsson, Nynne Marie Bech et al.",
+     "year": "2015",
+     "doi": "https://doi.org/10.1080/00167223.2015.1034151",
+     "openalex": "https://openalex.org/W1141250769",
+     "abstract": "This study documents the spatio-temporal development of Copenhagen's bicycle infrastructure and explores how the development corresponds to other processes of urban transformation.",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "M1",
+       "start": 0,
+       "end": 180
+      }
+     ]
+    },
+    {
+     "id": "W2596482858",
+     "title": "Estimation and Evaluation of the Effects of Future Implementation of GPS-based Bus Priority at Traffic Signals in Copenhagen",
+     "authors": "Camilla Morellato",
+     "year": "2010",
+     "doi": "https://doi.org/10.4122/1.1000000123",
+     "openalex": "https://openalex.org/W2596482858",
+     "abstract": "The idea of the project is to use GPS technology to provide buses with priority at traffic signals, which will give buses an observable advantage compared to cars and, improving travel times and punctuality, will generate a good potential for encouraging the modal shift.",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "M1",
+       "start": 0,
+       "end": 271
+      }
+     ]
+    },
+    {
+     "id": "W3217714558",
+     "title": "Car sharing schemes and MaaS: A study of shifting mobility practices from ownership to access: Artikel",
+     "authors": "Toke Haunstrup Christensen, Freja Friis, Marie Vang Nielsen",
+     "year": "2021",
+     "doi": null,
+     "openalex": "https://openalex.org/W3217714558",
+     "abstract": "Methodologically, the paper draws on insights from qualitative interviews with families using a car sharing scheme in Copenhagen.",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "M1",
+       "start": 0,
+       "end": 129
+      }
+     ]
+    },
+    {
+     "id": "W2599858479",
+     "title": "A new and greener alternative to public transport in Copenhagen",
+     "authors": "Morten G. Nielsen, L. K. Sandvik, O. H. Kverneland et al.",
+     "year": "2012",
+     "doi": "https://doi.org/10.22007/dtu:111",
+     "openalex": "https://openalex.org/W2599858479",
+     "abstract": "This project examines how the implementation of light rail in Copenhagen and the surrounding municipalities can have a positive effect on travel time spent in the Copenhagen Region.",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "M1",
+       "start": 0,
+       "end": 181
+      }
+     ]
+    },
+    {
+     "id": "W3136003627",
+     "title": "Copenhagen climate innovation",
+     "authors": "Billy Fields, John L. Renne",
+     "year": "2021",
+     "doi": "https://doi.org/10.4324/9780429026805-6",
+     "openalex": "https://openalex.org/W3136003627",
+     "abstract": "The chapter provides a close examination of the key design elements of the bicycle transportation system with a focus on the growth of the protected cycle track system.",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "M1",
+       "start": 0,
+       "end": 168
+      }
+     ]
+    },
+    {
+     "id": "W4323978779",
+     "title": "The Influence of Sustainable Urban Mobility on the Urban Morphology of Copenhagen City",
+     "authors": "Lobna Galal",
+     "year": "2023",
+     "doi": "https://doi.org/10.21608/msaeng.2023.289097",
+     "openalex": "https://openalex.org/W4323978779",
+     "abstract": "Moreover, the micro scale investigation comprises Copenhagen's bicycle infrastructure; Copenhagen-style bicycle lanes, street design, and sidewalks.",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "M1",
+       "start": 0,
+       "end": 148
+      }
+     ]
+    },
+    {
+     "id": "W4405114726",
+     "title": "Sustainable Urban mobility: Lessons from European Cities",
+     "authors": "Arman Shah Abdullah, Adnan Adnan",
+     "year": "2024",
+     "doi": "https://doi.org/10.30574/gjeta.2024.21.2.0210",
+     "openalex": "https://openalex.org/W4405114726",
+     "abstract": "The rising urgency of climate change and rapid urbanization has compelled cities worldwide to prioritize sustainable urban mobility. This article explores the innovative strategies implemented by leading European cities—such as Amsterdam, Copenhagen, and Vienna—in fostering sustainable transport solutions, including dedicated cycling infrastructure, car-free zones, and integrated public transport systems. By examining these cities' comprehensive approaches to urban planning, policy frameworks, and public engagement, this article highlights the key factors contributing to their success in reducing emissions, enhancing urban liveability, and shifting public behaviour toward sustainable modes of transport. Through a comparative analysis of these cities’ approaches, the study aims to offer actionable insights for global cities seeking to adopt similar sustainable mobility practices. In conclusion, the article discusses the critical role of policy support, infrastructure investment, and community involvement in making urban mobility more sustainable, equitable, and accessible, emphasizing the scalability of European models for cities around the world.",
+     "excerpt": false,
+     "tags": [
+      {
+       "tag": "M1",
+       "start": 133,
+       "end": 408
+      }
+     ]
+    },
+    {
+     "id": "W2989680429",
+     "title": "Modelling the future low-carbon energy systems - case study of Greater Copenhagen, Denmark",
+     "authors": "Sara Ben Amer, Rasmus Bramstoft, Olexandr Balyk et al.",
+     "year": "2019",
+     "doi": "https://doi.org/10.5278/ijsepm.3356",
+     "openalex": "https://openalex.org/W2989680429",
+     "abstract": "The results show that from the socio-economic perspective, expanding district heating to Nordhavn is a promising solution.",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "E1",
+       "start": 0,
+       "end": 122
+      }
+     ]
+    },
+    {
+     "id": "W2946332234",
+     "title": "Carbon-Free Advantage",
+     "authors": "Peter Plastrik, John Cleveland",
+     "year": "2018",
+     "doi": "https://doi.org/10.5822/978-1-61091-850-3_8",
+     "openalex": "https://openalex.org/W2946332234",
+     "abstract": "Thousands of residents of Copenhagen purchased stock in the city's offshore and onshore wind turbines, providing investment capital that is helping the city reach its goal of becoming carbon neutral by 2025.",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "E2",
+       "start": 0,
+       "end": 207
+      }
+     ]
+    },
+    {
+     "id": "W2083855283",
+     "title": "Offshore Wind Power and its Potential for Development in the West Wind Drift",
+     "authors": "Kaufui V. Wong, Thomas Hutley, Emma Salgado",
+     "year": "2010",
+     "doi": "https://doi.org/10.1115/imece2010-39825",
+     "openalex": "https://openalex.org/W2083855283",
+     "abstract": "More ambitious projects followed and in 2001 the Middelgrunden, Copenhagen wind farm opened producing 40 MW of power.",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "E2",
+       "start": 0,
+       "end": 117
+      }
+     ]
+    },
+    {
+     "id": "W4402959157",
+     "title": "Renewable Energy Adoption and Carbon Emission Reductions in Copenhagen, Denmark",
+     "authors": "Laura Christensen",
+     "year": "2024",
+     "doi": "https://doi.org/10.47604/ijcs.2971",
+     "openalex": "https://openalex.org/W4402959157",
+     "abstract": "The aim of the study was to analyze the renewable energy adoption and carbon emission reductions in Copenhagen, Denmark.",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "E2",
+       "start": 0,
+       "end": 120
+      }
+     ]
+    },
+    {
+     "id": "W2954874771",
+     "title": "Perspectives on solar power in dense urban areas – with Copenhagen International School as case study",
+     "authors": "Per Nørgaard, Søren H. Poder",
+     "year": "2019",
+     "doi": "https://doi.org/10.1049/joe.2018.9309",
+     "openalex": "https://openalex.org/W2954874771",
+     "abstract": "With the solar power panels as integrated surface elements in new building constructions, solar power will be economic attractive in urban areas, close to the power consumption.",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "E2",
+       "start": 0,
+       "end": 177
+      }
+     ]
+    }
+   ]
+  },
+  "5483": {
+   "name": "Berlin",
+   "studies": [
+    {
+     "id": "W2049234165",
+     "title": "Potential of Electric Carsharing in Urban and Rural Areas",
+     "authors": "Sandra Wappelhorst, Martin Sauer, Daniel Hinkeldein et al.",
+     "year": "2014",
+     "doi": "https://doi.org/10.1016/j.trpro.2014.11.028",
+     "openalex": "https://openalex.org/W2049234165",
+     "abstract": "Electromobility can help to contribute to a more sustainable, climate and environmentally friendly mobility. However, in terms of electric operated cars it has not spread to the full extent of its potential. From the user's perspective there are two major barriers in buying an electric car: It costs more than a car with an internal combustion engine and also, it has in general a limited range compared to a conventional vehicle. Intermodal concepts, relying on electric shared vehicles can be one promising solution as the total costs of ownership of the electric vehicles can be spread among many users and as a part of the public transport system it can also offer a complement for local and long-distance travel. To evaluate whether successful schemes known from urban contexts might work in rural areas as well, this paper presents results of two studies evaluating the potential of station-based electric carsharing in the city of Berlin and the smaller city of Garmisch-Partenkirchen. Overall, the results show that residents living in a rural area seem to be as open towards e-carsharing as people living in an urban context. However, this group alone cannot contribute to the full economic viability of the system.",
+     "excerpt": false,
+     "tags": [
+      {
+       "tag": "M1",
+       "start": 719,
+       "end": 993
+      }
+     ]
+    },
+    {
+     "id": "W4404142317",
+     "title": "Who is (not) in the room? An epistemic justice perspective on low-carbon transport transitions",
+     "authors": "Anke Klaever, Ersilia Verlinghieri",
+     "year": "2024",
+     "doi": "https://doi.org/10.1080/1523908x.2024.2422842",
+     "openalex": "https://openalex.org/W4404142317",
+     "abstract": "Car-centric planning exacerbates the climate crisis, compromises public health, and erodes public space. Street-space reallocation programmes, which redistribute road space from cars to active travel, leisure and urban green, are an important strategy to respond to these challenges. In line with a wider shift towards collaborative planning, many of these programmes include public participation. However, participatory planning approaches face criticism for being exclusionary, favouring a loud or privileged minority. Following an epistemic justice perspective, this paper invites to consider the question: 'who is (not) in the room?' Based on in-depth qualitative analysis of the participatory processes linked to a pedestrianisation scheme in Berlin, we focus on the link between non-participation in invited participatory spaces and the emergence of claimed spaces of participation. We found all participants to have participated in one of them. The decision of how to participate is a complex interplay between the relevance of the scheme and the feeling of being heard. We show that it seems irrelevant whether this interplay applies to oneself or to one's social network. Based on our findings, we argue that epistemically just participatory planning approaches to transitions need to go beyond invited spaces to include claimed spaces both spatially and temporally.",
+     "excerpt": false,
+     "tags": [
+      {
+       "tag": "M1",
+       "start": 638,
+       "end": 888
+      }
+     ]
+    },
+    {
+     "id": "W2600368582",
+     "title": "Suburban Daily Mobility – between Freedom and Sustainability",
+     "authors": "Cornelia Rahn",
+     "year": "2012",
+     "doi": null,
+     "openalex": "https://openalex.org/W2600368582",
+     "abstract": "In Berlin, an increase of multi-modal mobility is observed based on urban lifestyles combined with the availability of alternatives to the private car such as public transport, bicycle rental systems or car sharing.",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "M1",
+       "start": 0,
+       "end": 215
+      }
+     ]
+    },
+    {
+     "id": "W587430226",
+     "title": "New Car Sharing Offers and Customer Groups: Implications for a Growing and Diversifying Market",
+     "authors": "Sandra Wappelhorst, Andreas Graff, Josephine Steiner et al.",
+     "year": "2013",
+     "doi": null,
+     "openalex": "https://openalex.org/W587430226",
+     "abstract": "To address this issue, this article investigates the behaviour and preferences of new consumer groups in the Berlin car sharing market focusing on the following research questions: (1) Who are the user groups of the different car sharing systems in Berlin including conventional and electric cars and how do these customer groups act in this emerging market?",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "M1",
+       "start": 0,
+       "end": 358
+      }
+     ]
+    },
+    {
+     "id": "W4388583579",
+     "title": "BERLIN-POTSDAM - A MODEL REGION FOR ELECTRIC MOBILITY IN GERMANY",
+     "authors": "Thomas Meißner",
+     "year": "2011",
+     "doi": "https://doi.org/10.4271/2011-39-7226",
+     "openalex": "https://openalex.org/W4388583579",
+     "abstract": "On the other hand a lot of technical and organizational issues has already been identified that must be resolved before large scale market penetration of electric vehicles can happen.",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "M2",
+       "start": 0,
+       "end": 183
+      }
+     ]
+    },
+    {
+     "id": "W3110096979",
+     "title": "Methodology for Determining Charging Strategies for Freight Traffic Vehicles based on Traffic Simulation Results",
+     "authors": "Ricardo Miranda Jahn, Anne Magdalene Syré, Alexander Grahle et al.",
+     "year": "2021",
+     "doi": "https://doi.org/10.1016/j.procs.2021.03.082",
+     "openalex": "https://openalex.org/W3110096979",
+     "abstract": "The decarbonization of transport is one major challenge in the upcoming years. One possible solution is the use of battery electric vehicles (BEV). While electric passenger cars and their charging strategies are already in series production, battery electric trucks and their charging strategies are still mostly in the prototype stage. The range limitations of battery electric trucks represent a new challenge for logistics. Therefore, we introduce a methodology for determining charging strategies for freight transport vehicles based on transport simulation results. We analyze the results of an agent-based transport simulation (MATSim) and evaluate different settings of normal and fast charging points. We found for a case study dealing with the food retailing in Berlin, that for a fleet with 279 vehicles in 16 depots 214 normal and 61 fast charging points are sufficient to complete approx. 90% of the tours with BEV. If the vehicles share their charging points, only 71 fast charging points with 400 kW are sufficient. With higher charging power the share of charged vehicles hardly increases. With 29 additional high performance opportunity chargers within the city, all tours can be operated by battery electric trucks. Due to the large variance in route lengths, the results of the case study can be representative for the entire delivery traffic.",
+     "excerpt": false,
+     "tags": [
+      {
+       "tag": "M2",
+       "start": 710,
+       "end": 900
+      }
+     ]
+    },
+    {
+     "id": "W3036448874",
+     "title": "Electrification of Urban Waste Collection: Introducing a Simulation-Based Methodology for Technical Feasibility, Impact and Cost Analysis",
+     "authors": "Ricardo Ewert, Alexander Grahle, Kai Martins-Turner et al.",
+     "year": "2021",
+     "doi": "https://doi.org/10.3390/wevj12030122",
+     "openalex": "https://openalex.org/W3036448874",
+     "abstract": "Electrification is a potential solution for transport decarbonization and already widely available for individual and public transport. However, the availability of electrified commercial vehicles like waste collection vehicles is still limited, despite their significant contribution to urban emissions. Moreover, there is a lack of clarity whether electric waste collection vehicles can persist in real world conditions and which system design is required. Therefore, we introduce a multi-agent-based simulation methodology to investigate the technical feasibility and evaluate environmental and economic sustainability of an electrified urban waste collection. We present a synthetic model for waste collection demand on a per-link basis, using open available data. The tour planning is solved by an open-source algorithm as a capacitated vehicle routing problem (CVRP). This generates plausible tours which handle the demand. The generated tours are simulated with an open-source transport simulation (MATSim) for both the diesel and the electric waste collection vehicles. To compare the life cycle costs, we analyze the data using total cost of ownership (TCO). Environmental impacts are evaluated based on a Well-to-Wheel approach. We present a comparison of the two propulsion types for the exemplary use case of Berlin. And we are able to generate a suitable planning to handle Berlin’s waste collection demand using battery electric vehicles only. The TCO calculation reveals that the electrification raises the total operator cost by 16–30%, depending on the scenario and the battery size with conservative assumptions. Furthermore, the greenhouse gas emissions (GHG) can be reduced by 60–99%, depending on the carbon footprint of electric power generation.",
+     "excerpt": false,
+     "tags": [
+      {
+       "tag": "M2",
+       "start": 1329,
+       "end": 1457
+      }
+     ]
+    },
+    {
+     "id": "W2484328946",
+     "title": "Smart grid communications",
+     "authors": "Martin Maier, Navid Ghazisaidi",
+     "year": "2011",
+     "doi": "https://doi.org/10.1017/cbo9780511760112.021",
+     "openalex": "https://openalex.org/W2484328946",
+     "abstract": "A promising example of using EVs for a sustainable electric mobility (e-mobility) in urban areas is the “e-mobility Berlin” project, which deploys only green electricity from renewable sources to realize a user-friendly public charging infrastructure for plug-in EVs (PEVs).",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "M2",
+       "start": 0,
+       "end": 274
+      }
+     ]
+    },
+    {
+     "id": "W3045801317",
+     "title": "Method for a Multi-Vehicle, Simulation-Based Life Cycle Assessment and Application to Berlin’s Motorized Individual Transport",
+     "authors": "Anne Magdalene Syré, Florian Heining, Dietmar Göhlich",
+     "year": "2020",
+     "doi": "https://doi.org/10.3390/su12187302",
+     "openalex": "https://openalex.org/W3045801317",
+     "abstract": "The transport sector in Germany causes one-quarter of energy-related greenhouse gas emissions. One potential solution to reduce these emissions is the use of battery electric vehicles. Although a number of life cycle assessments have been conducted for these vehicles, the influence of a transport system-wide transition has not been addressed sufficiently. Therefore, we developed a method which combines life cycle assessment with an agent-based transport simulation and synthetic electric-, diesel- and gasoline-powered vehicle models. We use a transport simulation to obtain the number of vehicles, their lifetime mileage and road-specific consumption. Subsequently, we analyze the product systems’ vehicle production, use phase and end-of-life. The results are scaled depending on the covered distance, the vehicle weight and the consumption for the whole life cycle. The results indicate that the sole transition of drive trains is insufficient to significantly lower the greenhouse gas emissions. However, sensitivity analyses demonstrate that there is a considerable potential to reduce greenhouse gas emissions with higher shares of renewable energies, a different vehicle distribution and a higher lifetime mileage. The method facilitates the assessment of the ecological impacts of complete car-based transportation in urban agglomerations and is able to analyze different transport sectors.",
+     "excerpt": false,
+     "tags": [
+      {
+       "tag": "M2",
+       "start": 95,
+       "end": 184
+      }
+     ]
+    },
+    {
+     "id": "W3107573134",
+     "title": "Evaluation of Energy Transition Pathways to Phase out Coal for District Heating in Berlin",
+     "authors": "Miguel Gonzalez‐Salazar, Thomas Langrock, Christoph Koch et al.",
+     "year": "2020",
+     "doi": "https://doi.org/10.3390/en13236394",
+     "openalex": "https://openalex.org/W3107573134",
+     "abstract": "As Germany struggles to meet its near-term emissions reduction targets in lagging sectors like heating or transport, the need to identify energy transition pathways beyond power generation is urgent. This paper presents an investigation of tangible and climate-friendly transformation paths to replace the existing coal-fired units used for heat and power generation in Berlin with a largely CO2-free innovative technology mix. Although the literature has extensively covered the decarbonization of the power generation sector on different geographic scales, few studies have focused on the decarbonization of the heat sector in cities with large district heating networks, like Berlin. This paper aims to fill this gap. The proposed methodology combines three key elements: (1) scenario analysis including high-fidelity models of the European power market and the heat demand in Berlin, (2) evaluation of energy potential from low-carbon alternative sources, and (3) a techno-economic portfolio optimization. The results suggest that a coal phase-out by 2030 is feasible without any discontinuities in the provision of heat. Although low-carbon sources could partially substitute coal-based heat, they would not be sufficient to replace it completely. Thus, a gas-based hydrogen-ready combined heat and power plant linked with a power-to-heat plant would be required to fill the gap.",
+     "excerpt": false,
+     "tags": [
+      {
+       "tag": "E1",
+       "start": 428,
+       "end": 686
+      }
+     ]
+    },
+    {
+     "id": "W4403345370",
+     "title": "Long-Term Multi-Objective Optimization for Integrated Unit Commitment and Investment Planning for District Heating Networks",
+     "authors": "Stephanie Riedmüller, Fabian Rivetta, Janina Zittel",
+     "year": "2024",
+     "doi": "https://doi.org/10.48550/arxiv.2410.06673",
+     "openalex": "https://openalex.org/W4403345370",
+     "abstract": "The formulation is tested on Berlin's district heating network.",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "E1",
+       "start": 0,
+       "end": 63
+      }
+     ]
+    },
+    {
+     "id": "W4392864993",
+     "title": "Vehicle-Integrated Photovoltaics—A Case Study for Berlin",
+     "authors": "Philipp Hoth, Ludger Heide, Alexander Grahle et al.",
+     "year": "2024",
+     "doi": "https://doi.org/10.3390/wevj15030113",
+     "openalex": "https://openalex.org/W4392864993",
+     "abstract": "Recent developments in vehicle-integrated photovoltaics (VIPV) offer prospects for enhancing electric vehicle range, lowering operating costs, and supporting carbon-neutral transport, particularly in urban settings. This study evaluates the solar energy potential of parking spaces in Berlin, considering challenges like building and tree shading using digital surface models and weather data for solar simulations. Utilizing open datasets and software, the analysis covered 48,827 parking spaces, revealing that VIPV could extend vehicle range by 7 to 14 km per day, equating to a median annual increase of 2527 km. The findings suggest median yearly cost savings of 164 euros from reduced grid charging. However, the environmental benefits of solar vehicle charging were found to be less than those of traditional grid-connected photovoltaic systems. The study introduces a method to pinpoint parking spaces that are most suitable for solar charging.",
+     "excerpt": false,
+     "tags": [
+      {
+       "tag": "E2",
+       "start": 216,
+       "end": 415
+      }
+     ]
+    },
+    {
+     "id": "W4402614934",
+     "title": "Rooftop PV Potential Determined by Backward Ray Tracing: A Case Study for the German Regions of Berlin, Cologne, and Hanover",
+     "authors": "Marlon Schlemminger, Dennis Bredemeier, Alexander Mahner et al.",
+     "year": "2024",
+     "doi": "https://doi.org/10.1002/pip.3844",
+     "openalex": "https://openalex.org/W4402614934",
+     "abstract": "Photovoltaics (PV) on building rooftops is a major contributor to the decarbonization of energy systems. We simulate the PV energy yield potential for 2.5 million individual roofs in three German regions. We cumulate the results for each single roof to calculate the cost‐potential curves for the three cities Berlin, Cologne, and Hanover. These curves give the amount of electricity that can be generated at less than a given cost per kWh. We find that these curves have the shape of a hockey stick. Neglecting the dependence of PV investment on building size and thus on the system sizes causes largely different cost‐potential curves that differ by 11%–18% for flat roofs due to their heterogeneous building size distribution. The cost‐potential curves of the three cities are very similar when appropriately normalized, for example, by the local solar irradiation and the settlement area of the city, despite substantial variations in population density. This allows for an extrapolation of our results. For Germany, we reveal an upper limit for the total electricity generation from rooftop PV of 762 TWh/a with cost as low as 6.9 ct/kWh without accounting for area losses due to chimneys, air conditioning systems, and so forth. We estimate the actual potential to be at least half of that figure.",
+     "excerpt": false,
+     "tags": [
+      {
+       "tag": "E2",
+       "start": 0,
+       "end": 104
+      }
+     ]
+    },
+    {
+     "id": "W3047358695",
+     "title": "How Much Can Small-Scale Wind Energy Production Contribute to Energy Supply in Cities? A Case Study of Berlin",
+     "authors": "Alina Wilke, Zhiwei Shen, Matthias Ritter",
+     "year": "2020",
+     "doi": "https://doi.org/10.2139/ssrn.3598580",
+     "openalex": "https://openalex.org/W3047358695",
+     "abstract": "This paper addresses the potential of urban wind energy production with small wind turbines, using Berlin as an example.",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "E2",
+       "start": 0,
+       "end": 120
+      }
+     ]
+    },
+    {
+     "id": "W4364374794",
+     "title": "Urban-Rural Cooperation for an Economy with 100% Renewable Energy and Climate Protection towards 2030 - the Region Berlin-Brandenburg",
+     "authors": "Thure Traber, Hans-Josef Fell, Christian Breyer",
+     "year": "2023",
+     "doi": "https://doi.org/10.54337/ijsepm.7268",
+     "openalex": "https://openalex.org/W4364374794",
+     "abstract": "The German states of Berlin and Brandenburg are committed to the Paris Agreement with the goal of keeping global warming safely below 2 degrees to protect the Earth system from uncontrollable warming. This claim implies targeting 1.5 degrees to keep a reasonable chance of realisation. Renewable energies are the only sources that can be considered to accomplish this task. We use a linear cost minimization model for the Berlin-Brandenburg region to show how a 100% renewable energy target is possible without relying on contributions from other regions. We find that a 100% renewable energy system based predominantly on photovoltaics on buildings and on green hydrogen production, and a transition essentially to electricity for all purposes, is feasible in time and at a reasonable cost below that of fossil-nuclear energy. Hydrogen storage technology appears as one of the key cost determinants, while a sensible integration of German and European transition systems potentially limits costs to the lowest levels ever realized in real terms.",
+     "excerpt": false,
+     "tags": [
+      {
+       "tag": "E2",
+       "start": 374,
+       "end": 555
+      }
+     ]
+    },
+    {
+     "id": "W4353062135",
+     "title": "Sector Coupling through Vehicle to Grid: A Case Study for Electric Vehicles and Households in Berlin, Germany",
+     "authors": "Florian Straub, Otto Maier, Dietmar Göhlich et al.",
+     "year": "2023",
+     "doi": "https://doi.org/10.3390/wevj14030077",
+     "openalex": "https://openalex.org/W4353062135",
+     "abstract": "A key factor in limiting global warming is the conversion of conventional electricity generation to renewable energy sources. However, a major obstacle is that renewable energy generation and energy demand often do not coincide in time, and energy must therefore be stored temporarily. Vehicle to grid (V2G) can be used to store excess renewable energy in battery electric vehicles (BEVs) and feed it back into the electric grid when needed. For effective V2G operation, the grid may have to be expanded, as the energy needs to be transported to BEVs. However, the grid should only be strengthened where renewable energy demand exceeds current grid capacity due to high grid expansion costs. This requires a method that determines the spatial distribution of V2G potential at a high resolution. Since such a method has not yet been reported in the existing literature, and so is developed in this paper. The method is demonstrated for the city of Berlin and its 448 sub-districts. For each sub-district, the method allows determining the percentage of residential and BEV energy demand that can be met by renewables if V2G is deployed, and answers the question of whether a full renewable supply is possible. The results show that BEVs can be effectively used as intermediate storage for renewable energy. If 30% of the BEVs participate in V2G, more than 99% of the energy demand of households and BEVs in Berlin can be covered by renewables on certain days. On the other hand, V2G deployment increases the average peak load in the districts by up to 100% and results in a nearly double load on vehicle batteries. High shares of renewable energy can be observed in districts with a high degree of motorization, which are predominantly found in the outskirts of the city.",
+     "excerpt": false,
+     "tags": [
+      {
+       "tag": "E2",
+       "start": 1306,
+       "end": 1458
+      }
+     ]
+    }
+   ]
+  },
+  "69": {
+   "name": "Geneva",
+   "studies": [
+    {
+     "id": "W3164624409",
+     "title": "Users, uses and potential of electric-assisted bicycles - Results of a survey in the Canton of Geneva; Usagers, usages et potentiel des velos a assistance electrique. Resultats d'une enquete menee dans le canton de Geneve",
+     "authors": "S. Bernardoni, A. Iseli, Sébastien Munafò",
+     "year": "2009",
+     "doi": null,
+     "openalex": "https://openalex.org/W3164624409",
+     "abstract": "The municipal, regional and national authorities wanted to assess the potential of electric-assisted bicycles in the Geneva region.",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "M1",
+       "start": 0,
+       "end": 131
+      }
+     ]
+    },
+    {
+     "id": "W4385783030",
+     "title": "“The crisis justified the urgency, but now we have to go back to the rule of law”: Urban mobility governance during Covid-19",
+     "authors": "Franziska Meinherz, Livia Fritz",
+     "year": "2023",
+     "doi": "https://doi.org/10.1080/09644016.2023.2242741",
+     "openalex": "https://openalex.org/W4385783030",
+     "abstract": "During COVID-19, many cities built pop-up infrastructure for cyclists and pedestrians. We analyse the experiences of Geneva and Lyon through a qualitative approach based on document analysis and interviews with institutional and societal actors. We explore what contributed to the development of pop-up infrastructure during COVID-19, and how these interventions were shaped by and affected policy-making processes and actors' agency. We found that COVID-19 accelerated social and political trends regarding urban mobility. In both cities, authorities used the crisis to push through existing plans. Authorities' commitment and the existence of ready-to-implement plans proved crucial. The implementation processes constituted a breach from usual procedures. In Geneva, this empowered actors who usually act from the margins. In Lyon, authorities adopted pop-up infrastructure as a way to reduce costs. Our study clarifies the potential of experimentation in a context of crisis for urban climate governance and highlights the democratic implications of such interventions.",
+     "excerpt": false,
+     "tags": [
+      {
+       "tag": "M1",
+       "start": 0,
+       "end": 245
+      }
+     ]
+    },
+    {
+     "id": "W3091150101",
+     "title": "Scenarios for integration of medium-depth geothermal energy in an evolving district heating system: case study in Geneva (Switzerland)",
+     "authors": "Loïc Quiquerez, Fleury De Oliveira Filho, S. Faÿ et al.",
+     "year": "2020",
+     "doi": null,
+     "openalex": "https://openalex.org/W3091150101",
+     "abstract": "In this context, this study assesses how geothermal energy could be integrated into the main district heating system in Geneva, and therefore help decarbonizing the heat sector.",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "E1",
+       "start": 0,
+       "end": 177
+      }
+     ]
+    },
+    {
+     "id": "W3106704858",
+     "title": "Estimation of load curves for large-scale district heating networks",
+     "authors": "Kai Nino Streicher, Stefan Schneider, M. Patel",
+     "year": "2020",
+     "doi": "https://doi.org/10.1088/1755-1315/588/5/052032",
+     "openalex": "https://openalex.org/W3106704858",
+     "abstract": "Decarbonisation and a transition towards sustainable energy systems in cities are key elements of the United Nations sustainability goal. Large-scale district heating networks sourced by excess heat or renewable energy allow to effectively transform building-related energy systems. This study proposes two different approaches for modelling load curves in large-scale district heating networks: 1) physics-based static energy balance model 2) data-driven regression model trained and adjusted on measured load curves. The load curves generated by application of these two approaches are compared with the actual load of an urban district heating network in Geneva, Switzerland. Both models allow to recreate the actual load curve of the district heating network, however with lower accuracy for higher time resolution in the case of the physics-based model. The physics-based static model can be used to simulate the demand and generate load curves of sufficient quality at monthly and daily resolution. For an hourly load curve, it is recommended to use the data-driven regression model if consumption data of the network is available.",
+     "excerpt": false,
+     "tags": [
+      {
+       "tag": "E1",
+       "start": 519,
+       "end": 678
+      }
+     ]
+    },
+    {
+     "id": "W2508598657",
+     "title": "The role of district heating in achieving sustainable cities: comparative analysis of different heat scenarios for Geneva",
+     "authors": "Loïc Quiquerez, Bernard Marie Lachal, Michel Monnard et al.",
+     "year": "2017",
+     "doi": "https://doi.org/10.1016/j.egypro.2017.05.057",
+     "openalex": "https://openalex.org/W2508598657",
+     "abstract": "In many European cities, the heat demand remains mostly supplied by individual fossil fuel-fired boilers, contributing to an inefficient and non-sustainable energy system. In order to decrease the fossil fuel consumption in the heating sector, an improvement of energy efficiency and an increase of renewable energy use must be achieved. This study assesses and compares the impacts of implementing different heat strategies regarding both demand and supply side of the heating system, through a case-study in the city of Geneva, Switzerland. Different heat scenarios for 2035 were developed, based on an input/output hourly energy system model which ensures the matching between heat demand and energy resources. This model is coupled with spatial data that enable to identify the areas where district heating could be developed. The results show the impacts of the different strategies regarding the energy supply, the CO2 emissions and the related socio-economic costs. The findings demonstrate the importance of district heating networks, which offer the possibility to use local heat sources that otherwise would be unused due to technical, spatial or economic constraints. Compared to a scenario essentially focused on very high energy savings in buildings, a more flexible scenario, combining district heating expansion and a smaller reduction in heat demand, enables to achieve the same reductions in fossil fuel consumption and CO2 emissions, but with lower socio-economic costs.",
+     "excerpt": false,
+     "tags": [
+      {
+       "tag": "E1",
+       "start": 973,
+       "end": 1178
+      }
+     ]
+    },
+    {
+     "id": "W3100169744",
+     "title": "How will geothermal energy transform the environmental performance of the heating mix of the State of Geneva from a life-cycle perspective?",
+     "authors": "Astu Sam Pratiwi, Marc Jaxa-Rozen, Evelina Trutnevyte",
+     "year": "2020",
+     "doi": "https://doi.org/10.5194/egusphere-egu2020-10980",
+     "openalex": "https://openalex.org/W3100169744",
+     "abstract": "Geothermal energy from shallow and medium depths is identified as one of the new renewable energy sources to meet the high heat demand in urban areas of Geneva in combination with the district heating network.",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "E1",
+       "start": 0,
+       "end": 209
+      }
+     ]
+    },
+    {
+     "id": "W4392597433",
+     "title": "Numerical assessment of urban wind energy micro-generation potential: a comparison between two Swiss cities",
+     "authors": "Aldo Brandi, Gabriele Manoli",
+     "year": "2024",
+     "doi": "https://doi.org/10.5194/egusphere-egu24-1770",
+     "openalex": "https://openalex.org/W4392597433",
+     "abstract": "Here we use use the Weather Research and Forecast (WRF) model to simulate mean near-surface wind speed over the cities of Lausanne and Geneva to assess the potential for wind energy generation.",
+     "excerpt": true,
+     "tags": [
+      {
+       "tag": "E2",
+       "start": 0,
+       "end": 193
+      }
+     ]
+    },
+    {
+     "id": "W2917956391",
+     "title": "Eco-Sim: A Parametric Tool to Evaluate the Environmental and Economic Feasibility of Decentralized Energy Systems",
+     "authors": "Karni Siraganyan, A.T.D. Perera, Jean‐Louis Scartezzini et al.",
+     "year": "2019",
+     "doi": "https://doi.org/10.3390/en12050776",
+     "openalex": "https://openalex.org/W2917956391",
+     "abstract": "Due to climate change and the need to decrease the carbon footprint of urban areas, there is an increasing pressure to integrate renewable energy and other components in urban energy systems. Most of the models or available tools do not provide both an economic and environmental assessment of the energy systems and thus lead to the design of systems that are sub-optimal. A flexible and modular simulation tool, Eco-Sim, is thus developed in the current study to conduct a comprehensive techno-economic and environmental assessment of a distributed energy system considering different configuration scenarios. Subsequently, an intermodel comparison is conducted with the Hybrid Optimization Model for Electric Renewable (HOMER) Pro as well as with a state-of-the-art industrial tool. Eco-Sim is then extended by including the heating demand, thermal conversion (by using heat pumps and solar thermal) methods and thermal storage. A parametric analysis is conducted by considering different capacities of solar photovoltaics (PV), solar thermal panels and energy storage technologies. The levelized cost of electricity, the autonomy level and the CO 2 emissions are used as the key performance indicators. Based on the analysis of a study case conducted in a neighbourhood in Geneva, Switzerland, the study reveals that, with the present market prices for batteries and seasonal changes in solar energy potential, the combination of solar PV with battery storage doesn’t bring a significant autonomy to the system and increases the CO 2 emissions of the system. However, the integration of thermal storage and solar thermal generation is shown to considerably increase the autonomy of the neighbourhood. Finally, multiple scenarios are also run in order to evaluate the sensitivity of economic parameters on the performance indicators of the system. Under the assumptions of the model, to foster investments in solar PV and battery installations, falling installation costs or stronger policies in favor of renewable energy seem necessary for the future.",
+     "excerpt": false,
+     "tags": [
+      {
+       "tag": "E2",
+       "start": 1207,
+       "end": 1562
+      }
+     ]
+    },
+    {
+     "id": "W4391445820",
+     "title": "Solar governance for the transborder agglomeration of the Greater Geneva based on the solar cadaster development",
+     "authors": "Gilles Desthieux, Martin Thebault",
+     "year": "2024",
+     "doi": "https://doi.org/10.3389/fbuil.2024.1347056",
+     "openalex": "https://openalex.org/W4391445820",
+     "abstract": "As cities are major energy consumers challenges arise in densely populated areas that limit solar resources, hindering the deployment of urban solar power plants. To address this, the paper underscores the importance of digital tools for modeling solar energy accessibility within the urban fabric, focusing on rooftops, building facades, and other relevant locations. In this context, the development of the solar cadaster in Greater Geneva is presented in the paper within the framework of the European INTERREG G2 Solar project (2019–2022). The solar cadaster relies on a rich database from the Geneva Land Information System (SITG), offering comprehensive data on Digital Surface Models, building and roof cadasters, land cover, and more. Notably, this data, including the solar cadaster outputs, is accessible to the public as open data, fostering its extensive use in academia for teaching and research. It serves as a living laboratory for urban solar studies, with its open data approach contributing to widespread adoption. The project, a collaborative effort involving academia, energy utilities, and public institutions on both sides of the border, aims to unite stakeholders and foster a dialogue on solar energy in the region, in line with its commitment to addressing climate change, striving for carbon neutrality by 2050. The paper articulates the steps, methods, and outcomes of the project, offering insights into the challenges of implementing a shared online application tool in a cross-border territory. The propositions are based on feedbacks from stakeholders and lessons learned from case studies. The paper also delves into the shift in the business model for solar photovoltaic installations, emphasizing the need to model self-consumption in buildings. It concludes by highlighting the solar cadaster as a unifying means, fostering cohesion among diverse stakeholders in the region’s energy sector and propelling them toward common governance around solar energy.",
+     "excerpt": false,
+     "tags": [
+      {
+       "tag": "E2",
+       "start": 163,
+       "end": 543
+      }
+     ]
+    }
+   ]
+  }
+ }
+}
