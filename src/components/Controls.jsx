@@ -4,6 +4,7 @@ import { Range } from "react-range";
 import { SqrtRange } from "./SqrtRangeSlider";
 import { metricList, typeDescriptions, typeEuropeSubtypeDescriptions } from "../utils/metrics";
 import { percentileColor } from "../utils/coloring";
+import { LENS_DOMAIN } from "../utils/mockLens";
 
 const StyledTrack = ({ props, children, minPct, maxPct }) => {
   const { style, ...rest } = props;
@@ -55,6 +56,11 @@ const Controls = ({
   setMetricFilters,
   pendingMetric,
   setPendingMetric,
+  lens,
+  setLens,
+  lensData,
+  lensSubtypeDescriptions,
+  onOpenTutorial,
 }) => {
   const viewBtnStyle = (mode) => ({
     flex: 1,
@@ -137,6 +143,16 @@ const Controls = ({
 
     <button
       type="button"
+      className="top-bar-btn mock-help-button"
+      onClick={onOpenTutorial}
+      aria-label="Show tutorial"
+      title="Show tutorial"
+    >
+      ?
+    </button>
+
+    <button
+      type="button"
       className="top-bar-btn controls-toggle"
       onClick={() => setControlsOpen(o => !o)}
       aria-label={controlsOpen ? "Hide filters" : "Show filters"}
@@ -187,6 +203,46 @@ const Controls = ({
         </button>
       </div>
 
+      {/* MOCK: similarity lens selector */}
+      {lensData && (
+        <div className="mock-domain-select">
+          <div style={{ fontSize: "0.8em", marginBottom: "6px", fontWeight: "bold" }}>
+            Solution domain
+          </div>
+          <select value={lensData.lenses[lens] ? lens : "overall"} onChange={(e) => setLens(e.target.value)}>
+            <option value="overall">All domains (overall city type)</option>
+            {Object.entries(lensData.lenses).map(([key, l]) => (
+              <option key={key} value={key}>
+                {LENS_DOMAIN[key]} ({l.label.toLowerCase()})
+              </option>
+            ))}
+          </select>
+          <div className="mock-lens-question">
+            {lensData.lenses[lens] ? (
+              <>
+                {lensData.lenses[lens].question}
+                <span className="mock-indicators">
+                  <strong>Similarity is computed on:</strong>
+                  {lensData.lenses[lens].variables.map((v) => (
+                    <span key={v.key} className="mock-indicator">
+                      {v.label}
+                    </span>
+                  ))}
+                </span>
+              </>
+            ) : (
+              <>
+                Which cities are similar across all characteristics?
+                <span className="mock-indicators">
+                  <strong>Similarity is computed on:</strong> all city characteristics together, as in
+                  the city typology. Choose a domain to compare cities on the indicators that matter for it.
+                </span>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Colour key selector */}
       <div
         style={{
@@ -203,6 +259,7 @@ const Controls = ({
       >
         <optgroup label="Color by categories">
           <option value="type">Type</option>
+          {lensData?.lenses[lens] && <option value="lens_subtype">Subtype for this solution domain</option>}
           <option value="subtype_europe">Subtype (Europe only)</option>
           <option value="region">Region</option>
         </optgroup>
@@ -527,7 +584,7 @@ const Controls = ({
       </div>
     )}
     {/* Legend */}
-    {(colorKey === "type" || colorKey === "subtype_europe" || colorKey === "region") && (
+    {(colorKey === "type" || colorKey === "subtype_europe" || colorKey === "region" || colorKey === "lens_subtype") && (
       <div className="legend">
         {categories.map((cat) => (
           <div className="legend-item" key={cat}>
@@ -536,13 +593,16 @@ const Controls = ({
               style={{ backgroundColor: categoryColors[cat] }}
             ></div>
             {(colorKey === "type" && typeDescriptions[cat]) ||
-            (colorKey === "subtype_europe" && typeEuropeSubtypeDescriptions[cat]) ? (
+            (colorKey === "subtype_europe" && typeEuropeSubtypeDescriptions[cat]) ||
+            (colorKey === "lens_subtype" && lensSubtypeDescriptions?.[cat]) ? (
               <span className="type-tooltip" style={{ fontSize: "0.8em" }}>
                 {cat}
                 <span className="type-tooltip-content">
                   {colorKey === "type"
                     ? typeDescriptions[cat]
-                    : typeEuropeSubtypeDescriptions[cat]}
+                    : colorKey === "lens_subtype"
+                      ? lensSubtypeDescriptions[cat]
+                      : typeEuropeSubtypeDescriptions[cat]}
                 </span>
               </span>
             ) : (

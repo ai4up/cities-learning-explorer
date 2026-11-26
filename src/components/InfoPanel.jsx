@@ -9,8 +9,10 @@ import {
 } from "../utils/metrics";
 import { domainPalette, typeColorsExplore, percentileColor } from "../utils/coloring";
 import MethodologySection from "./MethodologySection";
+import { EvidenceSection, LensPeers } from "./MockEvidence";
+import { OVERALL_LENS } from "../utils/mockLens";
 
-const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue }) => {
+const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue, mock, lens, setLens, byId, openEvidence }) => {
   const [openSections, setOpenSections] = React.useState({
     type: false,
     domains: false,
@@ -29,6 +31,11 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
         dist: selectedSample.neighbor_distances?.[i],
       }))
       .filter((x) => x.neighbour && x.neighbour.n_studies > 0) || [];
+
+  // MOCK: lens peers and hand-tagged evidence
+  const lensInfo = lens && lens !== OVERALL_LENS ? mock?.lenses?.lenses?.[lens] : null;
+  const hasEvidence = Boolean(mock?.evidence?.cities?.[selectedSample.id]);
+  const lensSubtype = lensInfo?.subtypes.find((s) => s.name === selectedSample.lens_subtype);
 
   const toggle = (key) => {
     setOpenSections(s => ({ ...s, [key]: !s[key] }));
@@ -92,6 +99,15 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
               </span>
             </div>
           )}
+          {lensSubtype && (
+            <div style={{ position: "relative" }}>
+              <strong>{lensInfo.label}:</strong>{" "}
+              <span className="type-tooltip type-tooltip-right">
+                {lensSubtype.name}
+                <span className="type-tooltip-content">{lensSubtype.description}</span>
+              </span>
+            </div>
+          )}
           <div>
             <strong>Region:</strong> {selectedSample.region}
           </div>
@@ -106,6 +122,7 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
         {/* Cluster assignment probabilities */}
         {selectedSample.type_probabilities && (
           <div
+            className="mock-sec-type"
             style={{
               marginTop: "18px",
               borderTop: "1px solid #444",
@@ -170,6 +187,7 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
 
         {/* Additional metrics */}
         <div
+          className="mock-sec-characteristics"
           style={{
             marginTop: "18px",
             borderTop: "1px solid #444",
@@ -325,8 +343,24 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
           )}
         </div>
 
+        {/* MOCK: verified solution tags replace the domain bars for the evidence cities */}
+        {hasEvidence && (
+          <EvidenceSection city={selectedSample} evidence={mock.evidence} openEvidence={openEvidence} lens={lens} setLens={setLens} />
+        )}
+
+        {lensInfo && (
+          <LensPeers
+            selected={selectedSample}
+            byId={byId}
+            mock={mock}
+            lens={lens}
+            setSelectedSample={setSelectedSample}
+            openEvidence={openEvidence}
+          />
+        )}
+
         {/* Domain solution counts (horizontal bar chart) */}
-        {selectedSample.solution_domain_counts && (
+        {!hasEvidence && selectedSample.solution_domain_counts && (
           <div
             style={{
               marginTop: "18px",
@@ -410,6 +444,8 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
         )}
 
         {/* Nearest neighbours list */}
+        {!lensInfo && (
+        <>
         <div
           style={{
             marginTop: "18px",
@@ -463,6 +499,13 @@ const InfoPanel = ({ selectedSample, samples, setSelectedSample, setSearchValue 
             </ul>
           )}
         </div>
+        {mock?.lenses && (
+          <div className="mock-note" style={{ marginTop: "8px" }}>
+            Choose a solution domain in the filter panel to find similar cities for that domain.
+          </div>
+        )}
+        </>
+        )}
       </div>
     </div>
   );

@@ -7,6 +7,17 @@ import FeedbackNote from "./FeedbackNote";
 import Plotly from "plotly.js-dist";
 import { palette, computeColors, computeSizes, typeColorsExplore } from "../utils/coloring";
 import { isCompactViewport } from "../utils/viewport";
+import { EvidencePanel, MockBanner } from "./MockEvidence";
+import Tutorial from "./Tutorial";
+import {
+  LENS_KEYS,
+  OVERALL_LENS,
+  applyLens,
+  loadMock,
+  tagCounts,
+  tagsForLens,
+  tutorialSeen,
+} from "../utils/mockLens";
 import "../styles/explorer.css";
 
 // ------------------------------------------------------
@@ -44,6 +55,12 @@ const loadInitialURLState = (samples) => {
 };
 
 
+// MOCK: a lens can be preselected with ?lens=mobility or ?lens=energy
+const initialLens = () => {
+  const lens = readURLParams().get("lens");
+  return LENS_KEYS.includes(lens) ? lens : OVERALL_LENS;
+};
+
 const Explorer = () => {
   const [samples, setSamples] = useState([]);
   const [viewMode, setViewMode] = useState("map");
@@ -66,6 +83,73 @@ const Explorer = () => {
   const [controlsOpen, setControlsOpen] = useState(() => !isCompactViewport());
   const [metricFilters, setMetricFilters] = useState([]);
   const [pendingMetric, setPendingMetric] = useState(null);
+
+  // MOCK: similarity lenses and hand-tagged evidence
+  const [mock, setMock] = useState({ lenses: null, evidence: null });
+  const [lens, setLensState] = useState(initialLens);
+  const [tutorialOpen, setTutorialOpen] = useState(() => !tutorialSeen());
+  const [drawer, setDrawer] = useState(null); // { cityId, tag, forId }: evidence opened from city forId
+
+  useEffect(() => {
+    loadMock().then(setMock);
+  }, []);
+
+  const lensActive = Boolean(mock.lenses?.lenses?.[lens]);
+
+  const setLens = useCallback((next) => {
+    setLensState(next);
+    // Colouring stays as chosen; only the subtype colouring needs a lens to exist
+    setColorKey((key) => (next === OVERALL_LENS && key === "lens_subtype" ? "type" : key));
+    updateURLParams({ lens: next === OVERALL_LENS ? null : next });
+  }, []);
+
+  // Cities with the peers, coordinates and subtype of the chosen lens
+  const viewSamples = useMemo(
+    () => applyLens(samples, mock.lenses, lens),
+    [samples, mock.lenses, lens]
+  );
+
+  const byId = useMemo(
+    () => new Map(viewSamples.map((s) => [s.id, s])),
+    [viewSamples]
+  );
+
+  const selectedView = useMemo(
+    () => (selectedSample ? byId.get(selectedSample.id) || selectedSample : null),
+    [selectedSample, byId]
+  );
+
+  const openEvidence = useCallback(
+    (cityId, tag) => setDrawer({ cityId, tag, forId: selectedSample?.id }),
+    [selectedSample]
+  );
+  // The evidence view belongs to the city it was opened from; selecting another city leaves it
+  const evidenceOpen = Boolean(
+    drawer && mock.evidence && selectedSample && drawer.forId === selectedSample.id
+  );
+
+  // The tour explains the city panel on a city that has every section: Berlin under
+  // the mobility domain, unless such a city is already open. With `withStudies` it also
+  // opens the studies of the first solution that has any.
+  const showTutorialExample = (withStudies) => {
+    const keep = Boolean(mock.evidence?.cities?.[selectedSample?.id]);
+    const cityId = keep ? selectedSample.id : 5483;
+    const domainLens = lensActive ? lens : "mobility";
+    if (!keep) selectSample(samples.find((s) => s.id === cityId) || null);
+    if (!lensActive && mock.lenses) setLens(domainLens);
+    if (!withStudies || !mock.evidence) return setDrawer(null);
+    const counts = tagCounts(mock.evidence, cityId);
+    const tag = tagsForLens(mock.evidence, domainLens).find((t) => counts[t] > 0);
+    return setDrawer(tag ? { cityId, tag, forId: cityId } : null);
+  };
+
+  const lensSubtypeDescriptions = useMemo(() => {
+    const map = {};
+    (mock.lenses?.lenses?.[lens]?.subtypes || []).forEach((s) => {
+      map[s.name] = s.description;
+    });
+    return map;
+  }, [mock.lenses, lens]);
 
   // ------------------------------------------------------
   // Load data + initialize URL-based state
@@ -123,12 +207,12 @@ const Explorer = () => {
     () =>
       Array.from(
         new Set(
-          samples
+          viewSamples
             .map((s) => s[colorKey])
             .filter((value) => value !== null && value !== undefined)
         )
       ).sort(),
-    [samples, colorKey]
+    [viewSamples, colorKey]
   );
 
   const categoryColors = useMemo(() => {
@@ -145,24 +229,24 @@ const Explorer = () => {
   // ------------------------------------------------------
   const colors = useMemo(
     () =>
-      computeColors(samples, {
+      computeColors(viewSamples, {
         populationThreshold,
         studyThreshold,
         selectedRegions,
         selectedTypes,
         colorKey,
-        selectedSample,
+        selectedSample: selectedView,
         categoryColors,
         metricFilters,
       }),
     [
-      samples,
+      viewSamples,
       populationThreshold,
       studyThreshold,
       selectedRegions,
       selectedTypes,
       colorKey,
-      selectedSample,
+      selectedView,
       categoryColors,
       metricFilters,
     ]
@@ -170,21 +254,21 @@ const Explorer = () => {
 
   const sizes = useMemo(
     () =>
-      computeSizes(samples, {
+      computeSizes(viewSamples, {
         populationThreshold,
         studyThreshold,
         selectedRegions,
         selectedTypes,
-        selectedSample,
+        selectedSample: selectedView,
         metricFilters,
       }),
     [
-      samples,
+      viewSamples,
       populationThreshold,
       studyThreshold,
       selectedRegions,
       selectedTypes,
-      selectedSample,
+      selectedView,
       metricFilters,
     ]
   );
@@ -292,7 +376,8 @@ const Explorer = () => {
       <div className="plots-wrapper">
         {(viewMode === "embedding" || viewMode === "both") && (
           <EmbeddingPlot
-            samples={samples}
+            key={lensActive ? lens : OVERALL_LENS} /* fresh axes for each lens space */
+            samples={viewSamples}
             colors={colors}
             sizes={sizes}
             selectedDims={selectedDims}
@@ -304,10 +389,10 @@ const Explorer = () => {
 
         {(viewMode === "map" || viewMode === "both") && (
           <MapPlot
-            samples={samples}
+            samples={viewSamples}
             colors={colors}
             sizes={sizes}
-            selectedSample={selectedSample}
+            selectedSample={selectedView}
             onSelectSample={selectSample}
             setSearchValue={setSearchValue}
             viewMode={viewMode}
@@ -347,16 +432,48 @@ const Explorer = () => {
         setMetricFilters={setMetricFilters}
         pendingMetric={pendingMetric}
         setPendingMetric={setPendingMetric}
+        lens={lens}
+        setLens={setLens}
+        lensData={mock.lenses}
+        lensSubtypeDescriptions={lensSubtypeDescriptions}
+        onOpenTutorial={() => setTutorialOpen(true)}
       />
+
+      <MockBanner />
+
+      {tutorialOpen && (
+        <Tutorial
+          onClose={() => setTutorialOpen(false)}
+          panelState={`${selectedSample?.id}-${lens}-${evidenceOpen}`}
+          showExampleCity={() => showTutorialExample(false)}
+          showExampleEvidence={() => showTutorialExample(true)}
+        />
+      )}
 
       <FeedbackNote />
 
-      {selectedSample && (
+      {/* MOCK: the evidence view takes the place of the city panel, so the map stays visible */}
+      {selectedSample && evidenceOpen && (
+        <EvidencePanel
+          key={`${drawer.cityId}-${drawer.tag}`}
+          drawer={drawer}
+          evidence={mock.evidence}
+          backLabel={selectedSample.name}
+          onClose={() => setDrawer(null)}
+        />
+      )}
+
+      {selectedSample && !evidenceOpen && (
         <InfoPanel
-          selectedSample={selectedSample}
-          samples={samples}
+          selectedSample={selectedView}
+          samples={viewSamples}
           setSelectedSample={selectSample}
           setSearchValue={setSearchValue}
+          mock={mock}
+          lens={lensActive ? lens : OVERALL_LENS}
+          setLens={setLens}
+          byId={byId}
+          openEvidence={openEvidence}
         />
       )}
     </div>

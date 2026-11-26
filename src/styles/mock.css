@@ -1,0 +1,475 @@
+/* MOCK (funder prototype): lenses, evidence chips and evidence drawer */
+
+.explorer-root .mock-banner {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  padding: 5px 12px;
+  border-radius: 12px;
+  background: rgba(201, 162, 39, 0.92);
+  color: #0d1117;
+  font-size: 0.72em;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.explorer-root .mock-lens-question {
+  font-size: 0.7em;
+  color: #8b949e;
+  margin: 4px 0 12px 0;
+  line-height: 1.3em;
+}
+
+.explorer-root .mock-note {
+  font-size: 0.7em;
+  color: #8b949e;
+  line-height: 1.35em;
+  margin-top: 4px;
+}
+
+.explorer-root .mock-domain {
+  font-size: 0.75em;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.explorer-root .mock-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.explorer-root .mock-chip-list-indent {
+  margin: 4px 0 2px 0;
+}
+
+.explorer-root .mock-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border: 1px solid #555;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 0.7em;
+  line-height: 1.25em;
+  position: relative;
+}
+
+.explorer-root .mock-chip-clickable {
+  cursor: pointer;
+}
+
+.explorer-root .mock-chip-clickable:hover,
+.explorer-root .mock-chip-active {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.explorer-root .mock-chip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.explorer-root .mock-chip-count {
+  font-weight: bold;
+  padding-left: 2px;
+}
+
+.explorer-root .mock-list {
+  font-size: 0.75em;
+  margin-top: 8px;
+}
+
+.explorer-root .mock-row {
+  margin-bottom: 5px;
+}
+
+.explorer-root .mock-row-main {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.explorer-root .mock-dist {
+  color: #8b949e;
+  font-variant-numeric: tabular-nums;
+  min-width: 30px;
+}
+
+.explorer-root .mock-link {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.explorer-root .mock-link:hover {
+  color: #fff;
+}
+
+.explorer-root .mock-count {
+  color: #8b949e;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+.explorer-root .mock-compare,
+.explorer-root .mock-rank {
+  margin-left: auto;
+  color: #8b949e;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+.explorer-root .mock-compare {
+  cursor: pointer;
+}
+
+.explorer-root .mock-compare:hover {
+  color: #c9d1d9;
+}
+
+.explorer-root .mock-compare-table {
+  margin: 4px 0 8px 0;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  font-size: 0.92em;
+}
+
+.explorer-root .mock-compare-head,
+.explorer-root .mock-compare-row {
+  display: grid;
+  grid-template-columns: 1fr 62px 62px;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 3px;
+}
+
+.explorer-root .mock-compare-head {
+  color: #8b949e;
+  font-size: 0.9em;
+}
+
+.explorer-root .mock-compare-head span:not(:first-child),
+.explorer-root .mock-compare-row .mock-pct {
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.explorer-root .mock-pct {
+  border-radius: 4px;
+  padding: 1px 0;
+  color: #0d1117;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* Hover text, placed above its anchor by the Tip component */
+.explorer-root .mock-tip {
+  position: fixed;
+  z-index: 9999;
+  width: 280px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgba(20, 20, 20, 0.97);
+  border: 1px solid #30363d;
+  color: #c9d1d9;
+  font-size: 12px;
+  font-weight: normal;
+  line-height: 1.35;
+  text-align: left;
+  white-space: normal;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+.explorer-root .mock-legend {
+  float: right;
+  display: inline-flex;
+  gap: 10px;
+}
+
+.explorer-root .mock-legend .mock-chip-dot {
+  display: inline-block;
+}
+
+/* Bars: verified studies per solution */
+.explorer-root .mock-bar-row {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.75em;
+}
+
+.explorer-root .mock-bar-row-clickable {
+  cursor: pointer;
+}
+
+.explorer-root .mock-bar-row-clickable:hover .mock-bar {
+  filter: brightness(1.25);
+}
+
+.explorer-root .mock-bar-row-empty {
+  opacity: 0.5;
+}
+
+.explorer-root .mock-bar-label {
+  display: block;
+  margin-bottom: 3px;
+  line-height: 1.3em;
+}
+
+.explorer-root .mock-bar-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.explorer-root .mock-bar {
+  height: 10px;
+  border-radius: 2px;
+  min-width: 0;
+}
+
+.explorer-root .mock-bar-count {
+  font-size: 0.85em;
+  color: #8b949e;
+  white-space: nowrap;
+}
+
+/* Evidence view, in the place of the city panel */
+.explorer-root .info-panel.mock-evidence-panel {
+  width: 430px;
+}
+
+.explorer-root .mock-evidence-header {
+  padding-right: 10px;
+  padding-bottom: 8px;
+}
+
+.explorer-root .mock-evidence-header h3 {
+  margin: 8px 0 2px 0;
+  font-size: 1.05em;
+  line-height: 1.3em;
+}
+
+.explorer-root .mock-back {
+  font-size: 0.8em;
+  color: #8b949e;
+  cursor: pointer;
+}
+
+.explorer-root .mock-back:hover {
+  color: #fff;
+}
+
+.explorer-root .mock-info {
+  font-size: 0.8em;
+  font-weight: normal;
+  color: #8b949e;
+  cursor: help;
+}
+
+.explorer-root .mock-study {
+  border-top: 1px solid #30363d;
+  padding: 10px 0;
+}
+
+.explorer-root .mock-study-title {
+  font-size: 0.85em;
+  line-height: 1.3em;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  gap: 6px;
+}
+
+.explorer-root .mock-study-title:hover {
+  color: #fff;
+}
+
+.explorer-root .mock-caret {
+  color: #8b949e;
+  flex-shrink: 0;
+}
+
+.explorer-root .mock-study-meta {
+  font-size: 0.7em;
+  color: #8b949e;
+  margin: 3px 0 0 17px;
+}
+
+.explorer-root .mock-study-meta a {
+  color: #8b949e;
+}
+
+.explorer-root .mock-study-meta a:hover {
+  color: #fff;
+}
+
+.explorer-root .mock-study .mock-chip-list {
+  margin: 8px 0 0 17px;
+}
+
+.explorer-root .mock-chip-hover {
+  cursor: default;
+}
+
+.explorer-root .mock-abstract {
+  font-size: 0.75em;
+  line-height: 1.5em;
+  color: #c9d1d9;
+  margin: 8px 0 0 17px;
+}
+
+/* The passage is faintly marked, and fully highlighted while its tag is hovered */
+.explorer-root .mock-abstract mark {
+  background: rgba(242, 204, 96, 0.16);
+  color: inherit;
+  border-bottom: 1px solid rgba(242, 204, 96, 0.7);
+  border-radius: 2px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.explorer-root .mock-abstract mark.mock-mark-strong {
+  background: #f2cc60;
+  color: #0d1117;
+}
+
+@media (max-width: 900px), (max-height: 540px) {
+  .explorer-root .info-panel.mock-evidence-panel {
+    width: min(430px, calc(100% - 20px));
+  }
+
+  .explorer-root .mock-banner {
+    font-size: 0.6em;
+  }
+}
+
+/* Tutorial */
+.explorer-root .mock-tour {
+  position: absolute;
+  left: 50%;
+  top: 96px;
+  transform: translateX(-50%);
+  width: min(400px, calc(100% - 24px));
+  box-sizing: border-box;
+  padding: 14px 16px 16px;
+  background: rgba(13, 17, 23, 0.97);
+  border: 1px solid #f2cc60;
+  border-radius: 8px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6);
+  z-index: 60;
+}
+
+.explorer-root .mock-tour-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72em;
+  color: #8b949e;
+}
+
+.explorer-root .mock-tour-skip {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.explorer-root .mock-tour-skip:hover {
+  color: #fff;
+}
+
+.explorer-root .mock-tour h3 {
+  margin: 8px 0 6px;
+  font-size: 1.05em;
+}
+
+.explorer-root .mock-tour p {
+  margin: 0 0 14px;
+  font-size: 0.82em;
+  line-height: 1.5em;
+  color: #c9d1d9;
+}
+
+.explorer-root .mock-tour-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.explorer-root .mock-tour-btn {
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: 1px solid #30363d;
+  background: #161b22;
+  color: #c9d1d9;
+  cursor: pointer;
+  font-size: 0.8em;
+}
+
+.explorer-root .mock-tour-btn-primary {
+  background: #238636;
+  border-color: #238636;
+  color: #fff;
+}
+
+/* The part of the screen a tutorial step refers to */
+.explorer-root .mock-tour-target {
+  outline: 2px solid #f2cc60;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgba(242, 204, 96, 0.22);
+}
+
+.explorer-root .mock-help-button {
+  font-weight: bold;
+  font-size: 1em;
+}
+
+@media (max-width: 900px), (max-height: 540px) {
+  .explorer-root .mock-tour {
+    top: auto;
+    bottom: 44px;
+  }
+}
+
+/* A section of the city panel that a tutorial step refers to */
+.explorer-root .mock-tour-section {
+  background: rgba(242, 204, 96, 0.08);
+  box-shadow: inset 0 0 0 2px #f2cc60;
+  border-radius: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-bottom: 8px;
+  scroll-margin-top: 12px;
+}
+
+/* Indicators behind the similarity of the chosen solution domain */
+.explorer-root .mock-indicators {
+  display: block;
+  margin-top: 6px;
+  line-height: 1.5em;
+}
+
+.explorer-root .mock-indicators strong {
+  display: block;
+  color: #c9d1d9;
+  font-weight: 600;
+}
+
+.explorer-root .mock-indicator {
+  display: inline-block;
+  margin: 2px 4px 0 0;
+  padding: 0 6px;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  color: #c9d1d9;
+}
+
+.explorer-root .mock-excerpt-note {
+  margin-left: 17px;
+}
